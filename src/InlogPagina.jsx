@@ -26,7 +26,7 @@ function InlogPagina() {
         }
     };
     const registrerenKnop = () => {
-        navigate('BeginRegistreren');
+        navigate('/BeginRegistreren');
     }
 
 

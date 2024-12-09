@@ -19,12 +19,9 @@ function App() {
 
                 <Routes>
                     {/* Redirect van de root naar de InlogPagina */}
-                    <Route path="/" element={<Navigate to="/InlogPagina" />} />
+                    <Route path="*" element={<Navigate to="/InlogPagina" />} />
                     <Route path="/InlogPagina/Registreren" element={<Navigate to="/Registreren" />} />
                     <Route path="/Registreren/InlogPagina" element={<Navigate to="/InlogPagina" />} />
-                    <Route path={"/InlogPagina/BeginRegistreren"} element={<Navigate to="/BeginRegistreren" />} />
-                    <Route path={"/BeginRegistreren/RegistreerPersoon"} element={<Navigate to="/Registreren" />} />
-                    <Route path={"/BeginRegistreren/RegistreerBedrijf"} element={<Navigate to="/RegistreerBedrijf" />} />
                     <Route path="/InlogPagina" element={<InlogPagina />} />
                     <Route path="/RegistreerBedrijf" element={<RegistreerBedrijf />} />
                     <Route path="/Registreren" element={<Registreren />} />

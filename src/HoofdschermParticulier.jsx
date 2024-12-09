@@ -3,7 +3,7 @@ import {useNavigate} from 'react-router-dom';
 function HoofdschermParticulier() {
     const navigate = useNavigate();
     const AutoHuren = () => {
-
+        navigate('/AutoHuren');
     }
     const MijnReservering = () => {
 

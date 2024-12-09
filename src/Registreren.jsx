@@ -8,7 +8,7 @@ function Registreren() {
     const navigate = useNavigate();
 
     const Inloggen = () => {
-        navigate("./InlogPagina")
+        navigate("/InlogPagina")
     }
     const Registreer = async (event) => {
         event.preventDefault();
