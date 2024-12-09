@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Registreren.css';
-import './InlogPagina.jsx';
 import React from 'react';
 import axios from "axios";
 import logo from './assets/CarAndAll Logo.webp';
