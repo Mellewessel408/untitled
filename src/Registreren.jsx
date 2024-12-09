@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './InlogPagina.css';
+import './Registreren.css';
 import './InlogPagina.jsx';
 import React from 'react';
 import axios from "axios";
@@ -53,36 +53,50 @@ function Registreren() {
 
     return (
         <div className="container">
-            <h1>Registreren</h1>
-
+            <div className="logo">
+                <img src="logo.png" alt="Carandall Logo"/>
+            </div>
+            <h1>Registreer</h1>
             <form onSubmit={Registreer}>
-                <label htmlFor="email">Emailadres:</label>
-                <input type="email" id="email" name="email" required placeholder="Vul je emailadres in..."/>
+                <div>
+                    <label htmlFor="email">Emailadres:</label>
+                    <input type="email" id="email" name="email" required placeholder="Vul je emailadres in..."/>
+                </div>
 
-                <label htmlFor="wachtwoord">Wachtwoord: <br/>(minimaal 8 karakters) </label>
-                <input type="password" id="wachtwoord" name="wachtwoord" required placeholder="Vul je wachtwoord in..."
-                       minLength="8"/>
+                <div>
+                    <label htmlFor="wachtwoord">Wachtwoord: <br/>(minimaal 8 karakters)</label>
+                    <input type="password" id="wachtwoord" name="wachtwoord" required
+                           placeholder="Vul je wachtwoord in..." minLength="8"/>
+                </div>
 
-                <label htmlFor="herhaalWachtwoord">Herhaal wachtwoord:</label>
-                <input type="password" id="herhaalWachtwoord" name="herhaalWachtwoord" required
-                       placeholder="Vul je wachtwoord in..." minLength="8"/>
+                <div>
+                    <label htmlFor="herhaalWachtwoord">Herhaal wachtwoord:</label>
+                    <input type="password" id="herhaalWachtwoord" name="herhaalWachtwoord" required
+                           placeholder="Vul je wachtwoord in..." minLength="8"/>
+                </div>
 
-                <label htmlFor="Postcode">Postcocde:</label>
-                <input type="text" id="postcode" name="postcode" pattern="[0-9]{4}\s?[A-Z]{2}" required placeholder="1111AA"/>
+                <div>
+                    <label htmlFor="postcode">Postcode:</label>
+                    <input type="text" id="postcode" name="postcode" pattern="[0-9]{4}\s?[A-Z]{2}" required
+                           placeholder="1111AA"/>
+                </div>
 
-                <label htmlFor="huisnummer">Huisnummer:</label>
-                <input type="text" id="huisnummer" name="huisnummer" required placeholder="Vul je Huisnummer in..."/>
+                <div>
+                    <label htmlFor="huisnummer">Huisnummer:</label>
+                    <input type="text" id="huisnummer" name="huisnummer" required
+                           placeholder="Vul je Huisnummer in..."/>
+                </div>
 
-                <label htmlFor="telefoonnummer">Telefoonnummer:</label>
-                <input type="tel" id="telefoonnummer" name="telefoonnummer" required
-                       placeholder="Vul je Telefoonnummer in..."/>
-                <button type="submit" >Registreer</button>
+                <div>
+                    <label htmlFor="telefoonnummer">Telefoonnummer:</label>
+                    <input type="tel" id="telefoonnummer" name="telefoonnummer" required
+                           placeholder="Vul je Telefoonnummer in..."/>
+                </div>
 
+                <button type="submit">Registreer</button>
             </form>
-            <button onClick={Inloggen}>Inloggen</button>
-
-
         </div>
+
     );
 }
 
