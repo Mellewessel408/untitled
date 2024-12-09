@@ -6,6 +6,7 @@ import RegistreerBedrijf from "./RegistreerBedrijf.jsx";
 import HoofdschermMedewerker from "./HoofdschermMedewerker.jsx";
 import HoofdschermParticulier from "./HoofdschermParticulier.jsx";
 import HoofdschermZakelijk from "./HoofdschermZakelijk.jsx";
+import AutoHuren from "./AutoHuren.jsx";
 
 function App() {
     return (
@@ -28,9 +29,10 @@ function App() {
                     <Route path="/RegistreerBedrijf" element={<RegistreerBedrijf />} />
                     <Route path="/Registreren" element={<Registreren />} />
                     <Route path="/BeginRegistreren" element={<BeginRegistreren />} />
-                    <Route path="/HoofdsschermMedewerker" element={<HoofdschermMedewerker/>} />
-                    <Route path="/HoofdsschermParticulier" element={<HoofdschermParticulier />} />
-                    <Route path="/HoofdsschermZakelijk" element={<HoofdschermZakelijk />} />
+                    <Route path="/HoofdschermMedewerker" element={<HoofdschermMedewerker/>} />
+                    <Route path="/HoofdschermParticulier" element={<HoofdschermParticulier />} />
+                    <Route path="/HoofdschermZakelijk" element={<HoofdschermZakelijk />} />
+                    <Route path="/AutoHuren" element={<AutoHuren />} />
                 </Routes>
             </div>
         </Router>

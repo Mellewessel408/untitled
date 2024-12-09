@@ -31,14 +31,14 @@ function Registreren() {
         const data = {
             email: email,
             password: wachtwoord,
-            // postcode,
-            // huisnummer,
-            // telefoonnummer
+            string: postcode,
+            huisnummer: huisnummer,
+            telefoonnummer: telefoonnummer
         };
 
         try {
             // Verstuur het POST verzoek naar de backend
-            const response = await axios.post('http://localhost:5257/api/account/maakaccount', data);
+            const response = await axios.post('http://localhost:5153/api/accountparticulier/maakaccount', data);
 
             // Als de request succesvol is
             console.log('Account succesvol aangemaakt:', response.data);
