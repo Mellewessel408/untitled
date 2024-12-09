@@ -2,11 +2,11 @@ import {useNavigate} from 'react-router-dom';
 
 function Reserveren() {
     const navigate = useNavigate();
-    const voertuigen[];
+    //const voertuigen[];
 
-    return (
+   // return (
 
-    );
+   // );
 
 }
 export default Reserveren;
