@@ -4,6 +4,7 @@ import './Registreren.css';
 import './InlogPagina.jsx';
 import React from 'react';
 import axios from "axios";
+import logo from './assets/CarAndAll Logo.webp';
 function Registreren() {
     const navigate = useNavigate();
 
@@ -48,13 +49,12 @@ function Registreren() {
             console.error('Er is een fout opgetreden:', error);
             alert('Er is iets misgegaan bij het aanmaken van het account!');
         }
-        ;
     }
 
     return (
         <div className="container">
-            <div className="logo">
-                <img src="logo.png" alt="Carandall Logo"/>
+            <div className="Centreren">
+                <img className="logo" src={logo} alt="Carandall Logo"/>
             </div>
             <h1>Registreer</h1>
             <form onSubmit={Registreer}>
@@ -64,9 +64,9 @@ function Registreren() {
                 </div>
 
                 <div>
-                    <label htmlFor="wachtwoord">Wachtwoord: <br/>(minimaal 8 karakters)</label>
+                    <label htmlFor="wachtwoord">Wachtwoord: </label>
                     <input type="password" id="wachtwoord" name="wachtwoord" required
-                           placeholder="Vul je wachtwoord in..." minLength="8"/>
+                           placeholder="(minimaal 8 karakters)" minLength="8"/>
                 </div>
 
                 <div>

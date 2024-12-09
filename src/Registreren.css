@@ -14,9 +14,8 @@ body {
     color: #fff;
 }
 
-.logo img {
-    max-width: 180px; /* Logo grootte */
-    height: auto;
+.logo {
+    width: 200px; /* Logo grootte */
     margin-bottom: 1rem; /* Ruimte onder het logo */
 }
 
