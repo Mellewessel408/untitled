@@ -1,4 +1,5 @@
 import {useNavigate} from 'react-router-dom';
+import './HoofdschermParticulier.css';
 
 function HoofdschermParticulier() {
     const navigate = useNavigate();
