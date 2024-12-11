@@ -32,14 +32,15 @@ function Registreren() {
         // Verzamel de data in een object om te verzenden
         const data = {
             email: email,
-            password: wachtwoord,
+            wachtwoord: wachtwoord,
             naam: naam,
-            telefoonnummer: telefoonnummer
+            telefoonnummer: telefoonnummer,
         };
+
 
         try {
             // Verstuur het POST verzoek naar de backend
-            const response = await axios.post('https://localhost:44318/api/AccountParticulier/MaakAccount', data, {
+            const response = await axios.post('https://localhost:44318/api/Particulier/MaakAccount', data, {
                 params: {
                     postcode: postcode,
                     huisnummer: huisnummer

@@ -15,3 +15,20 @@ html {
     justify-content: center;
     align-items: center;
 }
+
+.Inlogform {
+    display: block;
+}
+
+.Inlogform input {
+    margin-bottom: 10px;
+    margin-top: 5px;
+}
+
+
+
+.Inlogknop {
+    margin-bottom: 15px;
+    min-width: 150px;
+    border-radius: 10px;
+}
