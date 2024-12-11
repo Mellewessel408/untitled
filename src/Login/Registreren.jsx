@@ -1,15 +1,12 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+//import { useState } from 'react';
+//import { useNavigate } from 'react-router-dom';
 import './Registreren.css';
-import React from 'react';
+//import React from 'react';
 import axios from "axios";
 import logo from '../assets/CarAndAll Logo.webp';
 function Registreren() {
-    const navigate = useNavigate();
+    //const navigate = useNavigate();
 
-    const Inloggen = () => {
-        navigate("./InlogPagina")
-    }
     const Registreer = async (event) => {
         event.preventDefault();
 
