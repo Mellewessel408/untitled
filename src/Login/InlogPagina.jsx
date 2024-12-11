@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import './InlogPagina.css';
-import './BeginRegistreren.jsx'
+import './KiesGebruiker.jsx'
 import { useNavigate } from 'react-router-dom';
 function InlogPagina() {
     const testGebruikersnaam = 'admin';
@@ -26,7 +26,7 @@ function InlogPagina() {
         }
     };
     const registrerenKnop = () => {
-        navigate('BeginRegistreren');
+        navigate('KiesGebruiker');
     }
 
 

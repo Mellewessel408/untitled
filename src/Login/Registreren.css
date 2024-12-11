@@ -1,0 +1,77 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #807d84; /* Grijze achtergrondkleur */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    text-align: center;
+    color: #fff;
+}
+
+.logo {
+    width: 200px; /* Logo grootte */
+    margin-bottom: 1rem; /* Ruimte onder het logo */
+}
+
+h1 {
+    font-size: 2.5rem; /* Vergroot koptekst */
+    margin-bottom: 2rem;
+    font-weight: bold;
+    color: #000000;
+}
+
+form {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 kolommen voor de invoervelden */
+    grid-template-rows: auto auto auto; /* 3 rijen voor de velden */
+    gap: 1.5rem; /* Afstand tussen de invoervelden */
+    justify-items: center; /* Horizontaal en verticaal centreren binnen de grid */
+    width: 400%; /* Zorgt ervoor dat het formulier de volledige breedte gebruikt */
+    max-width: 1000px; /* Maximum breedte van het formulier (bijvoorbeeld 1000px voor bredere schermen) */
+    padding: 1rem; /* Zorg voor wat ruimte rondom het formulier */
+    box-sizing: border-box;
+    margin-left: -200px; /* Zorgt ervoor dat het formulier naar links wordt verschoven */
+}
+
+label {
+    font-size: 1rem; /* Zelfde tekstgrootte als in de mockup */
+    color: #000000; /* Zwarte kleur voor de tekst */
+    font-weight: bold; /* Zet de tekst vetgedrukt */
+    text-align: left; /* Zorgt ervoor dat de tekst links wordt uitgelijnd boven het invoerveld */
+    width: 100%; /* Zorgt ervoor dat de label breedte 100% van de grid-cel is */
+    margin-bottom: 0.5rem; /* Ruimte tussen de tekst en het invoerveld */
+}
+
+input {
+    width: 90%; /* Zorgt ervoor dat de invoervelden 90% van de kolombreedte vullen */
+    height: 3rem; /* Zelfde hoogte als in de mockup */
+    padding: 0 1rem; /* Horizontale padding voor meer ruimte */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem; /* Gelijke tekstgrootte */
+    box-sizing: border-box;
+}
+
+button {
+    grid-column: span 2; /* Knop over beide kolommen */
+    padding: 1rem;
+    background-color: #000;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    justify-self: center; /* Horizontaal centreren van de knop */
+}
+
+button:hover {
+    background-color: #333;
+}
