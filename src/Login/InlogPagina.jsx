@@ -31,6 +31,7 @@ function InlogPagina() {
 
 
     return (
+        <>
         <div className = "container">
             <h1>Inloggen</h1>
 
@@ -55,6 +56,7 @@ function InlogPagina() {
                 onClick={registrerenKnop}>Registreren
             </button>
         </div>
+        </>
     );
 }
 

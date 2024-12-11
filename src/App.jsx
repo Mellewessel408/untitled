@@ -6,6 +6,7 @@ import RegistreerBedrijf from "./Login/RegistreerBedrijf.jsx";
 import HoofdschermMedewerker from "./HoofdschermMedewerker.jsx";
 import HoofdschermParticulier from "./HoofdschermParticulier.jsx";
 import HoofdschermZakelijk from "./HoofdschermZakelijk.jsx";
+import Pagina404 from "./Pagina404.jsx";
 
 function App() {
     return (
@@ -31,6 +32,7 @@ function App() {
                     <Route path="/HoofdsschermMedewerker" element={<HoofdschermMedewerker/>} />
                     <Route path="/HoofdsschermParticulier" element={<HoofdschermParticulier />} />
                     <Route path="/HoofdsschermZakelijk" element={<HoofdschermZakelijk />} />
+                    <Route path="*" element={<Pagina404 />}/>
                 </Routes>
             </div>
         </Router>
