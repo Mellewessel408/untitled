@@ -20,6 +20,7 @@ function InlogPagina() {
 
         if (gebruikersnaam === testGebruikersnaam && wachtwoord === testWachtwoord) {
             alert('Ingelogd')
+            navigate('/HoofdschermParticulier');
         }
         else {
             alert('Ongeldige gebruikersnaam of wachtwoord');

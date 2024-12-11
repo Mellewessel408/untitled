@@ -29,9 +29,9 @@ function App() {
                     <Route path="/RegistreerBedrijf" element={<RegistreerBedrijf />} />
                     <Route path="/Registreren" element={<Registreren />} />
                     <Route path="/KiesGebruiker" element={<KiesGebruiker />} />
-                    <Route path="/HoofdsschermMedewerker" element={<HoofdschermMedewerker/>} />
-                    <Route path="/HoofdsschermParticulier" element={<HoofdschermParticulier />} />
-                    <Route path="/HoofdsschermZakelijk" element={<HoofdschermZakelijk />} />
+                    <Route path="/HoofdschermMedewerker" element={<HoofdschermMedewerker/>} />
+                    <Route path="/HoofdschermParticulier" element={<HoofdschermParticulier />} />
+                    <Route path="/HoofdschermZakelijk" element={<HoofdschermZakelijk />} />
                     <Route path="*" element={<Pagina404 />}/>
                 </Routes>
             </div>
