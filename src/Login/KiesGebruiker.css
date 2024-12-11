@@ -2,7 +2,7 @@
     display: flex;
     justify-content: center; /* Horizontaal centreren */
     align-items: center; /* Verticaal centreren */
-    height: 100vh; /* Volledige hoogte van het scherm */
+    height: 100%; /* Volledige hoogte van het scherm */
     gap: 20px; /* Ruimte tussen de knoppen */
 }
 

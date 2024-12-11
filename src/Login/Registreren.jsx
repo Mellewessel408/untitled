@@ -18,6 +18,7 @@ function Registreren() {
         const email = formData.get('email');
         const wachtwoord = formData.get('wachtwoord');
         const herhaalWachtwoord = formData.get('herhaalWachtwoord');
+        const naam = formData.get('naam');
         const postcode = formData.get('postcode');
         const huisnummer = formData.get('huisnummer');
         const telefoonnummer = formData.get('telefoonnummer');
@@ -32,22 +33,26 @@ function Registreren() {
         const data = {
             email: email,
             password: wachtwoord,
-            // postcode,
-            // huisnummer,
-            // telefoonnummer
+            naam: naam,
+            telefoonnummer: telefoonnummer
         };
 
         try {
             // Verstuur het POST verzoek naar de backend
-            const response = await axios.post('http://localhost:5257/api/account/maakaccount', data);
+            const response = await axios.post('https://localhost:44318/api/AccountParticulier/MaakAccount', data, {
+                params: {
+                    postcode: postcode,
+                    huisnummer: huisnummer
+                }
+            });
 
             // Als de request succesvol is
             console.log('Account succesvol aangemaakt:', response.data);
             alert('Account succesvol aangemaakt!');
         } catch (error) {
             // Foutafhandelingslogica
-            console.error('Er is een fout opgetreden:', error);
-            alert('Er is iets misgegaan bij het aanmaken van het account!');
+            console.error('Er is een fout opgetreden: ' + error.message);
+            alert('Er is iets misgegaan bij het aanmaken van het account! Fout details: ' + JSON.stringify(error, null, 2));
         }
     }
 
@@ -61,6 +66,12 @@ function Registreren() {
                 <div>
                     <label htmlFor="email">Emailadres:</label>
                     <input type="email" id="email" name="email" required placeholder="Vul je emailadres in..."/>
+                </div>
+
+                <div>
+                    <label htmlFor="naam">Naam:</label>
+                    <input type="text" id="naam" name="naam" required
+                           placeholder="Abhishrek/Fatima"/>
                 </div>
 
                 <div>

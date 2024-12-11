@@ -12,6 +12,7 @@ body {
 .container {
     text-align: center;
     color: #fff;
+
 }
 
 .logo {
@@ -36,7 +37,10 @@ form {
     max-width: 1000px; /* Maximum breedte van het formulier (bijvoorbeeld 1000px voor bredere schermen) */
     padding: 1rem; /* Zorg voor wat ruimte rondom het formulier */
     box-sizing: border-box;
-    margin-left: -200px; /* Zorgt ervoor dat het formulier naar links wordt verschoven */
+    margin-left: 0; /* Zorgt ervoor dat het formulier naar links wordt verschoven */
+    justify-content: center;
+    align-items: center;
+
 }
 
 label {
