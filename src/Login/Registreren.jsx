@@ -40,13 +40,16 @@ function Registreren() {
 
         try {
             // Verstuur het POST verzoek naar de backend
-            const response = await axios.post('https://localhost:44318/api/Particulier/MaakAccount', data, {
-                params: {
-                    postcode: postcode,
-                    huisnummer: huisnummer
-                }
+            const url = new URL("https://localhost:44318/api/Particulier/MaakAccount");
+            url.searchParams.append('postcode', postcode);
+            url.searchParams.append('huisnummer', huisnummer);
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data), // Data moet een JSON-object zijn
             });
-
             // Als de request succesvol is
             console.log('Account succesvol aangemaakt:', response.data);
             alert('Account succesvol aangemaakt!');
@@ -72,7 +75,7 @@ function Registreren() {
                 <div>
                     <label htmlFor="naam">Naam:</label>
                     <input type="text" id="naam" name="naam" required
-                           placeholder="Abhishrek/Fatima"/>
+                           placeholder="Vul uw naam in"/>
                 </div>
 
                 <div>

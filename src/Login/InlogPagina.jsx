@@ -1,47 +1,45 @@
 import React, { useState } from 'react';
 import './InlogPagina.css';
-import './KiesGebruiker.jsx'
+import './KiesGebruiker.jsx';
 import { useNavigate } from 'react-router-dom';
-import axios from "axios";
+
 function InlogPagina() {
-
-
+    const [email, setEmail] = useState('');
+    const [wachtwoord, setWachtwoord] = useState('');
     const navigate = useNavigate();
 
+    const inlogKnop = async (event) => {
+        event.preventDefault(); // Voorkomt dat het formulier standaard wordt ingediend
 
+        try {
+            // Verstuur het POST-verzoek naar de backend
+            const response = await fetch('https://localhost:44318/api/Particulier/Login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: email,
+                    wachtwoord: wachtwoord
+                })
+            });
 
-
-        const inlogKnop = async (event) => {
-            event.preventDefault(); // Voorkomt dat het formulier standaard wordt ingediend
-
-            const formData = new FormData(event.target);
-            const email = formData.get('email');
-            const wachtwoord = formData.get('wachtwoord');
-
-            try {
-                // Verstuur het POST-verzoek naar de backend
-                const response = await axios.post('https://localhost:44318/api/Particulier/Login', null, {
-                    params: {
-                        email: email,
-                        wachtwoord: wachtwoord
-                    }
-                });
-
-                // Als de request succesvol is
-                console.log('Account succesvol ingelogd:', response.data);
+            // Als de request succesvol is
+            if (response.status === 200) {
+                console.log('Account succesvol ingelogd');
                 alert('Inloggen succesvol!');
-
-            } catch (error) {
-                // Foutafhandelingslogica
-                console.error('Er is een fout opgetreden:', error.message);
-                alert('Er is iets misgegaan bij het inloggen! Fout details: ' + JSON.stringify(error, null, 2));
+                navigate('./HoofdschermParticulier'); // Of een andere route
+            } else {
+                alert('Fout account of wachtwoord!');
             }
-        };
+        } catch (error) {
+            // Foutafhandelingslogica
+            console.error('Er is een fout opgetreden:', error.message);
+            alert('Er is iets misgegaan bij het inloggen! Fout details: ' + JSON.stringify(error, null, 2));
+        }
+    };
 
-        const registrerenKnop = () => {
+    const registrerenKnop = () => {
         navigate('KiesGebruiker');
-    }
-
+    };
 
     return (
         <>
@@ -50,20 +48,31 @@ function InlogPagina() {
 
                 <form className="Inlogform" onSubmit={inlogKnop}>
                     <div>
-                        <label htmlFor="email">Emailadres:</label>
-                        <input type="email" id="email" name="email" required placeholder="Vul je emailadres in..."/>
+                        <label htmlFor="email">E-mailadres:</label>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                            placeholder="Vul je emailadres in..."
+                        />
                     </div>
                     <div>
                         <label htmlFor="wachtwoord">Wachtwoord: </label>
-                        <input type="password" id="wachtwoord" name="wachtwoord" required
-                               placeholder="(minimaal 8 karakters)" minLength="8"/>
+                        <input
+                            type="password"
+                            id="wachtwoord"
+                            name="wachtwoord"
+                            value={wachtwoord}
+                            onChange={(e) => setWachtwoord(e.target.value)}
+                            required
+                            placeholder="Vul hier uw wachtwoord in..."
+                        />
                     </div>
-                    <button
-                        className="Inlogknop"
-                    >Inloggen
-                    </button>
+                    <button className="Inlogknop">Inloggen</button>
                 </form>
-
 
                 <button
                     className="Inlogknop"
