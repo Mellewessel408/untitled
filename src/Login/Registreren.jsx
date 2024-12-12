@@ -35,14 +35,14 @@ function Registreren() {
             wachtwoord: wachtwoord,
             naam: naam,
             telefoonnummer: telefoonnummer,
+            postcode : postcode,
+            huisnummer : huisnummer
         };
 
 
         try {
             // Verstuur het POST verzoek naar de backend
             const url = new URL("https://localhost:44318/api/Particulier/MaakAccount");
-            url.searchParams.append('postcode', postcode);
-            url.searchParams.append('huisnummer', huisnummer);
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
@@ -50,14 +50,20 @@ function Registreren() {
                 },
                 body: JSON.stringify(data), // Data moet een JSON-object zijn
             });
-            // Als de request succesvol is
-            console.log('Account succesvol aangemaakt:', response.data);
-            alert('Account succesvol aangemaakt!');
+            if (response.ok) {
+                // Als de request succesvol is
+                console.log('Account succesvol aangemaakt');
+                alert('Account succesvol aangemaakt!');
+            } else {
+                // Als de request niet succesvol is (bijvoorbeeld BadRequest)
+                const errorMessage = await response.text(); // Krijg de tekst van de foutmelding
+                alert(`Fout: ${errorMessage}`);
+            }
         } catch (error) {
-            // Foutafhandelingslogica
-            console.error('Er is een fout opgetreden: ' + error.message);
-            alert('Er is iets misgegaan bij het aanmaken van het account! Fout details: ' + JSON.stringify(error, null, 2));
+            console.error('Fout bij het versturen van het verzoek:', error);
+            alert('Er is een fout opgetreden. Probeer het later opnieuw.');
         }
+
     }
 
     return (

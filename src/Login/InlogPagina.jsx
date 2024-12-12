@@ -11,19 +11,21 @@ function InlogPagina() {
     const inlogKnop = async (event) => {
         event.preventDefault(); // Voorkomt dat het formulier standaard wordt ingediend
 
+        const data = {
+            email: email,
+            wachtwoord: wachtwoord
+        }
+
         try {
             // Verstuur het POST-verzoek naar de backend
             const response = await fetch('https://localhost:44318/api/Particulier/Login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    email: email,
-                    wachtwoord: wachtwoord
-                })
+                body: JSON.stringify(data),
             });
 
             // Als de request succesvol is
-            if (response.status === 200) {
+            if (response.ok) {
                 console.log('Account succesvol ingelogd');
                 alert('Inloggen succesvol!');
                 navigate('./HoofdschermParticulier'); // Of een andere route
