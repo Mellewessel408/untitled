@@ -28,8 +28,7 @@ function InlogPagina() {
             // Als de request succesvol is
             if (response.ok) {
                 console.log('Account succesvol ingelogd');
-                alert('Inloggen succesvol!');
-                navigate('Hoofdscherm' + gebruiker); // Of een andere route
+                navigate('/Hoofdpagina' + gebruiker );
             } else {
                 alert('Fout account of wachtwoord!');
             }
