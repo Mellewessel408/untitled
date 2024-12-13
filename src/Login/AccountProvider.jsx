@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 const AccountContext = createContext();
 
 export const AccountProvider = ({ children }) => {
-    const [currentAccountId, setCurrentAccountId] = useState(null);
+    const [currentAccountId, setCurrentAccountId] = useState(28);
 
     const login = (accountId) => setCurrentAccountId(accountId);
     const logout = () => setCurrentAccountId(null);

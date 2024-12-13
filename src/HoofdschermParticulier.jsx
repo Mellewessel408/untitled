@@ -12,7 +12,7 @@ function HoofdschermParticulier() {
 
     }
     const MijnProfiel = () => {
-
+        navigate('/ProfielParticulier')
     }
     const LogUit = () => {
 

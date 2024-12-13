@@ -29,7 +29,7 @@ function InlogPagina() {
             if (response.ok) {
                 console.log('Account succesvol ingelogd');
                 alert('Inloggen succesvol!');
-                navigate('Hoofdscherm' + gebruiker); // Of een andere route
+                navigate('/Hoofdscherm' + gebruiker); // Of een andere route
             } else {
                 alert('Fout account of wachtwoord!');
             }

@@ -1,8 +1,10 @@
-﻿import React from "react";
-import './ProfielWijzigen.css';
+﻿import './Login/Registreren.css';
 import logo from "./assets/CarAndAll Logo.webp";
+import {useAccount} from "./Login/AccountProvider.jsx";
 
 function ProfielWijzigen(){
+    const { currentAccountId } = useAccount();
+    const accountIdString = String(currentAccountId)
 
     const Wijzigen = async (event) => {
         event.preventDefault();
@@ -12,7 +14,7 @@ function ProfielWijzigen(){
         const email = formData.get('email');
         const telefoonnummer = formData.get('telefoonnummer');
         const postcode = formData.get('postcode');
-        const huisnummer = formData.get('Huisnummer');
+        const huisnummer = formData.get('huisnummer');
         const wachtwoord = formData.get('wachtwoord');
         const herhaalWachtwoord = formData.get('herhaalWachtwoord');
 
@@ -21,23 +23,25 @@ function ProfielWijzigen(){
             return;
         }
 
-        const data = {
+        const dto = {
             email: email,
-            naam: naam,
             wachtwoord: wachtwoord,
-            telefoonnummer: telefoonnummer,
+            naam: naam,
+            telefoonnummer: Number(telefoonnummer),
             postcode: postcode,
-            huisnummer: huisnummer
-        }
+            huisnummer: Number(huisnummer),
+        };
 
         try {
             const url = new URL("https://localhost:44318/api/Particulier/updateaccount");
+            url.searchParams.append("id", accountIdString)
+            console.log(url.toString())
             const response = await fetch(url, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(data),
+                body: JSON.stringify(dto),
             });
             if (response.ok) {
 
@@ -45,7 +49,7 @@ function ProfielWijzigen(){
                 alert('account succesvol geupdate');
             } else {
                 const errorMessage = await response.text();
-                alert('Fount: ${errorMessage}');
+                alert(`Fout: ${errorMessage}`);
             }
         }
         catch (error) {
@@ -59,7 +63,7 @@ function ProfielWijzigen(){
             <div className="Centreren">
                 <img className="logo" src={logo} alt="Carandall Logo"/>
             </div>
-            <h1>Registreer</h1>
+            <h1>Wijzig Profiel</h1>
             <form onSubmit={Wijzigen}>
                 <div>
                     <label htmlFor="email">Emailadres:</label>
@@ -102,7 +106,7 @@ function ProfielWijzigen(){
                            placeholder="Vul je Telefoonnummer in..."/>
                 </div>
 
-                <button type="submit">Registreer</button>
+                <button type="submit">Wijzig</button>
             </form>
         </div>
     );
