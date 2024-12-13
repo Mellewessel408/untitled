@@ -7,6 +7,7 @@ import HoofdschermMedewerker from "./HoofdschermMedewerker.jsx";
 import HoofdschermParticulier from "./HoofdschermParticulier.jsx";
 import HoofdschermZakelijk from "./HoofdschermZakelijk.jsx";
 import Pagina404 from "./Pagina404.jsx";
+import AutoHuren from "./AutoHuren.jsx";
 
 function App() {
     return (
@@ -32,6 +33,7 @@ function App() {
                     <Route path="/HoofdschermMedewerker" element={<HoofdschermMedewerker/>} />
                     <Route path="/HoofdschermParticulier" element={<HoofdschermParticulier />} />
                     <Route path="/HoofdschermZakelijk" element={<HoofdschermZakelijk />} />
+                    <Route path="/AutoHuren" element={<AutoHuren />} />
                     <Route path="*" element={<Pagina404 />}/>
                 </Routes>
             </div>
