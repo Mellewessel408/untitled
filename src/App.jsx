@@ -7,7 +7,6 @@ import HoofdschermMedewerker from "./HoofdschermMedewerker.jsx";
 import HoofdschermParticulier from "./HoofdschermParticulier.jsx";
 import HoofdschermZakelijk from "./HoofdschermZakelijk.jsx";
 import Pagina404 from "./Pagina404.jsx";
-import AutoHuren from "./VoertuigenSelectie.jsx";
 import VoertuigenSelectie from "./VoertuigenSelectie.jsx";
 
 function App() {
