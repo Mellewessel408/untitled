@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 function InlogPagina() {
     const [email, setEmail] = useState('');
     const [wachtwoord, setWachtwoord] = useState('');
+    const [gebruiker, setGebruiker] = useState('');
     const navigate = useNavigate();
 
     const inlogKnop = async (event) => {
@@ -18,7 +19,7 @@ function InlogPagina() {
 
         try {
             // Verstuur het POST-verzoek naar de backend
-            const response = await fetch('https://localhost:44318/api/Particulier/Login', {
+            const response = await fetch('https://localhost:44318/api/' + gebruiker + '/Login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data),
@@ -28,7 +29,7 @@ function InlogPagina() {
             if (response.ok) {
                 console.log('Account succesvol ingelogd');
                 alert('Inloggen succesvol!');
-                navigate('./HoofdschermParticulier'); // Of een andere route
+                navigate('Hoofdscherm' + gebruiker); // Of een andere route
             } else {
                 alert('Fout account of wachtwoord!');
             }
@@ -43,10 +44,73 @@ function InlogPagina() {
         navigate('KiesGebruiker');
     };
 
+    const handleChange = (event) => {
+        setGebruiker(event.target.value);
+    };
+
     return (
         <>
             <div className="container">
                 <h1>Inloggen</h1>
+
+                <form>
+                    <h3>Type Account:</h3>
+                    <label>
+                        <input
+                            type="radio"
+                            className="typeAccount"
+                            name="typeAccount"
+                            value="Particulier"
+                            checked={gebruiker === "Particulier"}
+                            onChange={handleChange}
+                        />
+                        Particulier
+                    </label>
+                    <label>
+                        <input
+                            type="radio"
+                            className="typeAccount"
+                            name="typeAccount"
+                            value="Backoffice"
+                            checked={gebruiker === "Backoffice"}
+                            onChange={handleChange}
+                        />
+                        Backoffice
+                    </label>
+                    <label>
+                        <input
+                            type="radio"
+                            className="typeAccount"
+                            name="typeAccount"
+                            value="Frontoffice"
+                            checked={gebruiker === "Frontoffice"}
+                            onChange={handleChange}
+                        />
+                        Frontoffice
+                    </label>
+                    <label>
+                        <input
+                            type="radio"
+                            className="typeAccount"
+                            name="typeAccount"
+                            value="ZakelijkHuurder"
+                            checked={gebruiker === "ZakelijkHuurder"}
+                            onChange={handleChange}
+                        />
+                        Zakelijk Huurder
+                    </label>
+                    <label>
+                        <input
+                            type="radio"
+                            className="typeAccount"
+                            name="typeAccount"
+                            value="ZakelijkBeheerder"
+                            checked={gebruiker === "ZakelijkBeheerder"}
+                            onChange={handleChange}
+                        />
+                        Zakelijk Beheerder
+                    </label>
+                </form>
 
                 <form className="Inlogform" onSubmit={inlogKnop}>
                     <div>

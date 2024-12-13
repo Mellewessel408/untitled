@@ -54,6 +54,7 @@ function Registreren() {
                 // Als de request succesvol is
                 console.log('Account succesvol aangemaakt');
                 alert('Account succesvol aangemaakt!');
+                navigate('HoofdschermParticulier');
             } else {
                 // Als de request niet succesvol is (bijvoorbeeld BadRequest)
                 const errorMessage = await response.text(); // Krijg de tekst van de foutmelding

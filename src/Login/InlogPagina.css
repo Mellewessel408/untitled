@@ -1,4 +1,3 @@
-Inlogpagina.css
 html {
     height: 100%;
     margin: 0;
@@ -11,13 +10,13 @@ html {
     flex-direction: column;
     max-width: 150px;
     padding: 20px;
-    display: flex;
     justify-content: center;
     align-items: center;
 }
 
 .Inlogform {
     display: block;
+    flex-direction: column;
 }
 
 .Inlogform input {
@@ -25,10 +24,29 @@ html {
     margin-top: 5px;
 }
 
-
-
 .Inlogknop {
     margin-bottom: 15px;
     min-width: 150px;
     border-radius: 10px;
+}
+
+.typeAccount {
+    width: 20px;
+    display: flex;
+    flex-wrap: wrap; /* Optioneel, als er veel opties zijn en ze moeten doorlopen naar een volgende regel */
+    gap: 10px; /* Ruimte tussen de opties */
+    justify-content: center; /* Optioneel: zorgt dat alles gecentreerd is */
+    margin-top: -20px;
+}
+
+.typeAccount label {
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Zorgt dat de tekst netjes uitgelijnd is met de radio-button */
+    gap: 5px; /* Ruimte tussen de radio-button en de tekst */
+    width: 50px;
+}
+
+h3 {
+    margin: 0;
 }
