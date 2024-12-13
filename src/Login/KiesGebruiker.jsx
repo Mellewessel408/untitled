@@ -7,11 +7,11 @@ import "./KiesGebruiker.css";
 function KiesGebruiker() {
     const navigate = useNavigate();
     const handelRegistreerBedrijf = () => {
-        navigate('RegistreerBedrijf')
+        navigate('/RegistreerBedrijf')
     };
 
     const handelRegistreerPersoon = () => {
-        navigate('RegistreerPersoon')
+        navigate('/Registreren')
     };
 
     return (

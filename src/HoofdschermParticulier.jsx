@@ -6,7 +6,7 @@ import logo from '../src/assets/CarAndAll Logo.webp';
 function HoofdschermParticulier() {
     const navigate = useNavigate();
     const AutoHuren = () => {
-
+        navigate('/AutoHuren');
     }
     const MijnReservering = () => {
 
