@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
+import { useAccount } from "./Login/AccountProvider.jsx"; // Zorg dat de context beschikbaar is
 import "./VoertuigenSelectie.css"; // Import CSS classes
 import carAndAllLogo from './assets/CarAndAll_Logo.webp'; // Gebruik één afbeelding
 
@@ -8,6 +10,9 @@ const VoertuigenComponent = () => {
     const [error, setError] = useState(null); // State for handling errors
     const [searchTerm, setSearchTerm] = useState(""); // Search term for merk and model
     const [filteredVoertuigen, setFilteredVoertuigen] = useState([]); // Filtered vehicles
+
+    const { logout } = useAccount(); // Gebruik de logout-functie vanuit de context
+    const navigate = useNavigate(); // Voor navigatie
 
     const apiBaseUrl = `https://localhost:44318/api/Voertuig`; // API endpoint to get all vehicles
 
@@ -47,9 +52,36 @@ const VoertuigenComponent = () => {
         setFilteredVoertuigen(filtered); // Update filtered vehicles based on search
     }, [searchTerm, voertuigen]); // Run whenever searchTerm or vehicles changes
 
-    // Log out function (simple example, you can implement actual log out logic)
+    // Nieuwe logout functie
     const handleLogout = () => {
-        alert("Logging out...");
+        logout(); // Roep de logout-functie aan
+        navigate('/Inlogpagina'); // Navigeren naar inlogpagina
+    };
+
+    const handleReserveer = async (voertuigId) => {
+        try {
+            const response = await fetch(`https://localhost:44318/api/Voertuig/reserveer/${voertuigId}`, {
+                method: 'POST',
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                alert(`Fout bij reserveren: ${errorText}`);
+                return;
+            }
+
+            const successMessage = await response.text();
+            alert(successMessage);
+
+            // Optioneel: Refresh de voertuigenlijst om de nieuwe status te tonen
+            const updatedVoertuigen = voertuigen.map((voertuig) =>
+                voertuig.voertuigId === voertuigId ? { ...voertuig, voertuigStatus: "Gereserveerd" } : voertuig
+            );
+            setVoertuigen(updatedVoertuigen);
+        } catch (error) {
+            console.error("Fout bij reserveren:", error);
+            alert("Er is een probleem opgetreden bij het reserveren van het voertuig.");
+        }
     };
 
     if (loading) return <div className="loading">Laden...</div>;
@@ -98,6 +130,12 @@ const VoertuigenComponent = () => {
                                 <p><strong>Aanschafjaar:</strong> {voertuig.aanschafjaar}</p>
                                 <p><strong>Prijs:</strong> €{voertuig.prijs}</p>
                                 <p><strong>Status:</strong> {voertuig.voertuigStatus}</p>
+                                <button
+                                    className="reserveer-button"
+                                    onClick={() => handleReserveer(voertuig.voertuigId)}
+                                >
+                                    Reserveer
+                                </button>
                             </div>
                         </div>
                     ))
