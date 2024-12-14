@@ -17,32 +17,29 @@ function InlogPagina() {
         event.preventDefault(); // Voorkomt dat het formulier standaard wordt ingediend
 
         const data = {
-            email: email,
-            wachtwoord: wachtwoord
+            email: email.trim(),
+            wachtwoord: wachtwoord.trim()
         }
 
         try {
-            // Verstuur het POST-verzoek naar de backend
-            const response = await fetch('https://localhost:44318/api/' + gebruiker + '/Login', {
+            const response = await fetch(`https://localhost:44318/api/${gebruiker}/Login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data),
             });
 
-            // Als de request succesvol is
-            if (response.ok) {
-                console.log("Object terughalen voor AccountId");
-                const IdResponse = await fetch('https://localhost:44318/api/' + gebruiker + '/KrijgSpecifiekAccountEmail?email=' + email);
-                const IdData = await IdResponse.json();
-                if (IdData?.accountId) {
-                    login(IdData.accountId); // Account-ID instellen vanuit de response
-                }
+            if (response.status === 401) {
+                const errorText = await response.text();
+                alert(errorText)
+                return;
+            }
 
-                console.log('Account succesvol ingelogd');
+            const responseData = await response.json();
+            console.log("Response data:", responseData);
+            if (responseData?.accountId) {
+                login(responseData.accountId)
                 alert('Inloggen succesvol!');
-                navigate('/Hoofdscherm' + gebruiker); // Of een andere route
-            } else {
-                alert('Fout account of wachtwoord!');
+                navigate('/Hoofdscherm' + gebruiker);
             }
         } catch (error) {
             // Foutafhandelingslogica
