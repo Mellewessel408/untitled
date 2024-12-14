@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './HoofdschermParticulier.css';
-import logo from '../src/assets/CarAndAll Logo.webp';
+import logo from '../src/assets/CarAndAll_Logo.webp';
 import { AccountProvider, useAccount } from "./Login/AccountProvider.jsx"; // Gebruik de useAccount hook om de context te gebruiken
 
 function HoofdschermParticulier() {
