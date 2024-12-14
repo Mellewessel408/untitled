@@ -1,3 +1,5 @@
+/* Algemene styling voor de voertuigen pagina */
+
 /* Positionering voor de log uit knop rechtsboven */
 .header {
     display: flex;
@@ -19,7 +21,7 @@
     background-color: #f0f0f0;
 }
 
-/* Zorg dat de grid een vaste hoogte heeft en niet krimpt */
+/* Zorg dat de voertuigen container goed gecentreerd is */
 .voertuigen-container {
     display: flex;
     flex-direction: column;
@@ -27,6 +29,7 @@
     padding: 20px;
 }
 
+/* Grid styling voor voertuigen */
 .voertuigen-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -34,10 +37,11 @@
     width: 100%;
     max-width: 1200px;
     margin-top: 20px;
-    max-height: 500px; /* De hoogte is nu vast zodat de grid niet kleiner wordt */
-    overflow-y: auto; /* Zorgt ervoor dat je kunt scrollen als de inhoud groter is */
+    max-height: 500px; /* Voorkomt dat de grid kleiner wordt */
+    overflow-y: auto; /* Scrollbaar als de inhoud te groot is */
 }
 
+/* Kaart voor elk voertuig */
 .voertuig-card {
     background-color: #fff;
     border-radius: 8px;
@@ -48,18 +52,22 @@
     align-items: center;
 }
 
+/* Styling voor de afbeelding */
 .voertuig-photo img {
-    width: 150px;
-    height: 100px;
-    object-fit: cover;
+    width: 150px; /* Breedte van de afbeelding */
+    height: 100px; /* Hoogte van de afbeelding */
+    object-fit: contain; /* Zorg ervoor dat de afbeelding netjes binnen het kader past */
     border-radius: 8px;
+    border: 2px solid transparent; /* Rode rand verwijderd */
 }
 
+/* Styling voor de voertuig-informatie */
 .voertuig-info {
     margin-top: 15px;
     text-align: center;
 }
 
+/* Zoekveld styling */
 .search-filter {
     display: flex;
     justify-content: center;
@@ -74,15 +82,3 @@
     border: 1px solid #ccc;
     width: 200px;
 }
-
-.filter-dropdown {
-    padding: 8px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-}
-
-.voertuig-photo img {
-    border: 2px solid red; /* Voeg tijdelijk een rode rand toe om te zien of de afbeelding aanwezig is */
-}
-
-

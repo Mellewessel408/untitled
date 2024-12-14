@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./VoertuigenSelectie.css"; // Import CSS classes
-import carImage from './assets/Car_image.jpg';
-import camperImage from './assets/Camper_image.jpg';
-import caravanImage from './assets/Caravan_image.jpg';
+import carAndAllLogo from './assets/CarAndAll_Logo.webp'; // Gebruik één afbeelding
 
 const VoertuigenComponent = () => {
     const [voertuigen, setVoertuigen] = useState([]); // State for storing vehicles
@@ -50,20 +48,6 @@ const VoertuigenComponent = () => {
         alert("Logging out...");
     };
 
-    // Function to determine voertuigType based on 'merk' or 'model'
-    const determineVoertuigType = (voertuig) => {
-        const type = voertuig.type ? voertuig.type.toLowerCase() : ''; // Ensure type is in lowercase
-        console.log("Voertuig type:", type); // Debugging: Log the type to see what's being passed
-
-        if (type.includes("camper")) {
-            return "camper"; // If "camper" is found, return "camper"
-        } else if (type.includes("caravan")) {
-            return "caravan"; // If "caravan" is found, return "caravan"
-        } else {
-            return "auto"; // Default to "auto" if no match
-        }
-    };
-
     if (loading) return <div className="loading">Laden...</div>;
     if (error) return <div className="error">{error}</div>;
 
@@ -93,38 +77,26 @@ const VoertuigenComponent = () => {
                 {filteredVoertuigen.length === 0 ? (
                     <div className="no-vehicles">Geen voertuigen gevonden</div>
                 ) : (
-                    filteredVoertuigen.map((voertuig) => {
-                        // Determine the type of the vehicle
-                        const voertuigType = determineVoertuigType(voertuig);
-
-                        // Select the image based on the type
-                        const imageSrc = voertuigType === 'auto'
-                            ? carImage
-                            : voertuigType === 'camper'
-                                ? camperImage
-                                : caravanImage;
-
-                        return (
-                            <div key={voertuig.voertuigId} className="voertuig-card">
-                                <div className="voertuig-photo">
-                                    <img
-                                        className="voertuig-photo"
-                                        src={imageSrc}
-                                        alt={`${voertuigType} afbeelding`}
-                                    />
-                                </div>
-                                <div className="voertuig-info">
-                                    <h3 className="kenteken">{voertuig.kenteken}</h3>
-                                    <p><strong>Merk:</strong> {voertuig.merk}</p>
-                                    <p><strong>Model:</strong> {voertuig.model}</p>
-                                    <p><strong>Kleur:</strong> {voertuig.kleur}</p>
-                                    <p><strong>Aanschafjaar:</strong> {voertuig.aanschafjaar}</p>
-                                    <p><strong>Prijs:</strong> €{voertuig.prijs}</p>
-                                    <p><strong>Status:</strong> {voertuig.voertuigStatus}</p>
-                                </div>
+                    filteredVoertuigen.map((voertuig) => (
+                        <div key={voertuig.voertuigId} className="voertuig-card">
+                            <div className="voertuig-photo">
+                                <img
+                                    className="voertuig-photo"
+                                    src={carAndAllLogo}
+                                    alt="CarAndAll Logo"
+                                />
                             </div>
-                        );
-                    })
+                            <div className="voertuig-info">
+                                <h3 className="kenteken">{voertuig.kenteken}</h3>
+                                <p><strong>Merk:</strong> {voertuig.merk}</p>
+                                <p><strong>Model:</strong> {voertuig.model}</p>
+                                <p><strong>Kleur:</strong> {voertuig.kleur}</p>
+                                <p><strong>Aanschafjaar:</strong> {voertuig.aanschafjaar}</p>
+                                <p><strong>Prijs:</strong> €{voertuig.prijs}</p>
+                                <p><strong>Status:</strong> {voertuig.voertuigStatus}</p>
+                            </div>
+                        </div>
+                    ))
                 )}
             </div>
         </div>

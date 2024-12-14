@@ -1,7 +1,7 @@
 import React from 'react';
 import {useNavigate} from 'react-router-dom';
 import './HoofdschermParticulier.css';
-import logo from '../src/assets/CarAndAll Logo.webp';
+import logo from './assets/CarAndAll_Logo.webp';
 
 function HoofdschermParticulier() {
     const navigate = useNavigate();

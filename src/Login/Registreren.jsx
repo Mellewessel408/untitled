@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import './Registreren.css';
 import React from 'react';
 import axios from "axios";
-import logo from '../assets/CarAndAll Logo.webp';
+import logo from '../assets/CarAndAll_Logo.webp';
 function Registreren() {
     const navigate = useNavigate();
 
