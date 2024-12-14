@@ -1,0 +1,69 @@
+﻿body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #807d84; /* Achtergrondkleur zoals in de mockup */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.hoofdscherm-container {
+    text-align: center;
+    color: #fff;
+}
+
+.hoofdscherm-container img {
+    width: 200px; /* Grootte van het logo */
+    margin-bottom: 1rem; /* Ruimte onder het logo */
+}
+
+.hoofdscherm-container h1 {
+    font-size: 2.5rem; /* Vergrote titeltekst */
+    margin-bottom: 0.5rem; /* Ruimte onder de titel */
+    font-weight: bold;
+    color: #000; /* Zwarte tekstkleur voor "Welkom" */
+}
+
+.hoofdscherm-container h2 {
+    font-size: 1.5rem;
+    margin-bottom: 2rem; /* Ruimte tussen ondertitel en knoppen */
+    color: #fff; /* Witte tekstkleur voor ondertitel */
+}
+
+.hoofdscherm-container button {
+    display: block;
+    width: 250px; /* Brede knoppen */
+    margin: 0.5rem auto; /* Ruimte tussen knoppen */
+    padding: 1rem;
+    background-color: #333; /* Donkere achtergrondkleur voor knoppen */
+    color: #fff; /* Witte tekstkleur */
+    border: none;
+    border-radius: 5px; /* Licht afgeronde hoeken */
+    font-size: 1.2rem; /* Vergrote tekst in knoppen */
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.hoofdscherm-container button:hover {
+    background-color: #555; /* Kleurverandering bij hover */
+}
+
+.hoofdscherm-container .logout-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.hoofdscherm-container .logout-button:hover {
+    background-color: #555;
+}

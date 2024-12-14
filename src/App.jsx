@@ -3,13 +3,16 @@ import InlogPagina from "./Login/InlogPagina.jsx";
 import Registreren from "./Login/Registreren.jsx";
 import KiesGebruiker from "./Login/KiesGebruiker.jsx";
 import RegistreerBedrijf from "./Login/RegistreerBedrijf.jsx";
-import HoofdschermMedewerker from "./HoofdschermMedewerker.jsx";
+import HoofdschermMedewerker from "./HoofdschermFrontoffice.jsx";
 import HoofdschermParticulier from "./HoofdschermParticulier.jsx";
 import HoofdschermZakelijkBeheerder from "./HoofdschermZakelijkBeheerder.jsx";
+import HoofdschermFrontoffice from "./HoofdschermFrontoffice.jsx";
+import HoofdschermZakelijk from "./HoofdschermZakelijk.jsx";
 import Pagina404 from "./Pagina404.jsx";
 import VoertuigenSelectie from "./VoertuigenSelectie.jsx";
 import ProfielWijzigen from "./ProfielWijzigen.jsx";
 import {AccountProvider} from "./Login/AccountProvider.jsx";
+import VoertuigselectieFrontoffice from "./VoertuigselectieFrontoffice.jsx";
 
 function App() {
     return (
@@ -35,8 +38,11 @@ function App() {
                     <Route path="/KiesGebruiker" element={<KiesGebruiker />} />
                     <Route path="/HoofdschermMedewerker" element={<HoofdschermMedewerker/>} />
                     <Route path="/HoofdschermParticulier" element={<HoofdschermParticulier />} />
+                    <Route path="/HoofdschermFrontoffice" element={<HoofdschermFrontoffice />} />
+                    <Route path="/HoofdschermZakelijk" element={<HoofdschermZakelijk />} />
                     <Route path="/HoofdschermZakelijkBeheerder" element={<HoofdschermZakelijkBeheerder />} />
                     <Route path="/VoertuigenSelectie" element={<VoertuigenSelectie />} />
+                    <Route path="/VoertuigenSelectieFrontoffice" element={<VoertuigselectieFrontoffice />} />
                     <Route path="*" element={<Pagina404 />}/>
                     <Route path="/ProfielParticulier" element={<ProfielWijzigen />} />
                 </Routes>
