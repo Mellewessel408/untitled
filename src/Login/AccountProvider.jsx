@@ -4,10 +4,23 @@ import PropTypes from "prop-types";
 const AccountContext = createContext();
 
 export const AccountProvider = ({ children }) => {
-    const [currentAccountId, setCurrentAccountId] = useState(28);
+    const [currentAccountId, setCurrentAccountId] = useState(() => {
+        const storedAccountId = localStorage.getItem('currentAccountId');
+        return storedAccountId ? JSON.parse(storedAccountId) : 0;
+    });
 
-    const login = (accountId) => setCurrentAccountId(accountId);
-    const logout = () => setCurrentAccountId(null);
+    const login = (accountId) => {
+        setCurrentAccountId(accountId);
+        // Sla het accountId op in de localStorage
+        localStorage.setItem('currentAccountId', JSON.stringify(accountId));
+    };
+
+    const logout = () => {
+        setCurrentAccountId(null);
+        // Verwijder het accountId uit de localStorage
+        localStorage.removeItem('currentAccountId');
+    };
+
 
     return (
         <AccountContext.Provider value={{ currentAccountId, login, logout }}>

@@ -1,13 +1,16 @@
 ﻿import './Login/Registreren.css';
 import logo from "./assets/CarAndAll Logo.webp";
 import {useAccount} from "./Login/AccountProvider.jsx";
+import React from "react";
 
 function ProfielWijzigen(){
     const { currentAccountId } = useAccount();
     const accountIdString = String(currentAccountId)
 
+
     const Wijzigen = async (event) => {
         event.preventDefault();
+
 
         const formData = new FormData(event.target);
         const naam = formData.get('naam');
@@ -33,7 +36,7 @@ function ProfielWijzigen(){
         };
 
         try {
-            const url = new URL("https://localhost:44318/api/Particulier/updateaccount");
+            const url = new URL("https://localhost:44318/api/Particulier/UpdateAccount");
             url.searchParams.append("id", accountIdString)
             console.log(url.toString())
             const response = await fetch(url, {
@@ -64,6 +67,7 @@ function ProfielWijzigen(){
                 <img className="logo" src={logo} alt="Carandall Logo"/>
             </div>
             <h1>Wijzig Profiel</h1>
+
             <form onSubmit={Wijzigen}>
                 <div>
                     <label htmlFor="email">Emailadres:</label>

@@ -1,13 +1,17 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import './InlogPagina.css';
 import './KiesGebruiker.jsx';
 import { useNavigate } from 'react-router-dom';
+import {AccountProvider, useAccount} from "./AccountProvider.jsx";
 
 function InlogPagina() {
     const [email, setEmail] = useState('');
     const [wachtwoord, setWachtwoord] = useState('');
     const [gebruiker, setGebruiker] = useState('');
     const navigate = useNavigate();
+    const { login } = useAccount();
+
+
 
     const inlogKnop = async (event) => {
         event.preventDefault(); // Voorkomt dat het formulier standaard wordt ingediend
@@ -27,6 +31,13 @@ function InlogPagina() {
 
             // Als de request succesvol is
             if (response.ok) {
+                console.log("Object terughalen voor AccountId");
+                const IdResponse = await fetch('https://localhost:44318/api/' + gebruiker + '/KrijgSpecifiekAccountEmail?email=' + email);
+                const IdData = await IdResponse.json();
+                if (IdData?.accountId) {
+                    login(IdData.accountId); // Account-ID instellen vanuit de response
+                }
+
                 console.log('Account succesvol ingelogd');
                 alert('Inloggen succesvol!');
                 navigate('/Hoofdscherm' + gebruiker); // Of een andere route
