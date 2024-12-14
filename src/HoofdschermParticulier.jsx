@@ -10,12 +10,13 @@ function HoofdschermParticulier() {
 
     useEffect(() => {
         if (currentAccountId === 0) {
-            alert("U bent ingelogd zonder AccountId")
+            alert("U bent ingelogd zonder AccountId");
             navigate('/inlogpagina');
         }
-    })
+    });
+
     const AutoHuren = () => {
-        navigate('/AutoHuren');
+        navigate('/VoertuigenSelectie');
     };
 
     const MijnReservering = () => {
