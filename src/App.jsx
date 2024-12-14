@@ -5,7 +5,7 @@ import KiesGebruiker from "./Login/KiesGebruiker.jsx";
 import RegistreerBedrijf from "./Login/RegistreerBedrijf.jsx";
 import HoofdschermMedewerker from "./HoofdschermMedewerker.jsx";
 import HoofdschermParticulier from "./HoofdschermParticulier.jsx";
-import HoofdschermZakelijk from "./HoofdschermZakelijk.jsx";
+import HoofdschermZakelijkBeheerder from "./HoofdschermZakelijkBeheerder.jsx";
 import Pagina404 from "./Pagina404.jsx";
 import VoertuigenSelectie from "./VoertuigenSelectie.jsx";
 import ProfielWijzigen from "./ProfielWijzigen.jsx";
@@ -35,7 +35,7 @@ function App() {
                     <Route path="/KiesGebruiker" element={<KiesGebruiker />} />
                     <Route path="/HoofdschermMedewerker" element={<HoofdschermMedewerker/>} />
                     <Route path="/HoofdschermParticulier" element={<HoofdschermParticulier />} />
-                    <Route path="/HoofdschermZakelijk" element={<HoofdschermZakelijk />} />
+                    <Route path="/HoofdschermZakelijkBeheerder" element={<HoofdschermZakelijkBeheerder />} />
                     <Route path="/VoertuigenSelectie" element={<VoertuigenSelectie />} />
                     <Route path="*" element={<Pagina404 />}/>
                     <Route path="/ProfielParticulier" element={<ProfielWijzigen />} />

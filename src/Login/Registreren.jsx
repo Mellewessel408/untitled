@@ -63,7 +63,7 @@ function Registreren() {
                     login(IdData.accountId); // Account-ID instellen vanuit de response
                 }
                 console.log('Account succesvol aangemaakt');
-                navigate('HoofdschermParticulier');
+                navigate('/HoofdschermParticulier');
             } else {
                 // Als de request niet succesvol is (bijvoorbeeld BadRequest)
                 const errorMessage = await response.text(); // Krijg de tekst van de foutmelding
@@ -123,6 +123,7 @@ function Registreren() {
                     <input type="tel" id="telefoonnummer" name="telefoonnummer" required
                            placeholder="Vul je Telefoonnummer in..."/>
                 </div>
+
 
                 <button type="submit">Registreer</button>
             </form>

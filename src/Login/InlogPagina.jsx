@@ -10,7 +10,7 @@ function InlogPagina() {
 
     const navigate = useNavigate();
     const { login } = useAccount();
-    const [gebruiker, setGebruiker] = useState('');
+    const [gebruiker, setGebruiker] = useState('Particulier');
 
 
     const inlogKnop = async (event) => {
@@ -32,10 +32,9 @@ function InlogPagina() {
             // Als de request succesvol is
             if (response.ok) {
                 console.log("Object terughalen voor AccountId");
-                const IdResponse = await fetch('https://localhost:44318/api/' + gebruiker + '/KrijgSpecifiekAccountEmail?email=' + email);
-                const IdData = await IdResponse.json();
-                if (IdData?.accountId) {
-                    login(IdData.accountId); // Account-ID instellen vanuit de response
+                const IdResponse = response.json();
+                if (IdResponse?.accountId) {
+                    login(IdResponse.accountId); // Account-ID instellen vanuit de response
                 }
 
                 console.log('Account succesvol ingelogd');
@@ -55,74 +54,21 @@ function InlogPagina() {
         navigate('KiesGebruiker');
     };
 
-    const handleChange = (event) => {
-        setGebruiker(event.target.value);
-    };
+
 
     return (
         <>
             <div className="container">
                 <h1>Inloggen</h1>
 
-                <form>
-                    <h3>Type Account:</h3>
-                    <label>
-                        <input
-                            type="radio"
-                            className="typeAccount"
-                            name="typeAccount"
-                            value="Particulier"
-                            checked={gebruiker === "Particulier"}
-                            onChange={handleChange}
-                        />
-                        Particulier
-                    </label>
-                    <label>
-                        <input
-                            type="radio"
-                            className="typeAccount"
-                            name="typeAccount"
-                            value="Backoffice"
-                            checked={gebruiker === "Backoffice"}
-                            onChange={handleChange}
-                        />
-                        Backoffice
-                    </label>
-                    <label>
-                        <input
-                            type="radio"
-                            className="typeAccount"
-                            name="typeAccount"
-                            value="Frontoffice"
-                            checked={gebruiker === "Frontoffice"}
-                            onChange={handleChange}
-                        />
-                        Frontoffice
-                    </label>
-                    <label>
-                        <input
-                            type="radio"
-                            className="typeAccount"
-                            name="typeAccount"
-                            value="ZakelijkHuurder"
-                            checked={gebruiker === "ZakelijkHuurder"}
-                            onChange={handleChange}
-                        />
-                        Zakelijk Huurder
-                    </label>
-                    <label>
-                        <input
-                            type="radio"
-                            className="typeAccount"
-                            name="typeAccount"
-                            value="ZakelijkBeheerder"
-                            checked={gebruiker === "ZakelijkBeheerder"}
-                            onChange={handleChange}
-                        />
-                        Zakelijk Beheerder
-                    </label>
-                </form>
 
+                <select value={gebruiker} onChange={(e) => setGebruiker(e.target.value)}>
+                    <option value="Particulier">Particulier</option>
+                    <option value="Backoffice">Backoffice</option>
+                    <option value="Frontoffice">Frontoffice</option>
+                    <option value="ZakelijkHuurder">Zakelijk Huurder</option>
+                    <option value="Zakelijk">Zakelijk Beheerder</option>
+                </select>
                 <form className="Inlogform" onSubmit={inlogKnop}>
                     <div>
                         <label htmlFor="email">E-mailadres:</label>

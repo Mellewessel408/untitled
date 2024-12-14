@@ -1,10 +1,16 @@
 import {useNavigate} from 'react-router-dom';
 import {AccountProvider, useAccount} from "./Login/AccountProvider.jsx";
+import {useEffect} from "react";
 
-function HoofdschermZakelijk() {
+function HoofdschermZakelijkBeheerder() {
     const navigate = useNavigate();
     const { currentAccountId, logout } = useAccount(); // Haal de currentAccountId uit de context
-
+    useEffect(() => {
+        if (currentAccountId === 0) {
+            alert("U bent ingelogd zonder AccountId")
+            navigate('/inlogpagina');
+        }
+    })
     const VoertuigenOverzicht = () => {
 
     }
@@ -19,21 +25,19 @@ function HoofdschermZakelijk() {
     }
     const BedrijfVerwijderen = async () => {
         try {
-            // Verstuur het POST-verzoek naar de backend en wacht op het antwoord
-            const response = await fetch('https://localhost:44318/api/Bedrijf/VerwijderBedrijf?id=' + AccountProvider.currentAccountId, {
-                method: 'POST',
+            // Verstuur het DELETE-verzoek naar de backend en wacht op het antwoord
+            const response = await fetch(`https://localhost:44318/api/Bedrijf/VerwijderBedrijf?id=${currentAccountId}`, {
+                method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
             });
 
-            // Controleer of het verzoek succesvol was
             if (response.ok) {
+                // Controleer of het verzoek succesvol was
                 console.log('Bedrijf succesvol verwijderd');
                 alert('Bedrijf succesvol verwijderd!');
                 navigate('/InlogPagina');
             } else {
-                // Haal de foutmelding op en toon deze
-                const errorMessage = await response.text();
-                alert(`Fout: ${errorMessage}`);
+                throw new Error('Er is iets misgegaan bij het verwijderen van het bedrijf');
             }
         } catch (error) {
             // Foutafhandeling
@@ -44,9 +48,10 @@ function HoofdschermZakelijk() {
 
 
 
+
     return (
         <div>
-            <h2>Welkom, !</h2>
+            <h2>Welkom, {currentAccountId}!</h2>
             <h2>Wat wil je vandaag doen</h2>
             <button onClick={VoertuigenOverzicht}></button>
             <button onClick={MedewerkersBeheren}></button>
@@ -58,4 +63,4 @@ function HoofdschermZakelijk() {
 
 }
 
-export default HoofdschermZakelijk;
+export default HoofdschermZakelijkBeheerder;

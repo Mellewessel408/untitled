@@ -2,19 +2,16 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './RegistreerBedrijf.css';
 import React from 'react';
-import axios from "axios";
 import logo from '../assets/CarAndAll_Logo.webp';
-import {AccountProvider, useAccount} from "./AccountProvider.jsx";
+import { AccountProvider, useAccount } from "./AccountProvider.jsx";
 
 function RegistreerBedrijf() {
     const navigate = useNavigate();
+    const { login } = useAccount();
 
     const Inloggen = () => {
         navigate("./InlogPagina");
     };
-
-    const { login } = useAccount();
-
 
     const Registreer = async (event) => {
         event.preventDefault();
@@ -29,9 +26,6 @@ function RegistreerBedrijf() {
         const maxMedewerkers = formData.get('maxMedewerkers');
         const maxVoertuigen = formData.get('maxVoertuigen');
 
-
-
-
         // Verzamel de data in een object om te verzenden
         const BedrijfsData = {
             kvkNummer: kvkNummer,
@@ -45,36 +39,38 @@ function RegistreerBedrijf() {
         const AccountData = {
             email: email,
             wachtwoord: wachtwoord
-        }
+        };
+
         const requestBody = {
             Bedrijf: BedrijfsData,
             Beheerder: AccountData,
         };
 
         try {
-            // Verstuur het POST-verzoek naar de backend
+            // Verstuur het POST-verzoek naar de backend en wacht op het antwoord
             const response = await fetch('https://localhost:44318/api/Bedrijf/MaakBedrijf', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(requestBody),
             });
 
-            // Als de request succesvol is
             if (response.ok) {
                 // Als de request succesvol is
-                console.log('Account succesvol aangemaakt');
+                const data = await response.json();
+                console.log('Account succesvol aangemaakt', data);
                 alert('Account succesvol aangemaakt!');
-                login(await response.text());
-                navigate('HoofdschermZakelijk');
+                login(data.token); // Dit kan variëren afhankelijk van je API
+                navigate('/HoofdschermZakelijkBeheerder');
             } else {
                 // Als de request niet succesvol is (bijvoorbeeld BadRequest)
                 const errorMessage = await response.text(); // Krijg de tekst van de foutmelding
+                console.error('Foutmelding van server:', errorMessage);
                 alert(`Fout: ${errorMessage}`);
             }
         } catch (error) {
             // Foutafhandelingslogica
             console.error('Er is een fout opgetreden:', error.message);
-            alert('Er is iets misgegaan bij het inloggen! Fout details: ' + JSON.stringify(error, null, 2));
+            alert('Er is iets misgegaan bij het registreren! Fout details: ' + JSON.stringify(error, null, 2));
         }
     };
 
@@ -86,9 +82,8 @@ function RegistreerBedrijf() {
             <h1>Registreer Bedrijf</h1>
             <form onSubmit={Registreer}>
                 <div>
-                    <label htmlFor="Bedrijfsnaam">Bedrijfsnaam:</label>
-                    <input type="bedrijfsnaam" id="bedrijfsnaam" name="bedrijfsnaam" required
-                           placeholder="Vul je bedrijfsnaam in..."/>
+                    <label htmlFor="bedrijfsnaam">Bedrijfsnaam:</label>
+                    <input type="text" id="bedrijfsnaam" name="bedrijfsnaam" required placeholder="Vul je bedrijfsnaam in..."/>
                 </div>
 
                 <div>
@@ -98,44 +93,32 @@ function RegistreerBedrijf() {
 
                 <div>
                     <label htmlFor="wachtwoord">Wachtwoord:</label>
-                    <input type="password" id="wachtwoord" name="wachtwoord" required
-                           placeholder="(minimaal 8 karakters)" minLength="8"/>
+                    <input type="password" id="wachtwoord" name="wachtwoord" required placeholder="(minimaal 8 karakters)" minLength="8"/>
                 </div>
-
-                {/*<div>
-                    <label htmlFor="herhaalWachtwoord">Herhaal wachtwoord:</label>
-                    <input type="password" id="herhaalWachtwoord" name="herhaalWachtwoord" required
-                           placeholder="Vul je wachtwoord in..." minLength="8"/>
-                </div>*/}
 
                 <div>
                     <label htmlFor="kvkNummer">KVK-nummer:</label>
-                    <input type="text" id="kvkNummer" name="kvkNummer" required
-                           placeholder="Vul je KVK-nummer in..."/>
+                    <input type="text" id="kvkNummer" name="kvkNummer" required placeholder="Vul je KVK-nummer in..."/>
                 </div>
 
                 <div>
                     <label htmlFor="postcode">Postcode:</label>
-                    <input type="text" id="postcode" name="postcode" required
-                           placeholder="Vul je postcode in..."/>
+                    <input type="text" id="postcode" name="postcode" required placeholder="Vul je postcode in..."/>
                 </div>
 
                 <div>
                     <label htmlFor="huisnummer">Huisnummer:</label>
-                    <input type="text" id="huisnummer" name="huisnummer" required
-                           placeholder="Vul je huisnummer in..."/>
+                    <input type="text" id="huisnummer" name="huisnummer" required placeholder="Vul je huisnummer in..."/>
                 </div>
 
                 <div>
                     <label htmlFor="maxVoertuigen">Max voertuigen:</label>
-                    <input type="text" id="maxVoertuigen" name="maxVoertuigen" required
-                           placeholder="Vul je maximale voertuigen in..."/>
+                    <input type="text" id="maxVoertuigen" name="maxVoertuigen" required placeholder="Vul je maximale voertuigen in..."/>
                 </div>
 
                 <div>
                     <label htmlFor="maxMedewerkers">Max Medewerkers:</label>
-                    <input type="text" id="maxMedewerkers" name="maxMedewerkers" required
-                           placeholder="Vul je maximale medewerkers in..."/>
+                    <input type="text" id="maxMedewerkers" name="maxMedewerkers" required placeholder="Vul je maximale medewerkers in..."/>
                 </div>
 
                 <button type="submit">Registreer Bedrijf</button>
