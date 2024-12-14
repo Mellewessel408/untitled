@@ -4,6 +4,7 @@ import './RegistreerBedrijf.css';
 import React from 'react';
 import axios from "axios";
 import logo from '../assets/CarAndAll Logo.webp';
+import {AccountProvider, useAccount} from "./AccountProvider.jsx";
 
 function RegistreerBedrijf() {
     const navigate = useNavigate();
@@ -12,14 +13,16 @@ function RegistreerBedrijf() {
         navigate("./InlogPagina");
     };
 
+    const { login } = useAccount();
+
+
     const Registreer = async (event) => {
         event.preventDefault();
 
         const formData = new FormData(event.target);
         const email = formData.get('email');
         const wachtwoord = formData.get('wachtwoord');
-        /*const herhaalWachtwoord = formData.get('herhaalWachtwoord');
-        */const bedrijfsnaam = formData.get('bedrijfsnaam');
+        const bedrijfsnaam = formData.get('bedrijfsnaam');
         const kvkNummer = formData.get('kvkNummer');
         const postcode = formData.get('postcode');
         const huisnummer = formData.get('huisnummer');
@@ -27,11 +30,7 @@ function RegistreerBedrijf() {
         const maxVoertuigen = formData.get('maxVoertuigen');
 
 
-        // Controleer of de wachtwoorden overeenkomen
-        /*if (wachtwoord !== herhaalWachtwoord) {
-            alert('Wachtwoorden komen niet overeen. Probeer het opnieuw.');
-            return;
-        }*/
+
 
         // Verzamel de data in een object om te verzenden
         const BedrijfsData = {
@@ -65,6 +64,7 @@ function RegistreerBedrijf() {
                 // Als de request succesvol is
                 console.log('Account succesvol aangemaakt');
                 alert('Account succesvol aangemaakt!');
+                login(await response.text());
                 navigate('HoofdschermZakelijk');
             } else {
                 // Als de request niet succesvol is (bijvoorbeeld BadRequest)

@@ -1,8 +1,9 @@
 import {useNavigate} from 'react-router-dom';
-import {AccountProvider} from "./Login/AccountProvider.jsx";
+import {AccountProvider, useAccount} from "./Login/AccountProvider.jsx";
 
 function HoofdschermZakelijk() {
     const navigate = useNavigate();
+    const { currentAccountId, logout } = useAccount(); // Haal de currentAccountId uit de context
 
     const VoertuigenOverzicht = () => {
 
@@ -45,15 +46,16 @@ function HoofdschermZakelijk() {
 
     return (
         <div>
-            <h1>Welkom</h1>
+            <h2>Welkom, !</h2>
             <h2>Wat wil je vandaag doen</h2>
             <button onClick={VoertuigenOverzicht}></button>
             <button onClick={MedewerkersBeheren}></button>
             <button onClick={AbbonementsBeheer}></button>
             <button onClick={VerhuurActiviteiten}></button>
-            <button onClick={BedrijfVerwijderen}></button>
+            <button onClick={BedrijfVerwijderen}> Het bedrijf verwijderen </button>
         </div>
     );
 
 }
+
 export default HoofdschermZakelijk;

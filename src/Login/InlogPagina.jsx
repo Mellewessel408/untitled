@@ -7,10 +7,10 @@ import {AccountProvider, useAccount} from "./AccountProvider.jsx";
 function InlogPagina() {
     const [email, setEmail] = useState('');
     const [wachtwoord, setWachtwoord] = useState('');
-    const [gebruiker, setGebruiker] = useState('');
+
     const navigate = useNavigate();
     const { login } = useAccount();
-
+    const [gebruiker, setGebruiker] = useState('');
 
 
     const inlogKnop = async (event) => {
