@@ -15,15 +15,19 @@ const VoertuigenComponent = () => {
     useEffect(() => {
         const fetchVoertuigen = async () => {
             try {
-                const url = `${apiBaseUrl}/Krijg%20alle%20voertuigen`;
+                const url = `${apiBaseUrl}/krijgallevoertuigen`;
                 const response = await fetch(url);
                 if (!response.ok) {
                     throw new Error("Netwerkfout: " + response.statusText);
                 }
                 const data = await response.json();
-                setVoertuigen(data || []); // Set the vehicles data
+
+                const voertuigenArray = data.$values || [];
+
+                setVoertuigen(voertuigenArray); // Set the vehicles data
                 setLoading(false); // Set loading to false after data is fetched
             } catch (err) {
+                console.log(err)
                 setError("Kan voertuigen niet ophalen"); // Set error if fetch fails
                 setLoading(false); // Set loading to false after error
             }

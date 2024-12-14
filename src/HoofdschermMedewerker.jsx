@@ -1,19 +1,34 @@
 import {useNavigate} from 'react-router-dom';
+import {useAccount} from "./Login/AccountProvider.jsx";
+import {useEffect} from "react";
 
 function HoofdschermMedewerker() {
     const navigate = useNavigate();
-    const ReserveringBeheren = () => {
+    const { currentAccountId, logout } = useAccount();
 
-    }
-    const VoertuigenBeheren = () => {
+    useEffect(() => {
+        if (currentAccountId === 0) {
+            alert("U bent ingelogd zonder AccountId");
+            navigate('/inlogpagina');
+        }
+    });
 
-    }
-    const Schademeldingen = () => {
+    const VoertuigStatusUpdate = () => {
 
-    }
-    const Klantenoverzicht = () => {
+    };
 
-    }
+    // const ReserveringBeheren = () => {
+    //
+    // }
+    // const VoertuigenBeheren = () => {
+    //
+    // }
+    // const Schademeldingen = () => {
+    //
+    // }
+    // const Klantenoverzicht = () => {
+    //
+    // }
     return (
         <div>
             <h1>Welkom</h1>
