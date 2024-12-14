@@ -7,7 +7,6 @@ import HoofdschermMedewerker from "./HoofdschermFrontoffice.jsx";
 import HoofdschermParticulier from "./HoofdschermParticulier.jsx";
 import HoofdschermZakelijkBeheerder from "./HoofdschermZakelijkBeheerder.jsx";
 import HoofdschermFrontoffice from "./HoofdschermFrontoffice.jsx";
-import HoofdschermZakelijk from "./HoofdschermZakelijk.jsx";
 import Pagina404 from "./Pagina404.jsx";
 import VoertuigenSelectie from "./VoertuigenSelectie.jsx";
 import ProfielWijzigen from "./ProfielWijzigen.jsx";
@@ -39,7 +38,6 @@ function App() {
                     <Route path="/HoofdschermMedewerker" element={<HoofdschermMedewerker/>} />
                     <Route path="/HoofdschermParticulier" element={<HoofdschermParticulier />} />
                     <Route path="/HoofdschermFrontoffice" element={<HoofdschermFrontoffice />} />
-                    <Route path="/HoofdschermZakelijk" element={<HoofdschermZakelijk />} />
                     <Route path="/HoofdschermZakelijkBeheerder" element={<HoofdschermZakelijkBeheerder />} />
                     <Route path="/VoertuigenSelectie" element={<VoertuigenSelectie />} />
                     <Route path="/VoertuigenSelectieFrontoffice" element={<VoertuigselectieFrontoffice />} />
