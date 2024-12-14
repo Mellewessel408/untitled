@@ -127,7 +127,7 @@ function InlogPagina() {
                     <div>
                         <label htmlFor="email">E-mailadres:</label>
                         <input
-                            type="email"
+                            type="text"
                             id="email"
                             name="email"
                             value={email}

@@ -52,20 +52,6 @@ function RegistreerBedrijf() {
             Beheerder: AccountData,
         };
 
-
-        /*try {
-            // Verstuur het POST verzoek naar de backend
-            const response = await axios.post('http://localhost:5257/api/bedrijf/MaakBedrijf', BedrijfsData, AccountData);
-
-            // Als de request succesvol is
-            console.log('Bedrijf succesvol aangemaakt:', response.data);
-            alert('Bedrijf succesvol geregistreerd!');
-            navigate('/dashboard'); // Navigeren naar een andere pagina
-        } catch (error) {
-            // Foutafhandelingslogica
-            console.error('Er is een fout opgetreden:', error);
-            alert('Er is iets misgegaan bij het registreren van het bedrijf!');
-        }*/
         try {
             // Verstuur het POST-verzoek naar de backend
             const response = await fetch('https://localhost:44318/api/Bedrijf/MaakBedrijf', {
