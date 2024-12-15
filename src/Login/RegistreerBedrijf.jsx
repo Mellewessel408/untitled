@@ -8,6 +8,7 @@ import { AccountProvider, useAccount } from "./AccountProvider.jsx";
 function RegistreerBedrijf() {
     const navigate = useNavigate();
     const { login } = useAccount();
+    const [abonnement, setAbonnement] = useState("Pay-As-You-Go");
 
     const Inloggen = () => {
         navigate("./InlogPagina");
@@ -42,9 +43,7 @@ function RegistreerBedrijf() {
             kvkNummer: kvkNummer,
             bedrijfsnaam: bedrijfsnaam,
             postcode: postcode,
-            huisnummer: huisnummer,
-            maxMedewerkers: maxMedewerkers,
-            maxVoertuigen: maxVoertuigen
+            huisnummer: huisnummer
         };
 
         const AccountData = {
@@ -52,9 +51,16 @@ function RegistreerBedrijf() {
             wachtwoord: wachtwoord
         };
 
+        const AbonnementData = {
+            abonnementType: abonnement,
+            maxMedewerkers: maxMedewerkers,
+            maxVoertuigen: maxVoertuigen
+        };
+
         const requestBody = {
             Bedrijf: BedrijfsData,
             Beheerder: AccountData,
+            Abonnement: AbonnementData
         };
 
         try {
@@ -94,7 +100,8 @@ function RegistreerBedrijf() {
             <form onSubmit={Registreer}>
                 <div>
                     <label htmlFor="bedrijfsnaam">Bedrijfsnaam:</label>
-                    <input type="text" id="bedrijfsnaam" name="bedrijfsnaam" required placeholder="Vul je bedrijfsnaam in..."/>
+                    <input type="text" id="bedrijfsnaam" name="bedrijfsnaam" required
+                           placeholder="Vul je bedrijfsnaam in..."/>
                 </div>
 
                 <div>
@@ -104,7 +111,8 @@ function RegistreerBedrijf() {
 
                 <div>
                     <label htmlFor="wachtwoord">Wachtwoord:</label>
-                    <input type="password" id="wachtwoord" name="wachtwoord" required placeholder="(minimaal 8 karakters)" minLength="8"/>
+                    <input type="password" id="wachtwoord" name="wachtwoord" required
+                           placeholder="(minimaal 8 karakters)" minLength="8"/>
                 </div>
 
                 <div>
@@ -119,17 +127,28 @@ function RegistreerBedrijf() {
 
                 <div>
                     <label htmlFor="huisnummer">Huisnummer:</label>
-                    <input type="text" id="huisnummer" name="huisnummer" required placeholder="Vul je huisnummer in..."/>
+                    <input type="text" id="huisnummer" name="huisnummer" required
+                           placeholder="Vul je huisnummer in..."/>
+                </div>
+
+                <div>
+                    <label htmlFor="typeAbonnement">Type Abonnement:</label>
+                    <select value={abonnement} onChange={(e) => setAbonnement(e.target.value)}>
+                        <option value="Pay-As-You-Go">Pay-As-You-Go</option>
+                        <option value="UpFront">UpFront</option>
+                    </select>
                 </div>
 
                 <div>
                     <label htmlFor="maxVoertuigen">Max voertuigen:</label>
-                    <input type="text" id="maxVoertuigen" name="maxVoertuigen" required placeholder="Vul je maximale voertuigen in..."/>
+                    <input type="text" id="maxVoertuigen" name="maxVoertuigen" required
+                           placeholder="Vul je maximale voertuigen in..."/>
                 </div>
 
                 <div>
                     <label htmlFor="maxMedewerkers">Max Medewerkers:</label>
-                    <input type="text" id="maxMedewerkers" name="maxMedewerkers" required placeholder="Vul je maximale medewerkers in..."/>
+                    <input type="text" id="maxMedewerkers" name="maxMedewerkers" required
+                           placeholder="Vul je maximale medewerkers in..."/>
                 </div>
 
                 <button type="submit">Registreer Bedrijf</button>
