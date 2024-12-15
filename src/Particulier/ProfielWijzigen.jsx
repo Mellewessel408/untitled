@@ -1,6 +1,6 @@
-﻿import './Login/Registreren.css';
-import logo from "./assets/CarAndAll_Logo.webp";
-import {useAccount} from "./Login/AccountProvider.jsx";
+﻿import '../Login/Registreren.css';
+import logo from "../assets/CarAndAll_Logo.webp";
+import {useAccount} from "../Login/AccountProvider.jsx";
 import React from "react";
 
 function ProfielWijzigen(){

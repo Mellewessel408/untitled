@@ -26,6 +26,17 @@ function RegistreerBedrijf() {
         const maxMedewerkers = formData.get('maxMedewerkers');
         const maxVoertuigen = formData.get('maxVoertuigen');
 
+        const bedrijfsnaamSchoon = bedrijfsnaam.replace(/[\s.@]/g, '').toLowerCase();
+
+        // Haal het domein van het e-mailadres op
+        const emailDomein = email.split('@')[1]?.split('.')[0]?.toLowerCase();
+
+        // Controleer of de bedrijfsnaam overeenkomt met het e-maildomein
+        if (bedrijfsnaamSchoon !== emailDomein) {
+            alert("Emailadres klopt niet met de bijbehorende bedrijfsnaam!");
+            return;
+        }
+
         // Verzamel de data in een object om te verzenden
         const BedrijfsData = {
             kvkNummer: kvkNummer,

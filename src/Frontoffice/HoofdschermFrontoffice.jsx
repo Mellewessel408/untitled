@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './HoofdschermFrontoffice.css';
-import logo from '../src/assets/CarAndAll_Logo.webp';
-import { AccountProvider, useAccount } from "./Login/AccountProvider.jsx"; // Gebruik de useAccount hook om de context te gebruiken
+import logo from '../assets/CarAndAll_Logo.webp';
+import { AccountProvider, useAccount } from "../Login/AccountProvider.jsx"; // Gebruik de useAccount hook om de context te gebruiken
 
 function HoofdschermFrontoffice() {
     const navigate = useNavigate();

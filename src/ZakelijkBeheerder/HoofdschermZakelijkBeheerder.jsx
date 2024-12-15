@@ -1,5 +1,5 @@
 import {useNavigate} from 'react-router-dom';
-import {AccountProvider, useAccount} from "./Login/AccountProvider.jsx";
+import {AccountProvider, useAccount} from "../Login/AccountProvider.jsx";
 import {useEffect} from "react";
 
 function HoofdschermZakelijkBeheerder() {

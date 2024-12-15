@@ -3,15 +3,16 @@ import InlogPagina from "./Login/InlogPagina.jsx";
 import Registreren from "./Login/Registreren.jsx";
 import KiesGebruiker from "./Login/KiesGebruiker.jsx";
 import RegistreerBedrijf from "./Login/RegistreerBedrijf.jsx";
-import HoofdschermMedewerker from "./HoofdschermFrontoffice.jsx";
-import HoofdschermParticulier from "./HoofdschermParticulier.jsx";
-import HoofdschermZakelijkBeheerder from "./HoofdschermZakelijkBeheerder.jsx";
-import HoofdschermFrontoffice from "./HoofdschermFrontoffice.jsx";
-import Pagina404 from "./Pagina404.jsx";
+import HoofdschermMedewerker from "./Frontoffice/HoofdschermFrontoffice.jsx";
+import HoofdschermParticulier from "./Particulier/HoofdschermParticulier.jsx";
+import HoofdschermZakelijkBeheerder from "./ZakelijkBeheerder/HoofdschermZakelijkBeheerder.jsx";
+import VoegMedewerkerToe from "./ZakelijkBeheerder/VoegMedewerkerToe.jsx";
+import HoofdschermFrontoffice from "./Frontoffice/HoofdschermFrontoffice.jsx";
+import Pagina404 from "./Error/Pagina404.jsx";
 import VoertuigenSelectie from "./VoertuigenSelectie.jsx";
-import ProfielWijzigen from "./ProfielWijzigen.jsx";
+import ProfielWijzigen from "./Particulier/ProfielWijzigen.jsx";
 import {AccountProvider} from "./Login/AccountProvider.jsx";
-import VoertuigselectieFrontoffice from "./VoertuigselectieFrontoffice.jsx";
+import VoertuigselectieFrontoffice from "./Frontoffice/VoertuigselectieFrontoffice.jsx";
 
 function App() {
     return (
@@ -39,6 +40,7 @@ function App() {
                     <Route path="/HoofdschermParticulier" element={<HoofdschermParticulier />} />
                     <Route path="/HoofdschermFrontoffice" element={<HoofdschermFrontoffice />} />
                     <Route path="/HoofdschermZakelijkBeheerder" element={<HoofdschermZakelijkBeheerder />} />
+                    <Route path="/HoofdschermZakelijkBeheerder/VoegMedewerkerToe" element={<VoegMedewerkerToe />} />
                     <Route path="/VoertuigenSelectie" element={<VoertuigenSelectie />} />
                     <Route path="/VoertuigenSelectieFrontoffice" element={<VoertuigselectieFrontoffice />} />
                     <Route path="*" element={<Pagina404 />}/>

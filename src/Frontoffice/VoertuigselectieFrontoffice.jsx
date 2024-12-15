@@ -1,6 +1,6 @@
 ﻿import React, { useState, useEffect } from "react";
-import "./VoertuigenSelectie.css"; // Import CSS classes
-import carAndAllLogo from './assets/CarAndAll_Logo.webp'; // Use one image
+import "../VoertuigenSelectie.css"; // Import CSS classes
+import carAndAllLogo from '../assets/CarAndAll_Logo.webp'; // Use one image
 
 const VoertuigenComponent = () => {
     const [voertuigen, setVoertuigen] = useState([]); // State for storing vehicles
