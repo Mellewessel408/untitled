@@ -36,6 +36,10 @@ function HoofdschermZakelijkBeheerder() {
         navigate('VoegMedewerkerToe');
     }
 
+    const MedewerkerVerwijderen = () => {
+        navigate('MedewerkerVerwijderen');
+    }
+
     const BedrijfVerwijderen = async () => {
         try {
             // Verstuur het DELETE-verzoek naar de backend en wacht op het antwoord
