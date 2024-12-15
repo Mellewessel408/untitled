@@ -67,7 +67,7 @@ function InlogPagina() {
                     <option value="Backoffice">Backoffice</option>
                     <option value="Frontoffice">Frontoffice</option>
                     <option value="ZakelijkHuurder">Zakelijk Huurder</option>
-                    <option value="Zakelijk">Zakelijk Beheerder</option>
+                    <option value="ZakelijkBeheerder">Zakelijk Beheerder</option>
                 </select>
                 <form className="Inlogform" onSubmit={inlogKnop}>
                     <div>
