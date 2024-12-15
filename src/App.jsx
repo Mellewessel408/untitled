@@ -7,6 +7,7 @@ import HoofdschermMedewerker from "./Frontoffice/HoofdschermFrontoffice.jsx";
 import HoofdschermParticulier from "./Particulier/HoofdschermParticulier.jsx";
 import HoofdschermZakelijkBeheerder from "./ZakelijkBeheerder/HoofdschermZakelijkBeheerder.jsx";
 import VoegMedewerkerToe from "./ZakelijkBeheerder/VoegMedewerkerToe.jsx";
+import MedewerkerVerwijderen from "./ZakelijkBeheerder/MedewerkerVerwijderen.jsx";
 import HoofdschermFrontoffice from "./Frontoffice/HoofdschermFrontoffice.jsx";
 import Pagina404 from "./Error/Pagina404.jsx";
 import VoertuigenSelectie from "./VoertuigenSelectie.jsx";
@@ -43,6 +44,7 @@ function App() {
                     <Route path="/HoofdschermFrontoffice" element={<HoofdschermFrontoffice />} />
                     <Route path="/HoofdschermZakelijkBeheerder" element={<HoofdschermZakelijkBeheerder />} />
                     <Route path="/HoofdschermZakelijkBeheerder/VoegMedewerkerToe" element={<VoegMedewerkerToe />} />
+                    <Route path="/HoofdschermZakelijkBeheerder/MedewerkerVerwijderen" element={<MedewerkerVerwijderen />} />
                     <Route path="/HoofdschermZakelijkHuurder" element={<HoofdschermZakelijkHuurder />} />
                     <Route path="/VoertuigenSelectie" element={<VoertuigenSelectie />} />
                     <Route path="/VoertuigenSelectieFrontoffice" element={<VoertuigselectieFrontoffice />} />

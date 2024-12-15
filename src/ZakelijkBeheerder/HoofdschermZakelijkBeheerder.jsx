@@ -74,6 +74,7 @@ function HoofdschermZakelijkBeheerder() {
             <button onClick={MedewerkersBeheren}></button>
             <button onClick={AbbonementsBeheer}></button>
             <button onClick={VerhuurActiviteiten}></button>
+            <button onClick={MedewerkerVerwijderen}>Medewerker toevoegen</button>
             <button onClick={VoegMedewerkerToe}>Medewerker toevoegen</button>
             <button onClick={BedrijfVerwijderen} className="fetusDeletus">Het Bedrijf Verwijderen</button>
             <button className="logout-button" onClick={LogUit}>Log uit</button>
