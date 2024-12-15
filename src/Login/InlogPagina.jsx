@@ -31,11 +31,12 @@ function InlogPagina() {
 
             // Als de request succesvol is
             if (response.ok) {
-                console.log("Object terughalen voor AccountId");
-                const IdResponse = response.json();
-                if (IdResponse?.accountId) {
-                    login(IdResponse.accountId); // Account-ID instellen vanuit de response
-                }
+                // Lees de JSON-body van de response
+                const responseData = await response.json();
+
+                console.log("Object terughalen voor AccountId:", responseData);
+                login(responseData.accountId); // Account-ID instellen vanuit de JSON-response
+
 
                 console.log('Account succesvol ingelogd');
                 alert('Inloggen succesvol!');

@@ -1,6 +1,8 @@
 import {useNavigate} from 'react-router-dom';
+import '../Particulier/HoofdschermParticulier.css';
 import {AccountProvider, useAccount} from "../Login/AccountProvider.jsx";
-import {useEffect} from "react";
+import React, {useEffect} from "react";
+import VoegMedewerkerToe from "./VoegMedewerkerToe.jsx";
 
 function HoofdschermZakelijkBeheerder() {
     const navigate = useNavigate();
@@ -11,6 +13,12 @@ function HoofdschermZakelijkBeheerder() {
             navigate('/inlogpagina');
         }
     })
+
+    const LogUit = () => {
+        logout();
+        navigate('/Inlogpagina');
+    };
+
     const VoertuigenOverzicht = () => {
 
     }
@@ -23,6 +31,11 @@ function HoofdschermZakelijkBeheerder() {
     const VerhuurActiviteiten = () => {
 
     }
+
+    const VoegMedewerkerToe = () => {
+        navigate('VoegMedewerkerToe');
+    }
+
     const BedrijfVerwijderen = async () => {
         try {
             // Verstuur het DELETE-verzoek naar de backend en wacht op het antwoord
@@ -50,14 +63,16 @@ function HoofdschermZakelijkBeheerder() {
 
 
     return (
-        <div>
+        <div className="hoofdscherm-container">
             <h2>Welkom, {currentAccountId}!</h2>
             <h2>Wat wil je vandaag doen</h2>
             <button onClick={VoertuigenOverzicht}></button>
             <button onClick={MedewerkersBeheren}></button>
             <button onClick={AbbonementsBeheer}></button>
             <button onClick={VerhuurActiviteiten}></button>
-            <button onClick={BedrijfVerwijderen}> Het bedrijf verwijderen </button>
+            <button onClick={VoegMedewerkerToe}>Medewerker toevoegen</button>
+            <button onClick={BedrijfVerwijderen} className="fetusDeletus">Het Bedrijf Verwijderen</button>
+            <button className="logout-button" onClick={LogUit}>Log uit</button>
         </div>
     );
 

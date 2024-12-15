@@ -58,12 +58,12 @@ function HoofdschermParticulier() {
     return (
         <div className="hoofdscherm-container">
             <img src={logo} alt="Carandall Logo"/>
-            <h1>Welkom</h1>
+            <h1>Welkom {currentAccountId}</h1>
             <h2>Wat wil je vandaag doen?</h2>
             <button onClick={AutoHuren}>Auto huren</button>
             <button onClick={MijnReservering}>Mijn reserveringen</button>
             <button onClick={MijnProfiel}>Mijn profiel</button>
-            <button onClick={AccountVerwijderen} style={{ backgroundColor: 'red' }}>Verwijder account</button>
+            <button onClick={AccountVerwijderen} className="fetusDeletus">Verwijder account</button>
             <button className="logout-button" onClick={LogUit}>Log uit</button>
         </div>
     );
