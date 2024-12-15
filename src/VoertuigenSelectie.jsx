@@ -1,22 +1,28 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from 'react-router-dom';
-import { useAccount } from "./Login/AccountProvider.jsx"; // Zorg dat de context beschikbaar is
-import "./VoertuigenSelectie.css"; // Import CSS classes
-import carAndAllLogo from './assets/CarAndAll_Logo.webp'; // Gebruik één afbeelding
+import { useAccount } from "./Login/AccountProvider.jsx";
+import "./VoertuigenSelectie.css";
+import carAndAllLogo from './assets/CarAndAll_Logo.webp';
+import flatpickr from "flatpickr";
+import "flatpickr/dist/flatpickr.min.css";
 
 const VoertuigenComponent = () => {
-    const [voertuigen, setVoertuigen] = useState([]); // State for storing vehicles
-    const [loading, setLoading] = useState(true); // State for loading status
-    const [error, setError] = useState(null); // State for handling errors
-    const [searchTerm, setSearchTerm] = useState(""); // Search term for merk and model
-    const [filteredVoertuigen, setFilteredVoertuigen] = useState([]); // Filtered vehicles
+    const [voertuigen, setVoertuigen] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [filteredVoertuigen, setFilteredVoertuigen] = useState([]);
+    const [startDate, setStartDate] = useState(null);
+    const [endDate, setEndDate] = useState(null);
 
-    const { logout } = useAccount(); // Gebruik de logout-functie vanuit de context
-    const navigate = useNavigate(); // Voor navigatie
+    const { logout } = useAccount();
+    const navigate = useNavigate();
+    const apiBaseUrl = `https://localhost:44318/api/Voertuig`;
 
-    const apiBaseUrl = `https://localhost:44318/api/Voertuig`; // API endpoint to get all vehicles
+    const startDatePickerRef = useRef();
+    const endDatePickerRef = useRef();
 
-    // Fetch voertuigen when the component is mounted
+    // Ophalen van voertuigen bij mounten van component
     useEffect(() => {
         const fetchVoertuigen = async () => {
             try {
@@ -28,60 +34,67 @@ const VoertuigenComponent = () => {
                 const data = await response.json();
 
                 const voertuigenArray = data.$values || [];
-
-                setVoertuigen(voertuigenArray); // Set the vehicles data
-                setLoading(false); // Set loading to false after data is fetched
+                setVoertuigen(voertuigenArray);
+                setLoading(false);
             } catch (err) {
-                console.log(err)
-                setError("Kan voertuigen niet ophalen"); // Set error if fetch fails
-                setLoading(false); // Set loading to false after error
+                console.error(err);
+                setError("Kan voertuigen niet ophalen");
+                setLoading(false);
             }
         };
 
         fetchVoertuigen();
-    }, []); // Run only on component mount
+    }, []);
 
-    // Filter vehicles based on search term
+    // Initialiseren van Flatpickr datepickers
+    useEffect(() => {
+        if (startDatePickerRef.current) {
+            flatpickr(startDatePickerRef.current, {
+                dateFormat: "d-m-Y",
+                minDate: "today",
+                onChange: ([date]) => {
+                    setStartDate(date);
+                },
+            });
+        }
+        if (endDatePickerRef.current) {
+            flatpickr(endDatePickerRef.current, {
+                dateFormat: "d-m-Y",
+                minDate: startDate, // Einddatum kan niet eerder zijn dan startdatum
+                onChange: ([date]) => {
+                    setEndDate(date);
+                },
+            });
+        }
+    }, [startDate]);
+
+    // Filter voertuigen op zoekterm en beschikbaarheid
     useEffect(() => {
         const filtered = voertuigen.filter((voertuig) => {
-            return (
+            const matchesSearch =
                 voertuig.merk.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                voertuig.model.toLowerCase().includes(searchTerm.toLowerCase())
-            );
-        });
-        setFilteredVoertuigen(filtered); // Update filtered vehicles based on search
-    }, [searchTerm, voertuigen]); // Run whenever searchTerm or vehicles changes
+                voertuig.model.toLowerCase().includes(searchTerm.toLowerCase());
 
-    // Nieuwe logout functie
-    const handleLogout = () => {
-        logout(); // Roep de logout-functie aan
-        navigate('/Inlogpagina'); // Navigeren naar inlogpagina
-    };
-
-    const handleReserveer = async (voertuigId) => {
-        try {
-            const response = await fetch(`https://localhost:44318/api/Voertuig/reserveer/${voertuigId}`, {
-                method: 'POST',
-            });
-
-            if (!response.ok) {
-                const errorText = await response.text();
-                alert(`Fout bij reserveren: ${errorText}`);
-                return;
+            if (!startDate || !endDate) {
+                return matchesSearch; // Alleen filteren op zoekterm als er geen datums zijn
             }
 
-            const successMessage = await response.text();
-            alert(successMessage);
+            const beschikbaarVan = new Date(voertuig.beschikbaarVan);
+            const beschikbaarTot = new Date(voertuig.beschikbaarTot);
 
-            // Optioneel: Refresh de voertuigenlijst om de nieuwe status te tonen
-            const updatedVoertuigen = voertuigen.map((voertuig) =>
-                voertuig.voertuigId === voertuigId ? { ...voertuig, voertuigStatus: "Gereserveerd" } : voertuig
-            );
-            setVoertuigen(updatedVoertuigen);
-        } catch (error) {
-            console.error("Fout bij reserveren:", error);
-            alert("Er is een probleem opgetreden bij het reserveren van het voertuig.");
-        }
+            const isAvailable =
+                beschikbaarVan <= startDate && beschikbaarTot >= endDate;
+
+            return matchesSearch && isAvailable;
+        });
+
+        setFilteredVoertuigen(filtered);
+    }, [searchTerm, startDate, endDate, voertuigen]);
+
+    // Afhandelen van uitloggen
+    const handleLogout = () => {
+        logout();
+        navigate('/Inlogpagina');
     };
 
     if (loading) return <div className="loading">Laden...</div>;
@@ -89,7 +102,6 @@ const VoertuigenComponent = () => {
 
     return (
         <div className="voertuigen-container">
-            {/* Title */}
             <header className="header">
                 <h1>Voertuig huren</h1>
                 <button className="logout-button small" onClick={handleLogout}>
@@ -97,7 +109,7 @@ const VoertuigenComponent = () => {
                 </button>
             </header>
 
-            {/* Search Section */}
+            {/* Zoekveld en datumselectie */}
             <div className="search-filter">
                 <input
                     type="text"
@@ -106,9 +118,23 @@ const VoertuigenComponent = () => {
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="search-bar"
                 />
+                <div className="datepickers">
+                    <input
+                        type="text"
+                        placeholder="Begin datum"
+                        ref={startDatePickerRef}
+                        className="datepicker-input"
+                    />
+                    <input
+                        type="text"
+                        placeholder="Eind datum"
+                        ref={endDatePickerRef}
+                        className="datepicker-input"
+                    />
+                </div>
             </div>
 
-            {/* Grid of vehicles */}
+            {/* Weergave van voertuigen */}
             <div className="voertuigen-grid">
                 {filteredVoertuigen.length === 0 ? (
                     <div className="no-vehicles">Geen voertuigen gevonden</div>
@@ -130,12 +156,6 @@ const VoertuigenComponent = () => {
                                 <p><strong>Aanschafjaar:</strong> {voertuig.aanschafjaar}</p>
                                 <p><strong>Prijs:</strong> €{voertuig.prijs}</p>
                                 <p><strong>Status:</strong> {voertuig.voertuigStatus}</p>
-                                <button
-                                    className="reserveer-button"
-                                    onClick={() => handleReserveer(voertuig.voertuigId)}
-                                >
-                                    Reserveer
-                                </button>
                             </div>
                         </div>
                     ))
