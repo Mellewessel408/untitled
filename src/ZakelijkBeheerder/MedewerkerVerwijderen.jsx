@@ -32,7 +32,7 @@ function MedewerkerVerwijderen() {
                     'Content-Type': 'application/json',
                 }
             });
-            alert("Medewerker geabhishreked")
+            alert("Medewerker gedelete");
         } catch (error) {
             console.error('Fout bij het versturen van het verzoek:', error);
             alert('Er is een fout opgetreden. Probeer het later opnieuw.');
