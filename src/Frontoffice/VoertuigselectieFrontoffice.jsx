@@ -39,7 +39,9 @@ const VoertuigenComponent = () => {
         const filtered = voertuigen.filter((voertuig) => {
             return (
                 voertuig.merk.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                voertuig.model.toLowerCase().includes(searchTerm.toLowerCase())
+                voertuig.model.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                voertuig.kleur.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                voertuig.kenteken.toLowerCase().includes(searchTerm.toLowerCase())
             );
         });
         setFilteredVoertuigen(filtered); // Update filtered vehicles based on search
@@ -103,9 +105,6 @@ const VoertuigenComponent = () => {
             {/* Title */}
             <header className="header">
                 <h1>Status Updaten</h1>
-                <button className="logout-button small" onClick={handleLogout}>
-                    Log uit
-                </button>
             </header>
 
             {/* Search Section */}
