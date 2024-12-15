@@ -15,6 +15,7 @@ import {AccountProvider} from "./Login/AccountProvider.jsx";
 import VoertuigselectieFrontoffice from "./Frontoffice/VoertuigselectieFrontoffice.jsx";
 import VoertuigenSelectieZakelijkHuurder from "./ZakelijkHuurder/VoertuigenSelectieZakelijkHuurder.jsx";
 import HoofdschermZakelijkHuurder from "./ZakelijkHuurder/HoofdschermZakelijkHuurder.jsx";
+import HoofdschermBackoffice from "./Backoffice/HoofdschermBackoffice.jsx";
 
 function App() {
     return (
@@ -49,6 +50,7 @@ function App() {
                     <Route path="/VoertuigenSelectieZakelijkHuurder" element={<VoertuigenSelectieZakelijkHuurder />} />
                     <Route path="*" element={<Pagina404 />}/>
                     <Route path="/ProfielParticulier" element={<ProfielWijzigen />} />
+                    <Route path="/HoofdschermBackoffice" element={<HoofdschermBackoffice />} />
                 </Routes>
             </div>
           </Router>
