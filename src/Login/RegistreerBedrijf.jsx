@@ -10,8 +10,8 @@ function RegistreerBedrijf() {
     const { login } = useAccount();
     const [abonnement, setAbonnement] = useState("Pay-As-You-Go");
 
-    const Inloggen = () => {
-        navigate("./InlogPagina");
+    const InlogPagina = () => {
+        navigate("/InlogPagina");
     };
 
     const Registreer = async (event) => {
@@ -152,6 +152,7 @@ function RegistreerBedrijf() {
                 </div>
 
                 <button type="submit">Registreer Bedrijf</button>
+                <button onClick={InlogPagina}>inloggen</button>
             </form>
         </div>
     );

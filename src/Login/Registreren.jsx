@@ -7,7 +7,7 @@ import {AccountProvider, useAccount} from "./AccountProvider.jsx";
 function Registreren() {
     const navigate = useNavigate();
 
-    const Inloggen = () => {
+    const InlogPagina = () => {
         navigate("/InlogPagina")
     }
 
@@ -126,6 +126,7 @@ function Registreren() {
 
 
                 <button type="submit">Registreer</button>
+                <button onClick={InlogPagina}>Inloggen</button>
             </form>
         </div>
 
