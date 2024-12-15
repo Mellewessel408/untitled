@@ -1,6 +1,8 @@
 ﻿import React, { useState, useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
+import { useAccount } from "../Login/AccountProvider.jsx"; // Zorg dat de context beschikbaar is
 import "../VoertuigenSelectie.css"; // Import CSS classes
-import carAndAllLogo from '../assets/CarAndAll_Logo.webp'; // Use one image
+import carAndAllLogo from '../assets/CarAndAll_Logo.webp'; // Gebruik één afbeelding
 
 const VoertuigenComponent = () => {
     const [voertuigen, setVoertuigen] = useState([]); // State for storing vehicles
@@ -9,28 +11,33 @@ const VoertuigenComponent = () => {
     const [searchTerm, setSearchTerm] = useState(""); // Search term for merk and model
     const [filteredVoertuigen, setFilteredVoertuigen] = useState([]); // Filtered vehicles
 
-    const apiBaseUrl = `https://localhost:44318/api/Voertuig`; // API endpoint to get all vehicles
-    const fetchVoertuigen = async () => {
-        try {
-            const url = `${apiBaseUrl}/krijgallevoertuigen`;
-            const response = await fetch(url);
-            if (!response.ok) {
-                throw new Error("Netwerkfout: " + response.statusText);
-            }
-            const data = await response.json();
+    const { logout } = useAccount(); // Gebruik de logout-functie vanuit de context
+    const navigate = useNavigate(); // Voor navigatie
 
-            const voertuigenArray = data.$values || [];
+    const apiBaseUrl = `https://localhost:44318/api/ZakelijkHuurder`; // API endpoint to get all vehicles
 
-            setVoertuigen(voertuigenArray); // Set the vehicles data
-            setLoading(false); // Set loading to false after data is fetched
-        } catch (err) {
-            console.log(err)
-            setError("Kan voertuigen niet ophalen"); // Set error if fetch fails
-            setLoading(false); // Set loading to false after error
-        }
-    };
     // Fetch voertuigen when the component is mounted
     useEffect(() => {
+        const fetchVoertuigen = async () => {
+            try {
+                const url = `${apiBaseUrl}/krijgalleautos`;
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error("Netwerkfout: " + response.statusText);
+                }
+                const data = await response.json();
+
+                const voertuigenArray = data.$values || [];
+
+                setVoertuigen(voertuigenArray); // Set the vehicles data
+                setLoading(false); // Set loading to false after data is fetched
+            } catch (err) {
+                console.log(err)
+                setError("Kan voertuigen niet ophalen"); // Set error if fetch fails
+                setLoading(false); // Set loading to false after error
+            }
+        };
+
         fetchVoertuigen();
     }, []); // Run only on component mount
 
@@ -39,72 +46,55 @@ const VoertuigenComponent = () => {
         const filtered = voertuigen.filter((voertuig) => {
             return (
                 voertuig.merk.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                voertuig.model.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                voertuig.kleur.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                voertuig.kenteken.toLowerCase().includes(searchTerm.toLowerCase())
+                voertuig.model.toLowerCase().includes(searchTerm.toLowerCase())
             );
         });
         setFilteredVoertuigen(filtered); // Update filtered vehicles based on search
     }, [searchTerm, voertuigen]); // Run whenever searchTerm or vehicles changes
 
-    // Log out function (simple example, you can implement actual log out logic)
+    // Nieuwe logout functie
     const handleLogout = () => {
-        alert("Logging out...");
+        logout(); // Roep de logout-functie aan
+        navigate('/Inlogpagina'); // Navigeren naar inlogpagina
+    };
+
+    const handleReserveer = async (voertuigId) => {
+        try {
+            const response = await fetch(`https://localhost:44318/api/Voertuig/reserveer/${voertuigId}`, {
+                method: 'POST',
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                alert(`Fout bij reserveren: ${errorText}`);
+                return;
+            }
+
+            const successMessage = await response.text();
+            alert(successMessage);
+
+            // Optioneel: Refresh de voertuigenlijst om de nieuwe status te tonen
+            const updatedVoertuigen = voertuigen.map((voertuig) =>
+                voertuig.voertuigId === voertuigId ? { ...voertuig, voertuigStatus: "Gereserveerd" } : voertuig
+            );
+            setVoertuigen(updatedVoertuigen);
+        } catch (error) {
+            console.error("Fout bij reserveren:", error);
+            alert("Er is een probleem opgetreden bij het reserveren van het voertuig.");
+        }
     };
 
     if (loading) return <div className="loading">Laden...</div>;
     if (error) return <div className="error">{error}</div>;
 
-    const updateData = async (voertuigId) => {
-        const url = `https://localhost:44318/api/Frontoffice/updatevoertuigstatus?id=${voertuigId}`;
-
-        try {
-            // Make the PUT request to update the vehicle status
-            const response = await fetch(url, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-
-            if (response.ok) {
-                // If the update was successful, update the status locally
-                setVoertuigen((prevVoertuigen) => {
-                    return prevVoertuigen.map((voertuig) => {
-                        if (voertuig.voertuigId === voertuigId) {
-                            let updatedStatus = voertuig.voertuigStatus;
-                            if (voertuig.voertuigStatus === "Gereserveerd" || voertuig.voertuigStatus === "Beschikbaar") {
-                                updatedStatus = "Uitgegeven";
-                            } else if (voertuig.voertuigStatus === "Uitgegeven") {
-                                updatedStatus = "Beschikbaar";
-                            }
-                            return {
-                                ...voertuig,
-                                voertuigStatus: updatedStatus,
-                            };
-                        }
-                        return voertuig;
-                    });
-                });
-            } else {
-                console.error('Failed to update the vehicle status');
-            }
-        } catch (error) {
-            console.error('Error updating vehicle status:', error);
-        }
-    };
-
-
-    const buttonevent = (voertuigId) => {
-        updateData(voertuigId);
-
-    }
-
     return (
         <div className="voertuigen-container">
             {/* Title */}
             <header className="header">
-                <h1>Status Updaten</h1>
+                <h1>Voertuig huren</h1>
+                <button className="logout-button small" onClick={handleLogout}>
+                    Log uit
+                </button>
             </header>
 
             {/* Search Section */}
@@ -139,7 +129,13 @@ const VoertuigenComponent = () => {
                                 <p><strong>Kleur:</strong> {voertuig.kleur}</p>
                                 <p><strong>Aanschafjaar:</strong> {voertuig.aanschafjaar}</p>
                                 <p><strong>Prijs:</strong> €{voertuig.prijs}</p>
-                                <button onClick={() => buttonevent(voertuig.voertuigId)}>{voertuig.voertuigStatus}</button>
+                                <p><strong>Status:</strong> {voertuig.voertuigStatus}</p>
+                                <button
+                                    className="reserveer-button"
+                                    onClick={() => handleReserveer(voertuig.voertuigId)}
+                                >
+                                    Reserveer
+                                </button>
                             </div>
                         </div>
                     ))
