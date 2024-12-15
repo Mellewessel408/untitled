@@ -8,12 +8,12 @@ function HoofdschermBackoffice() {
     const navigate = useNavigate();
     const { currentAccountId, logout } = useAccount(); // Haal de currentAccountId uit de context
 
-    /*useEffect(() => {
+    useEffect(() => {
         if (currentAccountId === 0) {
             alert("U bent ingelogd zonder AccountId");
             navigate('/inlogpagina');
         }
-    }); */
+    });
 
     const BedrijfsAbonnement = () => {
         navigate('/BedrijfsabbonomentenGoedkeuren');
