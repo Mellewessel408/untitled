@@ -10,8 +10,13 @@ body {
 }
 
 .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     text-align: center;
     color: #fff;
+    width: 100%;
 }
 
 .logo {
@@ -26,9 +31,16 @@ h1 {
     color: #000000;
 }
 
+label {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #000000; /* Text color */
+    margin-bottom: 0.5rem; /* Space below label */
+}
+
 form {
     display: grid;
-    grid-template-columns: repeat(2, 1fr); /* 2 kolommen voor de invoervelden */
+    grid-template-columns: 1fr 1fr; /* 2 kolommen voor de invoervelden */
     grid-template-rows: auto auto auto; /* 3 rijen voor de velden */
     gap: 1.5rem; /* Afstand tussen de invoervelden */
     justify-items: center; /* Horizontaal en verticaal centreren binnen de grid */
@@ -39,23 +51,13 @@ form {
     margin-left: -200px; /* Zorgt ervoor dat het formulier naar links wordt verschoven */
 }
 
-label {
-    font-size: 1rem; /* Zelfde tekstgrootte als in de mockup */
-    color: #000000; /* Zwarte kleur voor de tekst */
-    font-weight: bold; /* Zet de tekst vetgedrukt */
-    text-align: left; /* Zorgt ervoor dat de tekst links wordt uitgelijnd boven het invoerveld */
-    width: 100%; /* Zorgt ervoor dat de label breedte 100% van de grid-cel is */
-    margin-bottom: 0.5rem; /* Ruimte tussen de tekst en het invoerveld */
-}
-
-input {
-    width: 90%; /* Zorgt ervoor dat de invoervelden 90% van de kolombreedte vullen */
-    height: 3rem; /* Zelfde hoogte als in de mockup */
-    padding: 0 1rem; /* Horizontale padding voor meer ruimte */
-    border: 1px solid #ccc;
+select {
+    justify-self: center; /* Center dropdown within its container */
+    width: 90%; /* Keep consistent with inputs */
+    Height: 2.9rem;
     border-radius: 5px;
-    font-size: 1rem; /* Gelijke tekstgrootte */
-    box-sizing: border-box;
+    font-size: 1rem;
+    align-items: center;
 }
 
 button {
@@ -70,6 +72,16 @@ button {
     cursor: pointer;
     transition: background-color 0.3s ease;
     justify-self: center; /* Horizontaal centreren van de knop */
+}
+
+input {
+    width: 100%; /* Inputs take full grid column width */
+    height: 2.5rem; /* Input height */
+    padding: 0 0.5rem; /* Padding inside inputs */
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box; /* Include padding in width calculation */
 }
 
 button:hover {

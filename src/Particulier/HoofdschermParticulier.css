@@ -47,7 +47,7 @@ body {
 }
 
 .hoofdscherm-container button:hover {
-    background-color: #555; /* Kleurverandering bij hover */
+    /*background-color: #555;*/ /* Kleurverandering bij hover */
 }
 
 .hoofdscherm-container .logout-button {
@@ -66,4 +66,10 @@ body {
 
 .hoofdscherm-container .logout-button:hover {
     background-color: #555;
+}
+
+
+.fetusDeletus:hover {
+    background-color: #ddd;
+    color: red;
 }

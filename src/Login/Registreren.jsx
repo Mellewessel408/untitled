@@ -2,17 +2,21 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Registreren.css';
 import React from 'react';
-import axios from "axios";
-import logo from '../assets/CarAndAll Logo.webp';
+import logo from '../assets/CarAndAll_Logo.webp';
+import {AccountProvider, useAccount} from "./AccountProvider.jsx";
 function Registreren() {
     const navigate = useNavigate();
 
-    const Inloggen = () => {
+    const InlogPagina = () => {
         navigate("/InlogPagina")
     }
 
+    const { login } = useAccount(); // Toegang krijgen tot de login functie
+
     const Registreer = async (event) => {
         event.preventDefault();
+
+
 
         const formData = new FormData(event.target);
         const email = formData.get('email');
@@ -52,9 +56,14 @@ function Registreren() {
             });
             if (response.ok) {
                 // Als de request succesvol is
+                console.log("Object terughalen voor AccountId");
+                const IdResponse = await fetch('https://localhost:44318/api/Particulier/KrijgSpecifiekAccountEmail?email=' + email);
+                const IdData = await IdResponse.json();
+                if (IdData?.accountId) {
+                    login(IdData.accountId); // Account-ID instellen vanuit de response
+                }
                 console.log('Account succesvol aangemaakt');
-                alert('Account succesvol aangemaakt!');
-                navigate('HoofdschermParticulier');
+                navigate('/HoofdschermParticulier');
             } else {
                 // Als de request niet succesvol is (bijvoorbeeld BadRequest)
                 const errorMessage = await response.text(); // Krijg de tekst van de foutmelding
@@ -115,7 +124,9 @@ function Registreren() {
                            placeholder="Vul je Telefoonnummer in..."/>
                 </div>
 
+
                 <button type="submit">Registreer</button>
+                <button onClick={InlogPagina}>Inloggen</button>
             </form>
         </div>
 

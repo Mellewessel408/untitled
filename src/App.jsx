@@ -3,15 +3,24 @@ import InlogPagina from "./Login/InlogPagina.jsx";
 import Registreren from "./Login/Registreren.jsx";
 import KiesGebruiker from "./Login/KiesGebruiker.jsx";
 import RegistreerBedrijf from "./Login/RegistreerBedrijf.jsx";
-import HoofdschermMedewerker from "./HoofdschermMedewerker.jsx";
-import HoofdschermParticulier from "./HoofdschermParticulier.jsx";
-import HoofdschermZakelijk from "./HoofdschermZakelijk.jsx";
-import Pagina404 from "./Pagina404.jsx";
-import AutoHuren from "./AutoHuren.jsx";
+import HoofdschermMedewerker from "./Frontoffice/HoofdschermFrontoffice.jsx";
+import HoofdschermParticulier from "./Particulier/HoofdschermParticulier.jsx";
+import HoofdschermZakelijkBeheerder from "./ZakelijkBeheerder/HoofdschermZakelijkBeheerder.jsx";
+import VoegMedewerkerToe from "./ZakelijkBeheerder/VoegMedewerkerToe.jsx";
+import MedewerkerVerwijderen from "./ZakelijkBeheerder/MedewerkerVerwijderen.jsx";
+import HoofdschermFrontoffice from "./Frontoffice/HoofdschermFrontoffice.jsx";
+import Pagina404 from "./Error/Pagina404.jsx";
+import VoertuigenSelectie from "./VoertuigenSelectie.jsx";
+import ProfielWijzigen from "./Particulier/ProfielWijzigen.jsx";
+import {AccountProvider} from "./Login/AccountProvider.jsx";
+import VoertuigselectieFrontoffice from "./Frontoffice/VoertuigselectieFrontoffice.jsx";
+import VoertuigenSelectieZakelijkHuurder from "./ZakelijkHuurder/VoertuigenSelectieZakelijkHuurder.jsx";
+import HoofdschermZakelijkHuurder from "./ZakelijkHuurder/HoofdschermZakelijkHuurder.jsx";
 
 function App() {
     return (
-        <Router>
+        <AccountProvider>
+          <Router>
             <div className="App">
                 <nav>
                     <ul>
@@ -32,12 +41,20 @@ function App() {
                     <Route path="/KiesGebruiker" element={<KiesGebruiker />} />
                     <Route path="/HoofdschermMedewerker" element={<HoofdschermMedewerker/>} />
                     <Route path="/HoofdschermParticulier" element={<HoofdschermParticulier />} />
-                    <Route path="/HoofdschermZakelijk" element={<HoofdschermZakelijk />} />
-                    <Route path="/AutoHuren" element={<AutoHuren />} />
+                    <Route path="/HoofdschermFrontoffice" element={<HoofdschermFrontoffice />} />
+                    <Route path="/HoofdschermZakelijkBeheerder" element={<HoofdschermZakelijkBeheerder />} />
+                    <Route path="/HoofdschermZakelijkBeheerder/VoegMedewerkerToe" element={<VoegMedewerkerToe />} />
+                    <Route path="/HoofdschermZakelijkBeheerder/MedewerkerVerwijderen" element={<MedewerkerVerwijderen />} />
+                    <Route path="/HoofdschermZakelijkHuurder" element={<HoofdschermZakelijkHuurder />} />
+                    <Route path="/VoertuigenSelectie" element={<VoertuigenSelectie />} />
+                    <Route path="/VoertuigenSelectieFrontoffice" element={<VoertuigselectieFrontoffice />} />
+                    <Route path="/VoertuigenSelectieZakelijkHuurder" element={<VoertuigenSelectieZakelijkHuurder />} />
                     <Route path="*" element={<Pagina404 />}/>
+                    <Route path="/ProfielParticulier" element={<ProfielWijzigen />} />
                 </Routes>
             </div>
-        </Router>
+          </Router>
+        </AccountProvider>
     );
 }
 
