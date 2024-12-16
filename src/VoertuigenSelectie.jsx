@@ -7,11 +7,11 @@ import "./VoertuigenSelectie.css";
 import carAndAllLogo from './assets/CarAndAll_Logo.webp';
 
 const VoertuigenComponent = () => {
-    const [voertuigen, setVoertuigen] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [searchTerm, setSearchTerm] = useState("");
-    const [filteredVoertuigen, setFilteredVoertuigen] = useState([]);
+    const [voertuigen, setVoertuigen] = useState([]); // State for storing vehicles
+    const [loading, setLoading] = useState(true); // State for loading status
+    const [error, setError] = useState(null); // State for handling errors
+    const [searchTerm, setSearchTerm] = useState(""); // Search term for merk and model
+    const [filteredVoertuigen, setFilteredVoertuigen] = useState([]); // Filtered vehicles
 
     const { currentAccountId, logout } = useAccount(); // Haal de currentAccountId uit de context
     const navigate = useNavigate();
@@ -50,10 +50,16 @@ const VoertuigenComponent = () => {
     // Filter voertuigen
     useEffect(() => {
         const filtered = voertuigen.filter((voertuig) => {
-            return (
-                voertuig.merk.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                voertuig.model.toLowerCase().includes(searchTerm.toLowerCase())
-            );
+            return Object.keys(voertuig).some((key) => {
+                const value = voertuig[key];
+                if (typeof value === "string") {
+                    return value.toLowerCase().includes(searchTerm.toLowerCase());
+                }
+                if (typeof value === "number") {
+                    return value.toString().includes(searchTerm);
+                }
+                return false;
+            });
         });
         setFilteredVoertuigen(filtered);
     }, [searchTerm, voertuigen]);
