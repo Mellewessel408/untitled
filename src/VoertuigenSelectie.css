@@ -33,7 +33,7 @@
     flex-direction: column;
     align-items: center;
     padding: 20px;
-    margin-left: 150px; /* Avoid collision with .filter-container */
+    /*margin-left: 150px; !* Avoid collision with .filter-container *!*/
 }
 
 /* Grid styling voor voertuigen */
@@ -106,33 +106,33 @@
 }
 
 /* Updated .filter-container positioning */
-.filter-container {
-    position: absolute; /* Place it independently of other containers */
-    top: 280px; /* Adjust based on desired position */
-    left: 420px; /* Align near the edge */
-    display: flex; /* Modern flexbox layout */
-    flex-direction: column; /* Stack checkboxes vertically */
-    align-items: flex-start; /* Align items to the left */
-    gap: 10px; /* Add space between checkboxes */
-    width: 120px; /* Optional: set a fixed width for the container */
-}
+/*.filter-container {*/
+/*    position: absolute; !* Place it independently of other containers *!*/
+/*    top: 280px; !* Adjust based on desired position *!*/
+/*    left: 420px; !* Align near the edge *!*/
+/*    display: flex; !* Modern flexbox layout *!*/
+/*    flex-direction: column; !* Stack checkboxes vertically *!*/
+/*    align-items: flex-start; !* Align items to the left *!*/
+/*    gap: 10px; !* Add space between checkboxes *!*/
+/*    width: 120px; !* Optional: set a fixed width for the container *!*/
+/*}*/
 
 /* Style for individual checkboxes and labels */
-.filter-checkbox {
-    display: flex;
-    align-items: center; /* Align checkbox and text vertically */
-    gap: 10px; /* Add spacing between checkbox and label text */
-    font-size: 16px; /* Adjust font size for better readability */
-}
+/*.filter-checkbox {*/
+/*    display: flex;*/
+/*    align-items: center; !* Align checkbox and text vertically *!*/
+/*    gap: 10px; !* Add spacing between checkbox and label text *!*/
+/*    font-size: 16px; !* Adjust font size for better readability *!*/
+/*}*/
 
-/* Optional: Additional styling for checkboxes */
-.checkbox {
-    width: 18px;
-    height: 18px;
-    cursor: pointer;
-}
+/*!* Optional: Additional styling for checkboxes *!*/
+/*.checkbox {*/
+/*    width: 18px;*/
+/*    height: 18px;*/
+/*    cursor: pointer;*/
+/*}*/
 
-/* Filter Type labels */
-.TypeFilter label {
-    font-size: 18px;
-}
+/*!* Filter Type labels *!*/
+/*.TypeFilter label {*/
+/*    font-size: 18px;*/
+/*}*/

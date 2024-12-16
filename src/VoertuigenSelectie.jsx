@@ -8,8 +8,7 @@ const VoertuigenComponent = () => {
     const [voertuigen, setVoertuigen] = useState([]); // State for storing vehicles
     const [loading, setLoading] = useState(true); // State for loading status
     const [error, setError] = useState(null); // State for handling errors
-    const [searchTerm, setSearchTerm] = useState("");
-    const [voertuigType, setVoertuigType] = useState("");// Search term for merk and model
+    const [searchTerm, setSearchTerm] = useState("");// Search term for merk and model
     const [filteredVoertuigen, setFilteredVoertuigen] = useState([]); // Filtered vehicles
 
     const { logout } = useAccount(); // Gebruik de logout-functie vanuit de context
