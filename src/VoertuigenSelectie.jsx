@@ -1,23 +1,31 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from 'react-router-dom';
-import { useAccount } from "./Login/AccountProvider.jsx"; // Zorg dat de context beschikbaar is
-import "./VoertuigenSelectie.css"; // Import CSS classes
-import carAndAllLogo from './assets/CarAndAll_Logo.webp'; // Gebruik één afbeelding
+import React, { useEffect, useRef, useState } from "react";
+import flatpickr from "flatpickr"; // Importeer Flatpickr
+import "flatpickr/dist/flatpickr.min.css"; // Importeer de Flatpickr CSS
+import { useNavigate } from "react-router-dom";
+import { useAccount } from "./Login/AccountProvider.jsx";
+import "./VoertuigenSelectie.css";
+import carAndAllLogo from './assets/CarAndAll_Logo.webp';
 
 const VoertuigenComponent = () => {
-    const [voertuigen, setVoertuigen] = useState([]); // State for storing vehicles
-    const [loading, setLoading] = useState(true); // State for loading status
-    const [error, setError] = useState(null); // State for handling errors
-    const [searchTerm, setSearchTerm] = useState(""); // Search term for merk and model
-    const [filteredVoertuigen, setFilteredVoertuigen] = useState([]); // Filtered vehicles
+    const [voertuigen, setVoertuigen] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [filteredVoertuigen, setFilteredVoertuigen] = useState([]);
 
-    const { logout } = useAccount(); // Gebruik de logout-functie vanuit de context
-    const navigate = useNavigate(); // Voor navigatie
+    const { currentAccountId, logout } = useAccount(); // Haal de currentAccountId uit de context
+    const navigate = useNavigate();
+    const apiBaseUrl = `https://localhost:44318/api/Voertuig`;
 
-    const apiBaseUrl = `https://localhost:44318/api/Voertuig`; // API endpoint to get all vehicles
+    // Ref voor het datumveld
+    const datePickerRef = useRef();
 
-    // Fetch voertuigen when the component is mounted
+    // Fetch voertuigen
     useEffect(() => {
+        if (currentAccountId === 0) {
+            alert("U bent ingelogd zonder AccountId");
+            navigate('/inlogpagina');
+        }
         const fetchVoertuigen = async () => {
             try {
                 const url = `${apiBaseUrl}/krijgallevoertuigen`;
@@ -26,22 +34,20 @@ const VoertuigenComponent = () => {
                     throw new Error("Netwerkfout: " + response.statusText);
                 }
                 const data = await response.json();
-
                 const voertuigenArray = data.$values || [];
-
-                setVoertuigen(voertuigenArray); // Set the vehicles data
-                setLoading(false); // Set loading to false after data is fetched
+                setVoertuigen(voertuigenArray);
+                setLoading(false);
             } catch (err) {
-                console.log(err)
-                setError("Kan voertuigen niet ophalen"); // Set error if fetch fails
-                setLoading(false); // Set loading to false after error
+                console.error(err);
+                setError("Kan voertuigen niet ophalen");
+                setLoading(false);
             }
         };
 
         fetchVoertuigen();
-    }, []); // Run only on component mount
+    }, []);
 
-    // Filter vehicles based on search term
+    // Filter voertuigen
     useEffect(() => {
         const filtered = voertuigen.filter((voertuig) => {
             return (
@@ -49,18 +55,19 @@ const VoertuigenComponent = () => {
                 voertuig.model.toLowerCase().includes(searchTerm.toLowerCase())
             );
         });
-        setFilteredVoertuigen(filtered); // Update filtered vehicles based on search
-    }, [searchTerm, voertuigen]); // Run whenever searchTerm or vehicles changes
+        setFilteredVoertuigen(filtered);
+    }, [searchTerm, voertuigen]);
 
-    // Nieuwe logout functie
+    // Logout functie
     const handleLogout = () => {
-        logout(); // Roep de logout-functie aan
-        navigate('/Inlogpagina'); // Navigeren naar inlogpagina
+        logout();
+        navigate('/Inlogpagina');
     };
 
+    // Reserveer functie
     const handleReserveer = async (voertuigId) => {
         try {
-            const response = await fetch(`https://localhost:44318/api/Voertuig/reserveer/${voertuigId}`, {
+            const response = await fetch(`${apiBaseUrl}/reserveer/${voertuigId}`, {
                 method: 'POST',
             });
 
@@ -73,7 +80,6 @@ const VoertuigenComponent = () => {
             const successMessage = await response.text();
             alert(successMessage);
 
-            // Optioneel: Refresh de voertuigenlijst om de nieuwe status te tonen
             const updatedVoertuigen = voertuigen.map((voertuig) =>
                 voertuig.voertuigId === voertuigId ? { ...voertuig, voertuigStatus: "Gereserveerd" } : voertuig
             );
@@ -84,21 +90,42 @@ const VoertuigenComponent = () => {
         }
     };
 
+    // Initialiseer Flatpickr
+    useEffect(() => {
+        if (datePickerRef.current) {
+            flatpickr(datePickerRef.current, {
+                dateFormat: "d-m-Y",
+                altInput: true,
+                altFormat: "F j, Y",
+                minDate: "today",
+                maxDate: new Date().fp_incr(365),
+                weekNumbers: true,
+                mode: "range",
+            });
+        }
+    }, []);
+
     if (loading) return <div className="loading">Laden...</div>;
     if (error) return <div className="error">{error}</div>;
 
     return (
         <div className="voertuigen-container">
-            {/* Title */}
             <header className="header">
                 <h1>Voertuig huren</h1>
                 <button className="logout-button small" onClick={handleLogout}>
                     Log uit
                 </button>
             </header>
+            {/* Flatpickr invoerveld */}
 
-            {/* Search Section */}
             <div className="search-filter">
+                <input
+                    type="text"
+                    ref={datePickerRef}
+                    className="flatpickr-calander"
+                    id="start"
+                    placeholder="Kies een datum"
+                />
                 <input
                     type="text"
                     placeholder="Zoek op merk of model"
@@ -107,42 +134,40 @@ const VoertuigenComponent = () => {
                     className="search-bar"
                 />
             </div>
-
-            {/* Grid of vehicles */}
             <div className="voertuigen-grid">
                 {filteredVoertuigen.length === 0 ? (
                     <div className="no-vehicles">Geen voertuigen gevonden</div>
                 ) : (
                     filteredVoertuigen.map((voertuig) => (
-                        <div key={voertuig.voertuigId} className="voertuig-card">
-                            <div className="voertuig-photo">
-                                <img
-                                    className="voertuig-photo"
-                                    src={carAndAllLogo}
-                                    alt="CarAndAll Logo"
-                                />
+                            <div key={voertuig.voertuigId} className="voertuig-card">
+                                <div className="voertuig-photo">
+                                    <img
+                                        className="voertuig-photo"
+                                        src={carAndAllLogo}
+                                        alt="CarAndAll Logo"
+                                    />
+                                </div>
+                                <div className="voertuig-info">
+                                    <h3 className="kenteken">{voertuig.kenteken}</h3>
+                                    <p><strong>Merk:</strong> {voertuig.merk}</p>
+                                    <p><strong>Model:</strong> {voertuig.model}</p>
+                                    <p><strong>Kleur:</strong> {voertuig.kleur}</p>
+                                    <p><strong>Aanschafjaar:</strong> {voertuig.aanschafjaar}</p>
+                                    <p><strong>Prijs:</strong> €{voertuig.prijs}</p>
+                                    <p><strong>Status:</strong> {voertuig.voertuigStatus}</p>
+                                    <button
+                                        className="reserveer-button"
+                                        onClick={() => handleReserveer(voertuig.voertuigId)}
+                                    >
+                                        Reserveer
+                                    </button>
+                                </div>
                             </div>
-                            <div className="voertuig-info">
-                                <h3 className="kenteken">{voertuig.kenteken}</h3>
-                                <p><strong>Merk:</strong> {voertuig.merk}</p>
-                                <p><strong>Model:</strong> {voertuig.model}</p>
-                                <p><strong>Kleur:</strong> {voertuig.kleur}</p>
-                                <p><strong>Aanschafjaar:</strong> {voertuig.aanschafjaar}</p>
-                                <p><strong>Prijs:</strong> €{voertuig.prijs}</p>
-                                <p><strong>Status:</strong> {voertuig.voertuigStatus}</p>
-                                <button
-                                    className="reserveer-button"
-                                    onClick={() => handleReserveer(voertuig.voertuigId)}
-                                >
-                                    Reserveer
-                                </button>
-                            </div>
-                        </div>
-                    ))
-                )}
+                        ))
+                    )}
+                </div>
             </div>
-        </div>
-    );
-};
+            );
+            };
 
-export default VoertuigenComponent;
+            export default VoertuigenComponent;

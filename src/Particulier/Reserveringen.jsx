@@ -8,13 +8,16 @@ const Reserveringen = () => {
     const [reserveringen, setReserveringen] = useState([]); // State voor reserveringen
     const [loading, setLoading] = useState(true); // State voor loading status
     const [error, setError] = useState(null); // State voor foutmeldingen
-    const { logout } = useAccount(); // Gebruik de logout functie
     const navigate = useNavigate(); // Voor navigatie
-
+    const { currentAccountId, logout } = useAccount(); // Haal de currentAccountId uit de context
     const apiBaseUrl = `https://localhost:44318/api/Voertuig`; // API endpoint voor reserveringen
 
     // Haal de reserveringen op bij het laden van de component
     useEffect(() => {
+        if (currentAccountId === 0) {
+            alert("U bent ingelogd zonder AccountId");
+            navigate('/inlogpagina');
+        }
         const fetchReserveringen = async () => {
             try {
                 const response = await fetch(`${apiBaseUrl}/krijgallereserveringen`);
@@ -52,7 +55,7 @@ const Reserveringen = () => {
                     Log uit
                 </button>
             </header>
-            <p>abhishrek</p>
+
             {/* Grid van reserveringen */}
             <div className="voertuigen-grid">
                 {reserveringen.length === 0 ? (
