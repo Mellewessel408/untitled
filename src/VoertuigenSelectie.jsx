@@ -8,7 +8,8 @@ const VoertuigenComponent = () => {
     const [voertuigen, setVoertuigen] = useState([]); // State for storing vehicles
     const [loading, setLoading] = useState(true); // State for loading status
     const [error, setError] = useState(null); // State for handling errors
-    const [searchTerm, setSearchTerm] = useState(""); // Search term for merk and model
+    const [searchTerm, setSearchTerm] = useState("");
+    const [voertuigType, setVoertuigType] = useState("");// Search term for merk and model
     const [filteredVoertuigen, setFilteredVoertuigen] = useState([]); // Filtered vehicles
 
     const { logout } = useAccount(); // Gebruik de logout-functie vanuit de context
@@ -41,16 +42,21 @@ const VoertuigenComponent = () => {
         fetchVoertuigen();
     }, []); // Run only on component mount
 
-    // Filter vehicles based on search term
     useEffect(() => {
         const filtered = voertuigen.filter((voertuig) => {
-            return (
-                voertuig.merk.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                voertuig.model.toLowerCase().includes(searchTerm.toLowerCase())
-            );
+            return Object.keys(voertuig).some((key) => {
+                const value = voertuig[key];
+                if (typeof value === "string") {
+                    return value.toLowerCase().includes(searchTerm.toLowerCase());
+                }
+                if (typeof value === "number") {
+                    return value.toString().includes(searchTerm);
+                }
+                return false;
+            });
         });
-        setFilteredVoertuigen(filtered); // Update filtered vehicles based on search
-    }, [searchTerm, voertuigen]); // Run whenever searchTerm or vehicles changes
+        setFilteredVoertuigen(filtered);
+    }, [searchTerm, voertuigen]);
 
     // Nieuwe logout functie
     const handleLogout = () => {
@@ -87,61 +93,64 @@ const VoertuigenComponent = () => {
     if (loading) return <div className="loading">Laden...</div>;
     if (error) return <div className="error">{error}</div>;
 
-    return (
-        <div className="voertuigen-container">
-            {/* Title */}
-            <header className="header">
-                <h1>Voertuig huren</h1>
-                <button className="logout-button small" onClick={handleLogout}>
+    return (<>
+            <div>
+                <button className="logout-button" onClick={handleLogout}>
                     Log uit
                 </button>
-            </header>
-
-            {/* Search Section */}
-            <div className="search-filter">
-                <input
-                    type="text"
-                    placeholder="Zoek op merk of model"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="search-bar"
-                />
             </div>
+            <div className="voertuigen-container">
+                {/* Title */}
+                <header className="header">
+                    <h1>Voertuig huren</h1>
+                </header>
 
-            {/* Grid of vehicles */}
-            <div className="voertuigen-grid">
-                {filteredVoertuigen.length === 0 ? (
-                    <div className="no-vehicles">Geen voertuigen gevonden</div>
-                ) : (
-                    filteredVoertuigen.map((voertuig) => (
-                        <div key={voertuig.voertuigId} className="voertuig-card">
-                            <div className="voertuig-photo">
-                                <img
-                                    className="voertuig-photo"
-                                    src={carAndAllLogo}
-                                    alt="CarAndAll Logo"
-                                />
+                {/* Search Section */}
+                <div className="search-filter">
+                    <input
+                        type="text"
+                        placeholder="Zoek op merk of model"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="search-bar"
+                    />
+                </div>
+
+                {/* Grid of vehicles */}
+                <div className="voertuigen-grid">
+                    {filteredVoertuigen.length === 0 ? (
+                        <div className="no-vehicles">Geen voertuigen gevonden</div>
+                    ) : (
+                        filteredVoertuigen.map((voertuig) => (
+                            <div key={voertuig.voertuigId} className="voertuig-card">
+                                <div className="voertuig-photo">
+                                    <img
+                                        className="voertuig-photo"
+                                        src={carAndAllLogo}
+                                        alt="CarAndAll Logo"
+                                    />
+                                </div>
+                                <div className="voertuig-info">
+                                    <h3 className="kenteken">{voertuig.kenteken}</h3>
+                                    <p><strong>Merk:</strong> {voertuig.merk}</p>
+                                    <p><strong>Model:</strong> {voertuig.model}</p>
+                                    <p><strong>Kleur:</strong> {voertuig.kleur}</p>
+                                    <p><strong>Aanschafjaar:</strong> {voertuig.aanschafjaar}</p>
+                                    <p><strong>Prijs:</strong> €{voertuig.prijs}</p>
+                                    <p><strong>Status:</strong> {voertuig.voertuigStatus}</p>
+                                    <button
+                                        className="reserveer-button"
+                                        onClick={() => handleReserveer(voertuig.voertuigId)}
+                                    >
+                                        Reserveer
+                                    </button>
+                                </div>
                             </div>
-                            <div className="voertuig-info">
-                                <h3 className="kenteken">{voertuig.kenteken}</h3>
-                                <p><strong>Merk:</strong> {voertuig.merk}</p>
-                                <p><strong>Model:</strong> {voertuig.model}</p>
-                                <p><strong>Kleur:</strong> {voertuig.kleur}</p>
-                                <p><strong>Aanschafjaar:</strong> {voertuig.aanschafjaar}</p>
-                                <p><strong>Prijs:</strong> €{voertuig.prijs}</p>
-                                <p><strong>Status:</strong> {voertuig.voertuigStatus}</p>
-                                <button
-                                    className="reserveer-button"
-                                    onClick={() => handleReserveer(voertuig.voertuigId)}
-                                >
-                                    Reserveer
-                                </button>
-                            </div>
-                        </div>
-                    ))
-                )}
+                        ))
+                    )}
+                </div>
             </div>
-        </div>
+        </>
     );
 };
 
