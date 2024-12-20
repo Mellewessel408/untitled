@@ -24,7 +24,7 @@ function HoofdschermParticulier() {
     };
 
     const MijnProfiel = () => {
-        navigate('/ProfielParticulier');
+        navigate('/ProfielPagina');
     };
 
     const LogUit = () => {

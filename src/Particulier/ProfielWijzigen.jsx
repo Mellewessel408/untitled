@@ -2,10 +2,12 @@
 import logo from "../assets/CarAndAll_Logo.webp";
 import {useAccount} from "../Login/AccountProvider.jsx";
 import React from "react";
+import { useNavigate } from 'react-router-dom';
 
 function ProfielWijzigen(){
     const { currentAccountId } = useAccount();
     const accountIdString = String(currentAccountId)
+    const navigate = useNavigate();
 
 
     const Wijzigen = async (event) => {
@@ -109,8 +111,10 @@ function ProfielWijzigen(){
                     <input type="tel" id="telefoonnummer" name="telefoonnummer" required
                            placeholder="Vul je Telefoonnummer in..."/>
                 </div>
-
-                <button type="submit">Wijzig</button>
+                <div className="button-container">
+                    <button type="submit">Wijzig</button>
+                    <button type="button" onClick={() => navigate('/ProfielPagina')}>Terug</button>
+                </div>
             </form>
         </div>
     );

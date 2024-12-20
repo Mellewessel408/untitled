@@ -12,6 +12,7 @@ import HoofdschermFrontoffice from "./Frontoffice/HoofdschermFrontoffice.jsx";
 import Pagina404 from "./Error/Pagina404.jsx";
 import VoertuigenSelectie from "./VoertuigenSelectie.jsx";
 import ProfielWijzigen from "./Particulier/ProfielWijzigen.jsx";
+import ProfielPagina from "./Particulier/ProfielPagina.jsx";
 import {AccountProvider} from "./Login/AccountProvider.jsx";
 import VoertuigselectieFrontoffice from "./Frontoffice/VoertuigselectieFrontoffice.jsx";
 import VoertuigenSelectieZakelijkHuurder from "./ZakelijkHuurder/VoertuigenSelectieZakelijkHuurder.jsx";
@@ -51,6 +52,8 @@ function App() {
                     <Route path="/VoertuigenSelectieZakelijkHuurder" element={<VoertuigenSelectieZakelijkHuurder />} />
                     <Route path="*" element={<Pagina404 />}/>
                     <Route path="/ProfielParticulier" element={<ProfielWijzigen />} />
+                    <Route path="/ProfielPagina" element={<ProfielPagina />} />
+                    <Route path="/ProfielWijzigen" element={<ProfielWijzigen />} />
                 </Routes>
             </div>
           </Router>
