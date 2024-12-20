@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import { useAccount } from "../Login/AccountProvider.jsx"; // Zorg dat de context beschikbaar is
-import "./VoertuigenSelectie.css"; // Hergebruik de CSS
-import carAndAllLogo from './assets/CarAndAll_Logo.webp'; // Gebruik dezelfde afbeelding
+//import "./VoertuigenSelectie.css"; // Hergebruik de CSS
+//import carAndAllLogo from './assets/CarAndAll_Logo.webp'; // Gebruik dezelfde afbeelding
 
 const Reserveringen = () => {
     const [reserveringen, setReserveringen] = useState([]); // State voor reserveringen
