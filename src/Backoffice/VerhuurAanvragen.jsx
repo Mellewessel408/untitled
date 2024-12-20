@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import "../VoertuigenSelectie.css";
+
 import logo from '../assets/CarAndAll_Logo.webp';
 import { AccountProvider, useAccount } from "../Login/AccountProvider.jsx";
 import carAndAllLogo from "../assets/CarAndAll_Logo.webp"; // Gebruik de useAccount hook om de context te gebruiken
@@ -14,7 +15,7 @@ function VerhuurAanvragen() {
     const [error, setError] = useState(null);
     const [showCommentField, setShowCommentField] = useState(false);
     const [comment, setComment] = useState("");
-    const [selectedCarId, setSelectedCarId] = useState(null);
+    const [selectedReserveringId, setSelectedReserveringId] = useState(null);
     const [selectedAction, setSelectedAction] = useState(null);
     const apiBaseUrl = `https://localhost:44318/api/Voertuig`;
 
@@ -27,7 +28,7 @@ function VerhuurAanvragen() {
     useEffect(() => {
         const fetchVoertuigen = async () => {
             try {
-                const url = `${apiBaseUrl}/gereserveerdevoertuigen`;
+                const url = `${apiBaseUrl}/reserveringen`;
                 const response = await fetch(url);
                 if (!response.ok) {
                     throw new Error("Netwerkfout: " + response.statusText);
@@ -40,7 +41,7 @@ function VerhuurAanvragen() {
                 setLoading(false); // Set loading to false after data is fetched
             } catch (err) {
                 console.log(err)
-                setError("Kan voertuigen niet ophalen"); // Set error if fetch fails
+                setError("Kan reserveringen niet ophalen"); // Set error if fetch fails
                 setLoading(false); // Set loading to false after error
             }
         };
@@ -51,10 +52,14 @@ function VerhuurAanvragen() {
         LogUit(); // Roep de logout-functie aan
         navigate('/Inlogpagina'); // Navigeren naar inlogpagina
     };
+    const handleHoofdmenu = () => {
+        navigate('/HoofdschermBackoffice'); // Navigeren naar inlogpagina
+    };
+
     const handleGoedkeuren = (id) => {
-        setSelectedCarId(id)
+        setSelectedReserveringId(id);
         setShowCommentField(true); // Toon het commentaarveld
-        setSelectedAction("Goedkeuren");
+        setSelectedAction(true);
     };
 
     const handleCommentChange = (e, id) => {
@@ -65,14 +70,14 @@ function VerhuurAanvragen() {
         event.preventDefault(); // Voorkomt dat het formulier standaard wordt ingediend
 
         const data = {
-            voertuigId : id,
+            reserveringId : id,
             comment : comment,
             keuze : selectedAction
         }
 
         try {
             // Verstuur het POST-verzoek naar de backend
-            await fetch('https://localhost:44318/api/accountmedewerkerbackoffice', {
+            await fetch('https://localhost:44318/api/accountmedewerkerbackoffice/verhuuraanvraagkeuren', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data),
@@ -89,7 +94,7 @@ function VerhuurAanvragen() {
     const handleCommentSubmit = (id) => {
         alert(`Commentaar verzonden: ${comment} voor ${id}`);
         setShowCommentField(false);
-        setSelectedCarId(null)
+        setSelectedReserveringId(null)
         setComment("");
         verstuurdata(id);
     };
@@ -99,9 +104,9 @@ function VerhuurAanvragen() {
         navigate('/Inlogpagina');
     };
     const handleAfkeuren = (id) => {
-        setSelectedCarId(id)
+        setSelectedReserveringId(id)
         setShowCommentField(true);
-        setSelectedAction("Afkeuren");
+        setSelectedAction(false);
     };
 
     return (
@@ -109,16 +114,20 @@ function VerhuurAanvragen() {
 
             <header className="header">
                 <h1>Verhuur aanvragen goedkeuren</h1>
+                <button className="logout-button small" onClick={handleHoofdmenu}>
+                    Hoofdmenu
+                </button>
                 <button className="logout-button small" onClick={handleLogout}>
                     Log uit
                 </button>
+
             </header>
             <div className="voertuigen-grid">
                 {voertuigen.length === 0 ? (
                     <div className="no-vehicles">Geen voertuigen gevonden</div>
                 ) : (
                     voertuigen.map((voertuig) => (
-                        <div key={voertuig.voertuigId} className="voertuig-card">
+                        <div key={voertuig.reserveringId} className="voertuig-card">
                             <div className="voertuig-photo">
                                 <img
                                     className="voertuig-photo"
@@ -133,29 +142,31 @@ function VerhuurAanvragen() {
                                 <p><strong>Kleur:</strong> {voertuig.kleur}</p>
                                 <p><strong>Aanschafjaar:</strong> {voertuig.aanschafjaar}</p>
                                 <p><strong>Prijs:</strong> €{voertuig.prijs}</p>
+                                <p><strong>Begindatum:</strong> {voertuig.begindatum}</p>
+                                <p><strong>Einddatum:</strong> {voertuig.einddatum}</p>
                                 <p><strong>Status:</strong> {voertuig.voertuigStatus}</p>
-                                <button onClick={() => handleGoedkeuren(voertuig.voertuigId)}
-                                    style={{
-                                    backgroundColor: selectedAction === "Goedkeuren" && selectedCarId === voertuig.voertuigId ? 'grey' : '#040404',
-                                }}
-                                        >
+                                <button onClick={() => handleGoedkeuren(voertuig.ReserveringId)}
+                                        style={{
+                                            backgroundColor: selectedAction === true && selectedReserveringId === voertuig.reserveringId ? 'grey' : '#040404',
+                                        }}
+                                >
                                     Goedkeuren
                                 </button>
-                                <button onClick={() => handleAfkeuren(voertuig.voertuigId)}
+                                <button onClick={() => handleAfkeuren(voertuig.reserveringId)}
                                         style={{
-                                            backgroundColor: selectedAction === "Afkeuren" && selectedCarId === voertuig.voertuigId ? 'grey' : '#040404',
+                                            backgroundColor: selectedAction === false && selectedReserveringId === voertuig.reserveringId ? 'grey' : '#040404',
                                         }}>
                                     Afkeuren
                                 </button>
                             </div>
-                            {selectedCarId === voertuig.voertuigId && (
+                            {selectedReserveringId === voertuig.reserveringId && (
                                 <div >
                                       <textarea
                                           placeholder="Voeg hier een opmerking toe..."
                                           value={comment}
-                                          onChange={(e) => handleCommentChange(e, voertuig.voertuigId)}
+                                          onChange={(e) => handleCommentChange(e, voertuig.reserveringId)}
                                       />
-                                    <button  onClick={() => handleCommentSubmit(voertuig.voertuigId)}>
+                                    <button  onClick={() => handleCommentSubmit(voertuig.reserveringId)}>
                                         Verzenden
                                     </button>
                                 </div>
