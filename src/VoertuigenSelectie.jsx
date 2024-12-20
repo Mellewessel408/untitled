@@ -1,26 +1,23 @@
-import React, { useEffect, useRef, useState } from "react";
-import flatpickr from "flatpickr"; // Importeer Flatpickr
-import "flatpickr/dist/flatpickr.min.css"; // Importeer de Flatpickr CSS
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAccount } from "./Login/AccountProvider.jsx";
 import "./VoertuigenSelectie.css";
 import carAndAllLogo from './assets/CarAndAll_Logo.webp';
 
 const VoertuigenComponent = () => {
-    const [voertuigen, setVoertuigen] = useState([]); // State for storing vehicles
-    const [loading, setLoading] = useState(true); // State for loading status
-    const [error, setError] = useState(null); // State for handling errors
-    const [searchTerm, setSearchTerm] = useState(""); // Search term for merk and model
-    const [filteredVoertuigen, setFilteredVoertuigen] = useState([]); // Filtered vehicles
+    const [voertuigen, setVoertuigen] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [filteredVoertuigen, setFilteredVoertuigen] = useState([]);
+    const [begindatum, setBegindatum] = useState(null);
+    const [einddatum, setEinddatum] = useState(null);
 
-    const { currentAccountId, logout } = useAccount(); // Haal de currentAccountId uit de context
+    const { currentAccountId, logout } = useAccount();
     const navigate = useNavigate();
     const apiBaseUrl = `https://localhost:44318/api/Voertuig`;
 
-    // Ref voor het datumveld
-    const datePickerRef = useRef();
-
-    // Fetch voertuigen
+    // Haal de voertuigen op
     useEffect(() => {
         if (currentAccountId === 0) {
             alert("U bent ingelogd zonder AccountId");
@@ -28,7 +25,7 @@ const VoertuigenComponent = () => {
         }
         const fetchVoertuigen = async () => {
             try {
-                const url = `${apiBaseUrl}/krijgallevoertuigen`;
+                const url = '${apiBaseUrl}/krijgallevoertuigen?begindatum=' + begindatum + '&einddatum=' + einddatum;
                 const response = await fetch(url);
                 if (!response.ok) {
                     throw new Error("Netwerkfout: " + response.statusText);
@@ -44,7 +41,7 @@ const VoertuigenComponent = () => {
             }
         };
 
-        fetchVoertuigen();
+        fetchVoertuigen(); //eruit
     }, []);
 
     // Filter voertuigen
@@ -71,11 +68,30 @@ const VoertuigenComponent = () => {
     };
 
     // Reserveer functie
-    const handleReserveer = async (voertuigId) => {
+    const handleReserveer = async (voertuigId, Prijs, voertuigStatus) => {
+        if (voertuigStatus != "Beschikbaar") {
+            alert("Dit voertuig is al gereserveerd");
+            return;
+        }
+
+        const data = {
+            begindatum: begindatum,
+            einddatum: einddatum,
+            totaalPrijs: Prijs,
+            voertuigId: voertuigId,
+            AccountId: currentAccountId
+        };
+
         try {
-            const response = await fetch(`${apiBaseUrl}/reserveer/${voertuigId}`, {
+            const url = new URL("https://localhost:44318/api/Reservering/PostReservering");
+            var response = await fetch(url, {
                 method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
             });
+            alert("Voertuig Gereserveerd!");
 
             if (!response.ok) {
                 const errorText = await response.text();
@@ -83,8 +99,7 @@ const VoertuigenComponent = () => {
                 return;
             }
 
-            const successMessage = await response.text();
-            alert(successMessage);
+            alert("Reservering succesvol");
 
             const updatedVoertuigen = voertuigen.map((voertuig) =>
                 voertuig.voertuigId === voertuigId ? { ...voertuig, voertuigStatus: "Gereserveerd" } : voertuig
@@ -95,21 +110,6 @@ const VoertuigenComponent = () => {
             alert("Er is een probleem opgetreden bij het reserveren van het voertuig.");
         }
     };
-
-    // Initialiseer Flatpickr
-    useEffect(() => {
-        if (datePickerRef.current) {
-            flatpickr(datePickerRef.current, {
-                dateFormat: "d-m-Y",
-                altInput: true,
-                altFormat: "F j, Y",
-                minDate: "today",
-                maxDate: new Date().fp_incr(365),
-                weekNumbers: true,
-                mode: "range",
-            });
-        }
-    }, []);
 
     if (loading) return <div className="loading">Laden...</div>;
     if (error) return <div className="error">{error}</div>;
@@ -122,15 +122,22 @@ const VoertuigenComponent = () => {
                     Log uit
                 </button>
             </header>
-            {/* Flatpickr invoerveld */}
-
             <div className="search-filter">
                 <input
-                    type="text"
-                    ref={datePickerRef}
+                    type="date"
+                    placeholder="Kies begindatum"
                     className="flatpickr-calander"
-                    id="start"
-                    placeholder="Kies een datum"
+                    value={begindatum}
+                    onChange={(e) => setBegindatum(e.target.value)}
+                    min={new Date().toISOString().split('T')[0]}
+                />
+                <input
+                    type="date"
+                    placeholder="Kies einddatum"
+                    className="flatpickr-calander"
+                    value={einddatum}
+                    onChange={(e) => setEinddatum(e.target.value)}
+                    min={begindatum || new Date().toISOString().split('T')[0]}
                 />
                 <input
                     type="text"
@@ -145,35 +152,35 @@ const VoertuigenComponent = () => {
                     <div className="no-vehicles">Geen voertuigen gevonden</div>
                 ) : (
                     filteredVoertuigen.map((voertuig) => (
-                            <div key={voertuig.voertuigId} className="voertuig-card">
-                                <div className="voertuig-photo">
-                                    <img
-                                        className="voertuig-photo"
-                                        src={carAndAllLogo}
-                                        alt="CarAndAll Logo"
-                                    />
-                                </div>
-                                <div className="voertuig-info">
-                                    <h3 className="kenteken">{voertuig.kenteken}</h3>
-                                    <p><strong>Merk:</strong> {voertuig.merk}</p>
-                                    <p><strong>Model:</strong> {voertuig.model}</p>
-                                    <p><strong>Kleur:</strong> {voertuig.kleur}</p>
-                                    <p><strong>Aanschafjaar:</strong> {voertuig.aanschafjaar}</p>
-                                    <p><strong>Prijs:</strong> €{voertuig.prijs}</p>
-                                    <p><strong>Status:</strong> {voertuig.voertuigStatus}</p>
-                                    <button
-                                        className="reserveer-button"
-                                        onClick={() => handleReserveer(voertuig.voertuigId)}
-                                    >
-                                        Reserveer
-                                    </button>
-                                </div>
+                        <div key={voertuig.voertuigId} className="voertuig-card">
+                            <div className="voertuig-photo">
+                                <img
+                                    className="voertuig-photo"
+                                    src={carAndAllLogo}
+                                    alt="CarAndAll Logo"
+                                />
                             </div>
-                        ))
-                    )}
-                </div>
+                            <div className="voertuig-info">
+                                <h3 className="kenteken">{voertuig.kenteken}</h3>
+                                <p><strong>Merk:</strong> {voertuig.merk}</p>
+                                <p><strong>Model:</strong> {voertuig.model}</p>
+                                <p><strong>Kleur:</strong> {voertuig.kleur}</p>
+                                <p><strong>Aanschafjaar:</strong> {voertuig.aanschafjaar}</p>
+                                <p><strong>Prijs:</strong> €{voertuig.prijs}</p>
+                                <p><strong>Status:</strong> {voertuig.voertuigStatus}</p>
+                                <button
+                                    className="reserveer-button"
+                                    onClick={() => handleReserveer(voertuig.voertuigId, voertuig.prijs, voertuig.voertuigStatus)}
+                                >
+                                    Reserveer
+                                </button>
+                            </div>
+                        </div>
+                    ))
+                )}
             </div>
-            );
-            };
+        </div>
+    );
+};
 
-            export default VoertuigenComponent;
+export default VoertuigenComponent;

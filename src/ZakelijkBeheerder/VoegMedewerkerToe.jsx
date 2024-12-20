@@ -112,6 +112,7 @@ console.log(data);
             if (response.ok) {
                 // Als de request succesvol is
                 console.log('Account succesvol aangemaakt');
+                alert("Huurder Account succesvol aangemaakt!");
                 navigate('/HoofdschermZakelijkBeheerder');
             } else {
                 // Als de request niet succesvol is (bijvoorbeeld BadRequest)

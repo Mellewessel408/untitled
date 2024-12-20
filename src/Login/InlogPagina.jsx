@@ -63,7 +63,13 @@ function InlogPagina() {
                 <h1>Inloggen</h1>
 
 
-                <select value={gebruiker} onChange={(e) => setGebruiker(e.target.value)}>
+                <label htmlFor="Kies-type-gebruiker">Kies type gebruiker</label>
+                <select
+                    id="Kies-type-gebruiker"
+                    value={gebruiker}
+                    onChange={(e) => setGebruiker(e.target.value)}
+                    aria-labelledby="Kies-type-gebruiker" // Geeft extra duidelijkheid voor schermlezers
+                >
                     <option value="Particulier">Particulier</option>
                     <option value="Backoffice">Backoffice</option>
                     <option value="Frontoffice">Frontoffice</option>

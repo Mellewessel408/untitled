@@ -133,7 +133,7 @@ function RegistreerBedrijf() {
 
                 <div>
                     <label htmlFor="typeAbonnement">Type Abonnement:</label>
-                    <select value={abonnement} onChange={(e) => setAbonnement(e.target.value)}>
+                    <select id="typeAbonnement" value={abonnement} onChange={(e) => setAbonnement(e.target.value)}>
                         <option value="Pay-As-You-Go">Pay-As-You-Go</option>
                         <option value="UpFront">UpFront</option>
                     </select>

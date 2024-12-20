@@ -21,10 +21,11 @@ function MedewerkerVerwijderen() {
 
 
 
-    const DeleteMedewerker = async () => {
+    const DeleteMedewerker = async (event) => {
+        event.preventDefault(); // Voorkom dat de pagina herlaadt
         const formData = new FormData(event.target);
         const email = formData.get('email');
-        try{
+        try {
             const url = new URL("https://localhost:44318/api/Bedrijf/BeheerderVerwijdertHuurder?id=" + currentAccountId + "&email=" + email);
             await fetch(url, {
                 method: 'DELETE',
@@ -32,13 +33,13 @@ function MedewerkerVerwijderen() {
                     'Content-Type': 'application/json',
                 }
             });
-            alert("Medewerker gedelete");
+            alert("Medewerker Verwijderd!");
+            navigate('/HoofdschermZakelijkBeheerder');
         } catch (error) {
             console.error('Fout bij het versturen van het verzoek:', error);
-            alert('Er is een fout opgetreden. Probeer het later opnieuw.');
-            return null;
+            alert('Fout ingevuld emailadres.');
         }
-    }
+    };
 
     return (
         <div className="container">
@@ -49,7 +50,7 @@ function MedewerkerVerwijderen() {
             <form onSubmit={DeleteMedewerker}>
                 <div>
                     <label htmlFor="email">Huurder email:</label>
-                    <input type="text" id="email" name="email" required placeholder="Email wat je wilt verwijderen..."/>
+                    <input type="email" id="email" name="email" required placeholder="Email wat je wilt verwijderen..."/>
                 </div>
                 <div>
 
