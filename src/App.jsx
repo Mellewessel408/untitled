@@ -16,7 +16,8 @@ import VoertuigselectieFrontoffice from "./Frontoffice/VoertuigselectieFrontoffi
 import VoertuigenSelectieZakelijkHuurder from "./ZakelijkHuurder/VoertuigenSelectieZakelijkHuurder.jsx";
 import HoofdschermZakelijkHuurder from "./ZakelijkHuurder/HoofdschermZakelijkHuurder.jsx";
 import HoofdschermBackoffice from "./Backoffice/HoofdschermBackoffice.jsx";
-
+import AbonnementGoedkeuren from "./Backoffice/AbonnementGoedkeuren.jsx";
+import VerhuurAanvragen from "./Backoffice/VerhuurAanvragen.jsx";
 function App() {
     return (
         <AccountProvider>
@@ -51,6 +52,8 @@ function App() {
                     <Route path="*" element={<Pagina404 />}/>
                     <Route path="/ProfielParticulier" element={<ProfielWijzigen />} />
                     <Route path="/HoofdschermBackoffice" element={<HoofdschermBackoffice />} />
+                    <Route path="/HoofdschermBackoffice/AbonnementGoedKeuren" element={<AbonnementGoedkeuren />} />
+                    <Route path="/HoofdschermBackoffice/VerhuurAanvragen" element={<VerhuurAanvragen />} />
                 </Routes>
             </div>
           </Router>
