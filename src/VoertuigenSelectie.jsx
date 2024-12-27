@@ -83,7 +83,7 @@ const VoertuigenComponent = () => {
         };
 
         try {
-            const url = new URL("https://localhost:44318/api/Reservering/PostReservering");
+            const url = new URL("https://localhost:44318/api/Voertuig/reserveerVoertuig");
             var response = await fetch(url, {
                 method: 'POST',
                 headers: {
