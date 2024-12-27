@@ -12,6 +12,7 @@ const VoertuigenComponent = () => {
     const [filteredVoertuigen, setFilteredVoertuigen] = useState([]);
     const [begindatum, setBegindatum] = useState(null);
     const [einddatum, setEinddatum] = useState(null);
+    const [showDetails, setShowDetails] = useState(null); // Nieuw: Show details voor geselecteerd voertuig
 
     const { currentAccountId, logout } = useAccount();
     const navigate = useNavigate();
@@ -24,24 +25,24 @@ const VoertuigenComponent = () => {
             navigate('/inlogpagina');
         }
         const fetchVoertuigen = async () => {
+            setLoading(true);
             try {
-                const url = '${apiBaseUrl}/krijgallevoertuigen?begindatum=' + begindatum + '&einddatum=' + einddatum;
+                const url = `${apiBaseUrl}/krijgallevoertuigen`;
                 const response = await fetch(url);
                 if (!response.ok) {
-                    throw new Error("Netwerkfout: " + response.statusText);
+                    throw new Error(`Netwerkfout (${response.status}): ${response.statusText}`);
                 }
                 const data = await response.json();
-                const voertuigenArray = data.$values || [];
-                setVoertuigen(voertuigenArray);
-                setLoading(false);
+                setVoertuigen(data.$values || []);
             } catch (err) {
                 console.error(err);
-                setError("Kan voertuigen niet ophalen");
+                setError(`Kan voertuigen niet ophalen: ${err.message}`);
+            } finally {
                 setLoading(false);
             }
         };
 
-        fetchVoertuigen(); //eruit
+        fetchVoertuigen();
     }, []);
 
     // Filter voertuigen
@@ -69,7 +70,7 @@ const VoertuigenComponent = () => {
 
     // Reserveer functie
     const handleReserveer = async (voertuigId, Prijs, voertuigStatus) => {
-        if (voertuigStatus != "Beschikbaar") {
+        if (voertuigStatus !== "Beschikbaar") {
             alert("Dit voertuig is al gereserveerd");
             return;
         }
@@ -109,6 +110,11 @@ const VoertuigenComponent = () => {
             console.error("Fout bij reserveren:", error);
             alert("Er is een probleem opgetreden bij het reserveren van het voertuig.");
         }
+    };
+
+    // Functie om details van het voertuig weer te geven
+    const toggleDetails = (voertuigId) => {
+        setShowDetails(showDetails === voertuigId ? null : voertuigId); // Toggle details
     };
 
     if (loading) return <div className="loading">Laden...</div>;
@@ -168,12 +174,31 @@ const VoertuigenComponent = () => {
                                 <p><strong>Aanschafjaar:</strong> {voertuig.aanschafjaar}</p>
                                 <p><strong>Prijs:</strong> €{voertuig.prijs}</p>
                                 <p><strong>Status:</strong> {voertuig.voertuigStatus}</p>
-                                <button
-                                    className="reserveer-button"
-                                    onClick={() => handleReserveer(voertuig.voertuigId, voertuig.prijs, voertuig.voertuigStatus)}
-                                >
-                                    Reserveer
-                                </button>
+
+                                {/* Knoppen voor reserveren en details */}
+                                <div className="button-container">
+                                    <button
+                                        className="reserveer-button"
+                                        onClick={() => handleReserveer(voertuig.voertuigId, voertuig.prijs, voertuig.voertuigStatus)}
+                                    >
+                                        Reserveer
+                                    </button>
+                                    <button
+                                        className="details-button"
+                                        onClick={() => toggleDetails(voertuig.voertuigId)}
+                                    >
+                                        Details
+                                    </button>
+                                </div>
+
+                                {/* Details tonen als de knop is ingedrukt */}
+                                {showDetails === voertuig.voertuigId && (
+                                    <div className="voertuig-details">
+                                        <p><strong>VoertuigType:</strong> {voertuig.voertuigType}</p>
+                                        <p><strong>Details:</strong> Deze informatie is alleen zichtbaar wanneer je op
+                                            Details klikt.</p>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     ))
