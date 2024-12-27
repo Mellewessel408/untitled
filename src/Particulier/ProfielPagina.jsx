@@ -46,8 +46,8 @@ function ProfielPagina() {
                 <p><strong>Email:</strong> {accountDetails.email}</p>
                 <p><strong>Naam:</strong> {accountDetails.naam}</p>
                 <p><strong>Telefoonnummer:</strong> {accountDetails.telefoonnummer}</p>
-                <p><strong>Postcode:</strong> {accountDetails.postcode}</p>
-                <p><strong>Huisnummer:</strong> {accountDetails.huisnummer}</p>
+                <p><strong>Postcode:</strong> {accountDetails.adres.postcode}</p>
+                <p><strong>Huisnummer:</strong> {accountDetails.adres.huisnummer}</p>
             </div>
             <div className="button-container">
                 <button onClick={() => navigate('/ProfielWijzigen')}>Wijzigen</button>
