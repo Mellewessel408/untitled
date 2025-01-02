@@ -84,6 +84,12 @@ const MijnReserveringen = () => {
                                     >
                                         {showDetails === voertuig.voertuigId ? "Verberg Details" : "Toon Details"}
                                     </button>
+                                    <button
+                                        className="fetusDeletus"
+                                        onClick={() => handleReserveer(voertuig.voertuigId)}
+                                    >
+                                        Verwijder reservering
+                                    </button>
                                 </div>
 
                                 {/* Details tonen als de knop is ingedrukt */}

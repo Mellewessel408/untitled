@@ -114,7 +114,7 @@ const VoertuigenComponent = () => {
                 return;
             }
 
-            alert("Voertuig Gereserveerd!");
+            //alert("Voertuig Gereserveerd!");
 
 
             const updatedVoertuigen = voertuigen.map((voertuig) =>

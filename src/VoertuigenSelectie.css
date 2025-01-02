@@ -110,7 +110,7 @@
 
 /* Styling voor de Details knop */
 .details-button {
-    margin-top: 5px;
+    margin-top: 10px;
     padding: 8px 15px;
     background-color: #28a745;
     color: #fff;
@@ -182,4 +182,21 @@ p {
 
 h1 {
     margin: 0;
+}
+
+.fetusDeletus:hover {
+    background-color: red;
+    color: white;
+
+}
+
+.fetusDeletus {
+    background-color: #fbc5c5;
+    color: red;
+    margin-top: 10px;
+    padding: 8px 15px;
+
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
 }
