@@ -64,23 +64,23 @@ const VoertuigenComponent = () => {
 
 
 
-    const fetchVoertuigen = async (begindatum, einddatum) => {
-        setLoading(true);
-        try {
-            const url = `${apiBaseUrl}/krijgallevoertuigenDatum?begindatum=${begindatum}&einddatum=${einddatum}`;
-            const response = await fetch(url);
-            if (!response.ok) {
-                throw new Error(`Netwerkfout (${response.status}): ${response.statusText}`);
+        const fetchVoertuigen = async (begindatum, einddatum) => {
+            setLoading(true);
+            try {
+                const url = `${apiBaseUrl}/krijgallevoertuigenDatum?begindatum=${begindatum}&einddatum=${einddatum}`;
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`Netwerkfout (${response.status}): ${response.statusText}`);
+                }
+                const data = await response.json();
+                setVoertuigen(data.$values || []);
+            } catch (err) {
+                console.error(err);
+                setError(`Kan voertuigen niet ophalen: ${err.message}`);
+            } finally {
+                setLoading(false);
             }
-            const data = await response.json();
-            setVoertuigen(data.$values || []);
-        } catch (err) {
-            console.error(err);
-            setError(`Kan voertuigen niet ophalen: ${err.message}`);
-        } finally {
-            setLoading(false);
-        }
-    };
+        };
 
     // Logout functie
     const handleLogout = () => {
@@ -89,16 +89,11 @@ const VoertuigenComponent = () => {
     };
 
     // Reserveer functie
-    const handleReserveer = async (voertuigId, Prijs, voertuigStatus) => {
-        if (voertuigStatus !== "Beschikbaar") {
-            alert("Dit voertuig is al gereserveerd");
-            return;
-        }
+    const handleReserveer = async (voertuigId) => {
 
         const data = {
             begindatum: begindatum,
             einddatum: einddatum,
-            totaalPrijs: Prijs,
             voertuigId: voertuigId,
             AccountId: currentAccountId
         };
@@ -112,15 +107,15 @@ const VoertuigenComponent = () => {
                 },
                 body: JSON.stringify(data),
             });
-            alert("Voertuig Gereserveerd!");
+
 
             if (!response.ok) {
-                const Foutmelding = await response.text();
                 alert(`Fout bij reserveren: Vul een datum in.`);
                 return;
             }
 
-            alert("Reservering succesvol");
+            alert("Voertuig Gereserveerd!");
+
 
             const updatedVoertuigen = voertuigen.map((voertuig) =>
                 voertuig.voertuigId === voertuigId ? { ...voertuig, voertuigStatus: "Gereserveerd" } : voertuig
@@ -196,13 +191,12 @@ const VoertuigenComponent = () => {
                                 <h3 className="kenteken">{voertuig.kenteken}</h3>
                                 <p><strong>Merk:</strong> {voertuig.merk}</p>
                                 <p><strong>Model:</strong> {voertuig.model}</p>
-                                <p><strong>Status:</strong> {voertuig.voertuigStatus}</p>
-
+                                <p><strong>Voertuigtype:</strong> {voertuig.voertuigType}</p>
                                 {/* Knoppen voor reserveren en details */}
                                 <div className="button-container">
                                     <button
                                         className="reserveer-button"
-                                        onClick={() => handleReserveer(voertuig.voertuigId, voertuig.prijs, voertuig.voertuigStatus)}
+                                        onClick={() => handleReserveer(voertuig.voertuigId)}
                                     >
                                         Reserveer
                                     </button>
@@ -217,7 +211,7 @@ const VoertuigenComponent = () => {
                                 {/* Details tonen als de knop is ingedrukt */}
                                 {showDetails === voertuig.voertuigId && (
                                     <div className="voertuig-details">
-                                        <p><strong>VoertuigType:</strong> {voertuig.voertuigType}</p>
+
                                         <p><strong>Kleur:</strong> {voertuig.kleur}</p>
                                         <p><strong>Aanschafjaar:</strong> {voertuig.aanschafjaar}</p>
                                         <p><strong>BrandstofType:</strong> {voertuig.brandstofType}</p>
