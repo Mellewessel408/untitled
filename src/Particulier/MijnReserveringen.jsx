@@ -9,32 +9,58 @@ const MijnReserveringen = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [showDetails, setShowDetails] = useState(null);
+    const [deleting, setDeleting] = useState(null);
 
     const { currentAccountId, logout } = useAccount();
     const apiBaseUrl = `https://localhost:44318/api/Voertuig`;
 
     // Haal de voertuigen op
-    useEffect(() => {
-        const fetchReserveringen = async () => {
-            setLoading(true);
-            try {
-                const url = `${apiBaseUrl}/krijgallevoertuigenAccount?accountId=${currentAccountId}`;
-                const response = await fetch(url);
-                if (!response.ok) {
-                    throw new Error(`Netwerkfout (${response.status}): ${response.statusText}`);
-                }
-                const data = await response.json();
-                setReserveringen(data.$values || []);
-            } catch (err) {
-                console.error(err);
-                setError(`Kan voertuigen niet ophalen: ${err.message}`);
-            } finally {
-                setLoading(false);
+    const fetchReserveringen = async () => {
+        try {
+            const url = `${apiBaseUrl}/krijgallevoertuigenAccount?accountId=${currentAccountId}`;
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`Netwerkfout (${response.status}): ${response.statusText}`);
             }
-        };
+            const data = await response.json();
+            setReserveringen(data.$values || []);
+        } catch (err) {
+            console.error(err);
+            setError(`Kan voertuigen niet ophalen: ${err.message}`);
+        } finally {
+            setLoading(false);
+        }
+    };
 
+    useEffect(() => {
         fetchReserveringen();
     }, [currentAccountId]);
+
+    const DeleteReserveer = async (ReserveringId) => {
+        setDeleting(ReserveringId);
+        try {
+            const url = `https://localhost:44318/api/Reservering/VerwijderReservering?reserveringId=${ReserveringId}`;
+            const response = await fetch(url, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (response.ok) {
+                // Verwijder de reservering direct uit de lokale staat
+                setReserveringen((prevReserveringen) =>
+                    prevReserveringen.filter((reservering) => reservering.reserveringsId !== ReserveringId)
+                );
+            } else {
+                throw new Error(`Verwijderen mislukt: ${response.statusText}`);
+            }
+        } catch (error) {
+            console.error("Fout bij reserveren:", error);
+        } finally {
+            setDeleting(null);
+        }
+    };
 
     const formatDatum = (datum) => {
         const date = new Date(datum);
@@ -75,7 +101,6 @@ const MijnReserveringen = () => {
                                     <strong>Betalingsstatus:</strong> {voertuig.isBetaald ? "Betaald" : `Nog te betalen €${voertuig.totaalPrijs || 0}`}
                                 </p>
 
-
                                 {/* Knop voor details */}
                                 <div className="button-container">
                                     <button
@@ -86,9 +111,10 @@ const MijnReserveringen = () => {
                                     </button>
                                     <button
                                         className="fetusDeletus"
-                                        onClick={() => handleReserveer(voertuig.voertuigId)}
+                                        disabled={deleting === voertuig.reserveringsId}
+                                        onClick={() => DeleteReserveer(voertuig.reserveringsId)}
                                     >
-                                        Verwijder reservering
+                                        {deleting === voertuig.reserveringsId ? "Verwijderen..." : "Verwijder reservering"}
                                     </button>
                                 </div>
 
