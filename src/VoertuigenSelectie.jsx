@@ -117,10 +117,13 @@ const VoertuigenComponent = () => {
             //alert("Voertuig Gereserveerd!");
 
 
-            const updatedVoertuigen = voertuigen.map((voertuig) =>
-                voertuig.voertuigId === voertuigId ? { ...voertuig, voertuigStatus: "Gereserveerd" } : voertuig
+            setVoertuigen((prevVoertuigen) =>
+                prevVoertuigen.map((voertuig) =>
+                    voertuig.voertuigId === voertuigId
+                        ? { ...voertuig, voertuigStatus: "Gereserveerd" }
+                        : voertuig
+                )
             );
-            setVoertuigen(updatedVoertuigen);
         } catch (error) {
             console.error("Fout bij reserveren:", error);
             alert("Er is een probleem opgetreden bij het reserveren van het voertuig.");
