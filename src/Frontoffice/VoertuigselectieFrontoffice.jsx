@@ -1,55 +1,96 @@
-﻿import React, { useState, useEffect } from "react";
-import "../VoertuigenSelectie.css"; // Import CSS classes
-import carAndAllLogo from '../assets/CarAndAll_Logo.webp'; // Use one image
+﻿import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import "../VoertuigenSelectie.css";
+import carAndAllLogo from '../assets/CarAndAll_Logo.webp';
+import {useAccount} from "../Login/AccountProvider.jsx";
 
 const VoertuigenComponent = () => {
-    const [voertuigen, setVoertuigen] = useState([]); // State for storing vehicles
-    const [loading, setLoading] = useState(true); // State for loading status
-    const [error, setError] = useState(null); // State for handling errors
-    const [searchTerm, setSearchTerm] = useState(""); // Search term for merk and model
-    const [filteredVoertuigen, setFilteredVoertuigen] = useState([]); // Filtered vehicles
+    const [voertuigen, setVoertuigen] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [filteredVoertuigen, setFilteredVoertuigen] = useState([]);
+    const [begindatum, setBegindatum] = useState(null);
+    const [einddatum, setEinddatum] = useState(null);
+    const [showDetails, setShowDetails] = useState(null); // Nieuw: Show details voor geselecteerd voertuig
 
-    const apiBaseUrl = `https://localhost:44318/api/Voertuig`; // API endpoint to get all vehicles
-    const fetchVoertuigen = async () => {
-        try {
-            const url = `${apiBaseUrl}/krijgallevoertuigen`;
-            const response = await fetch(url);
-            if (!response.ok) {
-                throw new Error("Netwerkfout: " + response.statusText);
-            }
-            const data = await response.json();
+    const { currentAccountId, logout } = useAccount();
+    const navigate = useNavigate();
+    const apiBaseUrl = `https://localhost:44318/api/Voertuig`;
 
-            const voertuigenArray = data.$values || [];
-
-            setVoertuigen(voertuigenArray); // Set the vehicles data
-            setLoading(false); // Set loading to false after data is fetched
-        } catch (err) {
-            console.log(err)
-            setError("Kan voertuigen niet ophalen"); // Set error if fetch fails
-            setLoading(false); // Set loading to false after error
-        }
-    };
-    // Fetch voertuigen when the component is mounted
+    // Haal de voertuigen op
     useEffect(() => {
-        fetchVoertuigen();
-    }, []); // Run only on component mount
+        if (currentAccountId === 0) {
+            alert("U bent ingelogd zonder AccountId");
+            navigate('/inlogpagina');
+        }
+        const fetchVoertuigen = async () => {
+            setLoading(true);
+            try {
+                const url = `${apiBaseUrl}/krijgallevoertuigen`;
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`Netwerkfout (${response.status}): ${response.statusText}`);
+                }
+                const data = await response.json();
+                setVoertuigen(data.$values || []);
+            } catch (err) {
+                console.error(err);
+                setError(`Kan voertuigen niet ophalen: ${err.message}`);
+            } finally {
+                setLoading(false);
+            }
+        };
 
-    // Filter vehicles based on search term
+        fetchVoertuigen();
+    }, []);
+
+    // Filter voertuigen
     useEffect(() => {
         const filtered = voertuigen.filter((voertuig) => {
-            return (
-                voertuig.merk.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                voertuig.model.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                voertuig.kleur.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                voertuig.kenteken.toLowerCase().includes(searchTerm.toLowerCase())
-            );
+            return Object.keys(voertuig).some((key) => {
+                const value = voertuig[key];
+                if (typeof value === "string") {
+                    return value.toLowerCase().includes(searchTerm.toLowerCase());
+                }
+                if (typeof value === "number") {
+                    return value.toString().includes(searchTerm);
+                }
+                return false;
+            });
         });
-        setFilteredVoertuigen(filtered); // Update filtered vehicles based on search
-    }, [searchTerm, voertuigen]); // Run whenever searchTerm or vehicles changes
+        setFilteredVoertuigen(filtered);
+    }, [searchTerm, voertuigen]);
 
-    // Log out function (simple example, you can implement actual log out logic)
+
+
+    const fetchVoertuigen = async (begindatum, einddatum) => {
+        setLoading(true);
+        try {
+            const url = `${apiBaseUrl}/krijgallevoertuigenDatum?begindatum=${begindatum}&einddatum=${einddatum}`;
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`Netwerkfout (${response.status}): ${response.statusText}`);
+            }
+            const data = await response.json();
+            setVoertuigen(data.$values || []);
+        } catch (err) {
+            console.error(err);
+            setError(`Kan voertuigen niet ophalen: ${err.message}`);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Logout functie
     const handleLogout = () => {
-        alert("Logging out...");
+        logout();
+        navigate('/Inlogpagina');
+    };
+
+    // Functie om details van het voertuig weer te geven
+    const toggleDetails = (voertuigId) => {
+        setShowDetails(showDetails === voertuigId ? null : voertuigId); // Toggle details
     };
 
     if (loading) return <div className="loading">Laden...</div>;
@@ -102,13 +143,34 @@ const VoertuigenComponent = () => {
 
     return (
         <div className="voertuigen-container">
-            {/* Title */}
             <header className="header">
-                <h1>Status Updaten</h1>
+                <h1>Voertuig huren</h1>
+                <button className="logout-button small" onClick={handleLogout}>
+                    Log uit
+                </button>
             </header>
-
-            {/* Search Section */}
             <div className="search-filter">
+                <input
+                    type="date"
+                    placeholder="Kies begindatum"
+                    className="flatpickr-calander"
+                    value={begindatum}
+                    onChange={(e) => setBegindatum(e.target.value)}
+                    min={new Date().toISOString().split('T')[0]}
+                />
+                <input
+                    type="date"
+                    placeholder="Kies einddatum"
+                    className="flatpickr-calander"
+                    value={einddatum}
+                    onChange={(e) => {
+                        const newEinddatum = e.target.value; // Verkrijg de nieuwe waarde van het invoerveld
+                        setEinddatum(newEinddatum); // Werk de state bij
+                        fetchVoertuigen(begindatum, newEinddatum); // Roep fetchVoertuigen aan met de nieuwe waarde
+                    }}
+                    min={begindatum || new Date().toISOString().split('T')[0]}
+                />
+
                 <input
                     type="text"
                     placeholder="Zoek op merk of model"
@@ -117,8 +179,6 @@ const VoertuigenComponent = () => {
                     className="search-bar"
                 />
             </div>
-
-            {/* Grid of vehicles */}
             <div className="voertuigen-grid">
                 {filteredVoertuigen.length === 0 ? (
                     <div className="no-vehicles">Geen voertuigen gevonden</div>
@@ -136,10 +196,33 @@ const VoertuigenComponent = () => {
                                 <h3 className="kenteken">{voertuig.kenteken}</h3>
                                 <p><strong>Merk:</strong> {voertuig.merk}</p>
                                 <p><strong>Model:</strong> {voertuig.model}</p>
-                                <p><strong>Kleur:</strong> {voertuig.kleur}</p>
-                                <p><strong>Aanschafjaar:</strong> {voertuig.aanschafjaar}</p>
-                                <p><strong>Prijs:</strong> €{voertuig.prijs}</p>
-                                <button onClick={() => buttonevent(voertuig.voertuigId)}>{voertuig.voertuigStatus}</button>
+                                <p><strong>Voertuigtype:</strong> {voertuig.voertuigType}</p>
+                                {/* Knoppen voor reserveren en details */}
+                                <div className="button-container">
+                                    <button
+                                        className="reserveer-button"
+                                        onClick={() => buttonevent(voertuig.voertuigId)}
+                                    >
+                                        Reserveer
+                                    </button>
+                                    <button
+                                        className="details-button"
+                                        onClick={() => toggleDetails(voertuig.voertuigId)}
+                                    >
+                                        Details
+                                    </button>
+                                </div>
+
+                                {/* Details tonen als de knop is ingedrukt */}
+                                {showDetails === voertuig.voertuigId && (
+                                    <div className="voertuig-details">
+
+                                        <p><strong>Kleur:</strong> {voertuig.kleur}</p>
+                                        <p><strong>Aanschafjaar:</strong> {voertuig.aanschafjaar}</p>
+                                        <p><strong>BrandstofType:</strong> {voertuig.brandstofType}</p>
+                                        <p><strong>Prijs:</strong> €{voertuig.prijs}</p>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     ))
