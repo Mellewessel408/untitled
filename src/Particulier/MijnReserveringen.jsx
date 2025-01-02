@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { useAccount } from "../Login/AccountProvider.jsx";
 import "../VoertuigenSelectie.css";
 import carAndAllLogo from '../assets/CarAndAll_Logo.webp';
 
@@ -10,8 +10,6 @@ const MijnReserveringen = () => {
     const [error, setError] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
     const [filteredVoertuigen, setFilteredVoertuigen] = useState([]);
-    const [begindatum, setBegindatum] = useState(null);
-    const [einddatum, setEinddatum] = useState(null);
     const [showDetails, setShowDetails] = useState(null); // Nieuw: Show details voor geselecteerd voertuig
 
     const { currentAccountId, logout } = useAccount();
@@ -27,7 +25,7 @@ const MijnReserveringen = () => {
         const fetchVoertuigen = async () => {
             setLoading(true);
             try {
-                const url = `${apiBaseUrl}/krijgallevoertuigen`;
+                const url = `${apiBaseUrl}/krijgallevoertuigenAccount?accountId=${currentAccountId}`;
                 const response = await fetch(url);
                 if (!response.ok) {
                     throw new Error(`Netwerkfout (${response.status}): ${response.statusText}`);
@@ -64,69 +62,12 @@ const MijnReserveringen = () => {
 
 
 
-    const fetchVoertuigen = async (begindatum, einddatum) => {
-        setLoading(true);
-        try {
-            const url = `${apiBaseUrl}/krijgallevoertuigenDatum?begindatum=${begindatum}&einddatum=${einddatum}`;
-            const response = await fetch(url);
-            if (!response.ok) {
-                throw new Error(`Netwerkfout (${response.status}): ${response.statusText}`);
-            }
-            const data = await response.json();
-            setVoertuigen(data.$values || []);
-        } catch (err) {
-            console.error(err);
-            setError(`Kan voertuigen niet ophalen: ${err.message}`);
-        } finally {
-            setLoading(false);
-        }
-    };
+
 
     // Logout functie
     const handleLogout = () => {
         logout();
         navigate('/Inlogpagina');
-    };
-
-    // Reserveer functie
-    const handleReserveer = async (voertuigId) => {
-
-
-        const data = {
-            begindatum: begindatum,
-            einddatum: einddatum,
-            voertuigId: voertuigId,
-            AccountId: currentAccountId
-        };
-
-        try {
-            const url = new URL("https://localhost:44318/api/Voertuig/reserveerVoertuig");
-            var response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
-            });
-
-
-            if (!response.ok) {
-                const errorText = await response.text();
-                alert(`Fout bij reserveren: ${errorText}`);
-                return;
-            }
-
-            alert("Reservering succesvol");
-
-            const updatedVoertuigen = voertuigen.map((voertuig) =>
-                voertuig.voertuigId === voertuigId ? { ...voertuig, voertuigStatus: "Gereserveerd" } : voertuig
-            );
-            setVoertuigen(updatedVoertuigen);
-        } catch (error) {
-            console.error("Fout bij reserveren:", error);
-            alert("Er is een probleem opgetreden bij het reserveren van het voertuig.");
-        }
-        fetchVoertuigen(begindatum, einddatum);
     };
 
     // Functie om details van het voertuig weer te geven
@@ -140,33 +81,12 @@ const MijnReserveringen = () => {
     return (
         <div className="voertuigen-container">
             <header className="header">
-                <h1>Voertuig huren</h1>
+                <h1>Mijn Reserveringen</h1>
                 <button className="logout-button small" onClick={handleLogout}>
                     Log uit
                 </button>
             </header>
             <div className="search-filter">
-                <input
-                    type="date"
-                    placeholder="Kies begindatum"
-                    className="flatpickr-calander"
-                    value={begindatum}
-                    onChange={(e) => setBegindatum(e.target.value)}
-                    min={new Date().toISOString().split('T')[0]}
-                />
-                <input
-                    type="date"
-                    placeholder="Kies einddatum"
-                    className="flatpickr-calander"
-                    value={einddatum}
-                    onChange={(e) => {
-                        const newEinddatum = e.target.value; // Verkrijg de nieuwe waarde van het invoerveld
-                        setEinddatum(newEinddatum); // Werk de state bij
-                        fetchVoertuigen(begindatum, newEinddatum); // Roep fetchVoertuigen aan met de nieuwe waarde
-                    }}
-                    min={begindatum || new Date().toISOString().split('T')[0]}
-                />
-
                 <input
                     type="text"
                     placeholder="Zoek op merk of model"
@@ -195,16 +115,10 @@ const MijnReserveringen = () => {
                                 <p><strong>Kleur:</strong> {voertuig.kleur}</p>
                                 <p><strong>Aanschafjaar:</strong> {voertuig.aanschafjaar}</p>
                                 <p><strong>Prijs:</strong> €{voertuig.prijs}</p>
-                                <p><strong>ID:</strong> {voertuig.voertuigId}</p>
 
-                                {/* Knoppen voor reserveren en details */}
+                                {/* Knop voor details */}
                                 <div className="button-container">
-                                    <button
-                                        className="reserveer-button"
-                                        onClick={() => handleReserveer(voertuig.voertuigId)}
-                                    >
-                                        Reserveer
-                                    </button>
+
                                     <button
                                         className="details-button"
                                         onClick={() => toggleDetails(voertuig.voertuigId)}
