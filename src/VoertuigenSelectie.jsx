@@ -89,12 +89,16 @@ const VoertuigenComponent = () => {
     };
 
     // Reserveer functie
-    const handleReserveer = async (voertuigId) => {
-
+    const handleReserveer = async (voertuigId, Prijs, voertuigStatus) => {
+        if (voertuigStatus !== "Beschikbaar") {
+            alert("Dit voertuig is al gereserveerd");
+            return;
+        }
 
         const data = {
             begindatum: begindatum,
             einddatum: einddatum,
+            totaalPrijs: Prijs,
             voertuigId: voertuigId,
             AccountId: currentAccountId
         };
@@ -108,7 +112,7 @@ const VoertuigenComponent = () => {
                 },
                 body: JSON.stringify(data),
             });
-
+            alert("Voertuig Gereserveerd!");
 
             if (!response.ok) {
                 const errorText = await response.text();
@@ -192,10 +196,7 @@ const VoertuigenComponent = () => {
                                 <h3 className="kenteken">{voertuig.kenteken}</h3>
                                 <p><strong>Merk:</strong> {voertuig.merk}</p>
                                 <p><strong>Model:</strong> {voertuig.model}</p>
-                                <p><strong>Kleur:</strong> {voertuig.kleur}</p>
-                                <p><strong>Aanschafjaar:</strong> {voertuig.aanschafjaar}</p>
-                                <p><strong>Prijs:</strong> €{voertuig.prijs}</p>
-                                <p><strong>ID:</strong> {voertuig.voertuigId}</p>
+                                <p><strong>Status:</strong> {voertuig.voertuigStatus}</p>
 
                                 {/* Knoppen voor reserveren en details */}
                                 <div className="button-container">
@@ -217,8 +218,10 @@ const VoertuigenComponent = () => {
                                 {showDetails === voertuig.voertuigId && (
                                     <div className="voertuig-details">
                                         <p><strong>VoertuigType:</strong> {voertuig.voertuigType}</p>
-                                        <p><strong>Details:</strong> Deze informatie is alleen zichtbaar wanneer je op
-                                            Details klikt.</p>
+                                        <p><strong>Kleur:</strong> {voertuig.kleur}</p>
+                                        <p><strong>Aanschafjaar:</strong> {voertuig.aanschafjaar}</p>
+                                        <p><strong>BrandstofType:</strong> {voertuig.brandstofType}</p>
+                                        <p><strong>Prijs:</strong> €{voertuig.prijs}</p>
                                     </div>
                                 )}
                             </div>
