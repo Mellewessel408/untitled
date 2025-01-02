@@ -31,6 +31,22 @@ function ProfielPagina() {
         fetchAccountDetails();
     }, [currentAccountId]);
 
+    const Telefoonnummer = ( telefoonnummer ) => {
+        if (!telefoonnummer) {
+            return <p>Onbekend</p>;
+        }
+        const stringnummer = String(telefoonnummer);
+        const formattedNumber = `06 ${stringnummer.slice(1, 9)}`;
+
+        return <p>{formattedNumber}</p>;
+    };
+
+
+
+
+
+
+
     if (!accountDetails) {
         return <p>Gegevens laden...</p>;
     }
@@ -43,11 +59,12 @@ function ProfielPagina() {
             <h1>Profiel</h1>
 
             <div>
-                <p><strong>Email:</strong> {accountDetails.email}</p>
-                <p><strong>Naam:</strong> {accountDetails.naam}</p>
-                <p><strong>Telefoonnummer:</strong> {accountDetails.telefoonnummer}</p>
-                <p><strong>Postcode:</strong> {accountDetails.adres.postcode}</p>
-                <p><strong>Huisnummer:</strong> {accountDetails.adres.huisnummer}</p>
+                <p><strong>Email:</strong> <br/> {accountDetails.email}</p>
+                <p><strong>Naam:</strong> <br/> {accountDetails.naam}</p>
+                <p><strong>Telefoonnummer:</strong><br/> {Telefoonnummer(accountDetails.telefoonnummer)}</p>
+                <p><strong>Woonplaats:</strong> <br/>{accountDetails.adres.woonplaats}</p>
+                <p><strong>Straat:</strong> <br/>{accountDetails.adres.straatnaam}</p>
+                <p><strong>Huisnummer:</strong><br/> {accountDetails.adres.huisnummer}</p>
             </div>
             <div className="button-container">
                 <button onClick={() => navigate('/ProfielWijzigen')}>Wijzigen</button>

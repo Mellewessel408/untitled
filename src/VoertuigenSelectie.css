@@ -43,8 +43,8 @@
     width: 100%;
     max-width: 1200px;
     margin-top: 20px;
-    max-height: 500px; /* Voorkomt dat de grid kleiner wordt */
-    overflow-y: auto; /* Scrollbaar als de inhoud te groot is */
+    max-height: 33rem; /* Voorkomt dat de grid kleiner wordt */
+    overflow-y: scroll;
 }
 
 /* Kaart voor elk voertuig */
@@ -70,7 +70,7 @@
 
 /* Styling voor de voertuig-informatie */
 .voertuig-info {
-    margin-top: 15px;
+    margin-top: 5px;
     text-align: center;
     display: flex;
     flex-direction: column; /* Zorg ervoor dat alles onder elkaar komt */
@@ -175,4 +175,11 @@
     flex-direction: column;
     align-items: center;
     height: auto; /* Zorg ervoor dat de card zich aanpast aan de inhoud */
+}
+p {
+    margin: 5px;
+}
+
+h1 {
+    margin: 0;
 }

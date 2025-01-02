@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAccount } from "./Login/AccountProvider.jsx";
-import "./VoertuigenSelectie.css";
-import carAndAllLogo from './assets/CarAndAll_Logo.webp';
 
-const VoertuigenComponent = () => {
+import "../VoertuigenSelectie.css";
+import carAndAllLogo from '../assets/CarAndAll_Logo.webp';
+
+const MijnReserveringen = () => {
     const [voertuigen, setVoertuigen] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -230,4 +230,4 @@ const VoertuigenComponent = () => {
     );
 };
 
-export default VoertuigenComponent;
+export default MijnReserveringen;

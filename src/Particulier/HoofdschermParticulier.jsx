@@ -20,7 +20,7 @@ function HoofdschermParticulier() {
     };
 
     const MijnReservering = () => {
-        // Voeg actie toe voor MijnReservering als dat nodig is
+        navigate('MijnReserveringen');
     };
 
     const MijnProfiel = () => {
