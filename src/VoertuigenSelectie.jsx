@@ -115,8 +115,8 @@ const VoertuigenComponent = () => {
             alert("Voertuig Gereserveerd!");
 
             if (!response.ok) {
-                const errorText = await response.text();
-                alert(`Fout bij reserveren: ${errorText}`);
+                const Foutmelding = await response.text();
+                alert(`Fout bij reserveren: Vul een datum in.`);
                 return;
             }
 
