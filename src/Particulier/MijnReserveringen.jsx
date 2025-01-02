@@ -5,7 +5,7 @@ import "../VoertuigenSelectie.css";
 import carAndAllLogo from '../assets/CarAndAll_Logo.webp';
 
 const MijnReserveringen = () => {
-    const [voertuigen, setVoertuigen] = useState([]);
+    const [reserveringen, setReserveringen] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
@@ -21,8 +21,10 @@ const MijnReserveringen = () => {
         if (currentAccountId === 0) {
             alert("U bent ingelogd zonder AccountId");
             navigate('/inlogpagina');
+            return;
         }
-        const fetchVoertuigen = async () => {
+
+        const fetchReserveringen = async () => {
             setLoading(true);
             try {
                 const url = `${apiBaseUrl}/krijgallevoertuigenAccount?accountId=${currentAccountId}`;
@@ -31,7 +33,7 @@ const MijnReserveringen = () => {
                     throw new Error(`Netwerkfout (${response.status}): ${response.statusText}`);
                 }
                 const data = await response.json();
-                setVoertuigen(data.$values || []);
+                setReserveringen(data.reserveringen || []);
             } catch (err) {
                 console.error(err);
                 setError(`Kan voertuigen niet ophalen: ${err.message}`);
@@ -40,12 +42,15 @@ const MijnReserveringen = () => {
             }
         };
 
-        fetchVoertuigen();
-    }, []);
+        fetchReserveringen();
+    }, [currentAccountId, navigate]);
+
+
+
 
     // Filter voertuigen
     useEffect(() => {
-        const filtered = voertuigen.filter((voertuig) => {
+        const filtered = reserveringen.filter((voertuig) => {
             return Object.keys(voertuig).some((key) => {
                 const value = voertuig[key];
                 if (typeof value === "string") {
@@ -58,7 +63,7 @@ const MijnReserveringen = () => {
             });
         });
         setFilteredVoertuigen(filtered);
-    }, [searchTerm, voertuigen]);
+    }, [searchTerm, reserveringen]);
 
 
 
@@ -109,12 +114,12 @@ const MijnReserveringen = () => {
                                 />
                             </div>
                             <div className="voertuig-info">
-                                <h3 className="kenteken">{voertuig.kenteken}</h3>
-                                <p><strong>Merk:</strong> {voertuig.merk}</p>
-                                <p><strong>Model:</strong> {voertuig.model}</p>
-                                <p><strong>Kleur:</strong> {voertuig.kleur}</p>
+                                <h3 className="kenteken"> {voertuig.reserveringsId}</h3>
+                                <p><strong>Begindatum:</strong> {voertuig.begindatum}</p>
+                                <p><strong>Einddatum:</strong> {voertuig.einddatum}</p>
+                                <p><strong>Status:</strong> €{voertuig.totaalPrijs}</p>
+                                <p><strong>Is:</strong> {voertuig.kleur}</p>
                                 <p><strong>Aanschafjaar:</strong> {voertuig.aanschafjaar}</p>
-                                <p><strong>Prijs:</strong> €{voertuig.prijs}</p>
 
                                 {/* Knop voor details */}
                                 <div className="button-container">
@@ -138,7 +143,7 @@ const MijnReserveringen = () => {
                             </div>
                         </div>
                     ))
-                )}
+                    )}
             </div>
         </div>
     );
