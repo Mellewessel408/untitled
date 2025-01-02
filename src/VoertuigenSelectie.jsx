@@ -202,7 +202,7 @@ const VoertuigenComponent = () => {
                                 <div className="button-container">
                                     <button
                                         className="reserveer-button"
-                                        onClick={() => handleReserveer(voertuig.voertuigId)}
+                                        onClick={() => handleReserveer(voertuig.voertuigId, voertuig.prijs, voertuig.voertuigStatus)}
                                     >
                                         Reserveer
                                     </button>
