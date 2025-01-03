@@ -126,82 +126,33 @@ function VerhuurAanvragen() {
                         <div key={voertuig.voertuigId} className="voertuig-card">
                             <div className="voertuig-photo">
                                 <img
-                                    className="photo"
+                                    className="voertuig-photo"
                                     src={carAndAllLogo}
-                                    alt={`${voertuig.merk} ${voertuig.model}`}
+                                    alt="CarAndAll Logo"
                                 />
                             </div>
-
                             <div className="voertuig-info">
-                                <h3 className="kenteken">{voertuig.kenteken}</h3>
-                                <p><strong>Merk:</strong> {voertuig.merk}</p>
-                                <p><strong>Model:</strong> {voertuig.model}</p>
-                                <p><strong>Kleur:</strong> {voertuig.kleur}</p>
-                                <p><strong>Aanschafjaar:</strong> {voertuig.aanschafjaar}</p>
-                                <p><strong>Prijs:</strong> €{voertuig.prijs}</p>
-                                <p><strong>Status:</strong> {voertuig.voertuigStatus}</p>
+                                <h3 className="kenteken">ReserveringsId #{voertuig.reserveringsId}</h3>
+                                <p><strong>Voertuigtype:</strong> {voertuig.voertuigType}</p>
+                                <p><strong>Begindatum:</strong> {formatDatum(voertuig.begindatum)}</p>
+                                <p><strong>Einddatum:</strong> {formatDatum(voertuig.einddatum)}</p>
+                                <p>
+                                    <strong>Betalingsstatus:</strong> {voertuig.isBetaald ? "Betaald" : `Nog te betalen €${voertuig.totaalPrijs || 0}`}
+                                </p>
 
-                                <div className="voertuig-actions">
-                                    <button
-                                        onClick={() => handleGoedkeuren(voertuig.voertuigId)}
-                                        disabled={selectedAction === true && selectedReserveringId === voertuig.voertuigId}
-                                        style={{
-                                            backgroundColor:
-                                                selectedAction === true && selectedReserveringId === voertuig.voertuigId
-                                                    ? 'grey'
-                                                    : '#040404',
-                                        }}
-                                    >
-                                        Goedkeuren
-                                    </button>
-                                    <button
-                                        onClick={() => handleAfkeuren(voertuig.voertuigId)}
-                                        disabled={selectedAction === false && selectedReserveringId === voertuig.voertuigId}
-                                        style={{
-                                            backgroundColor:
-                                                selectedAction === false && selectedReserveringId === voertuig.voertuigId
-                                                    ? 'grey'
-                                                    : '#040404',
-                                        }}
-                                    >
-                                        Afkeuren
-                                    </button>
-                                </div>
+
+
+
+                                    <div className="voertuig-details">
+                                        <p><strong>Kenteken:</strong> {voertuig.kenteken}</p>
+                                        <p><strong>Voertuig:</strong> {voertuig.merk} {voertuig.model}</p>
+                                        <p><strong>Kleur:</strong> {voertuig.kleur}</p>
+                                        <p><strong>Aanschafjaar:</strong> {voertuig.aanschafjaar}</p>
+                                        <p><strong>Brandstoftype:</strong> {voertuig.brandstofType}</p>
+                                        <p><strong>Totaalprijs:</strong> €{voertuig.totaalPrijs}</p>
+                                    </div>
+
                             </div>
-
-                            <div className="reserveringen-section">
-                                <h4>Reserveringen</h4>
-                                {voertuig.reserveringen.length > 0 ? (
-                                    <ul className="reserveringen-list">
-                                        {voertuig.reserveringen.map((reservering) => (
-                                            <li key={reservering.reserveringId}>
-                                                <p><strong>Reservering ID:</strong> {reservering.reserveringId}</p>
-                                                <p><strong>Begindatum:</strong> {new Date(reservering.begindatum).toLocaleDateString()}</p>
-                                                <p><strong>Einddatum:</strong> {new Date(reservering.einddatum).toLocaleDateString()}</p>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                ) : (
-                                    <p>Geen reserveringen beschikbaar</p>
-                                )}
-                            </div>
-
-                            {selectedReserveringId === voertuig.voertuigId && (
-                                <div className="voertuig-comment-section">
-                                <textarea
-                                    placeholder="Voeg hier een opmerking toe..."
-                                    value={comment}
-                                    onChange={(e) => handleCommentChange(e, voertuig.voertuigId)}
-                                    className="comment-textarea"
-                                />
-                                    <button
-                                        onClick={() => handleCommentSubmit(voertuig.voertuigId)}
-                                        className="button submit-comment"
-                                    >
-                                        Verzenden
-                                    </button>
-                                </div>
-                            )}
                         </div>
                     ))
                 )}
