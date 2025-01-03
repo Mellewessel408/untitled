@@ -21,19 +21,20 @@ function RegistreerBedrijf() {
         const email = formData.get('email');
         const wachtwoord = formData.get('wachtwoord');
         const bedrijfsnaam = formData.get('bedrijfsnaam');
+        const domeinnaam = formData.get('domeinnaam');
         const kvkNummer = formData.get('kvkNummer');
         const postcode = formData.get('postcode');
         const huisnummer = formData.get('huisnummer');
         const maxMedewerkers = formData.get('maxMedewerkers');
         const maxVoertuigen = formData.get('maxVoertuigen');
 
-        const bedrijfsnaamSchoon = bedrijfsnaam.replace(/[\s.@]/g, '').toLowerCase();
+
 
         // Haal het domein van het e-mailadres op
         const emailDomein = email.split('@')[1]?.split('.')[0]?.toLowerCase();
 
         // Controleer of de bedrijfsnaam overeenkomt met het e-maildomein
-        if (bedrijfsnaamSchoon !== emailDomein) {
+        if (domeinnaam !== emailDomein) {
             alert("Emailadres klopt niet met de bijbehorende bedrijfsnaam!");
             return;
         }
@@ -41,6 +42,7 @@ function RegistreerBedrijf() {
         // Verzamel de data in een object om te verzenden
         const BedrijfsData = {
             kvkNummer: kvkNummer,
+            domeinnaam: domeinnaam,
             bedrijfsnaam: bedrijfsnaam,
             postcode: postcode,
             huisnummer: huisnummer
@@ -107,6 +109,11 @@ function RegistreerBedrijf() {
                 <div>
                     <label htmlFor="email">Beheerder Emailadres:</label>
                     <input type="email" id="email" name="email" required placeholder="Vul je emailadres in..."/>
+                </div>
+
+                <div>
+                    <label htmlFor="Domeinnaam">Domeinnaam:</label>
+                    <input type="text" id="Domeinnaam" name="Domeinnaam" required placeholder="Vul je Domein in..."/>
                 </div>
 
                 <div>
