@@ -10,9 +10,10 @@ const MijnReserveringen = () => {
     const [error, setError] = useState(null);
     const [showDetails, setShowDetails] = useState(null);
     const [deleting, setDeleting] = useState(null);
-
+    const navigate = useNavigate();
     const { currentAccountId, logout } = useAccount();
     const apiBaseUrl = `https://localhost:44318/api/Voertuig`;
+
 
     // Haal de voertuigen op
     const fetchReserveringen = async () => {
@@ -105,9 +106,9 @@ const MijnReserveringen = () => {
     }
 
 
-    function WijzigReservering() {
-
-    }
+    const handleReserveringClick = (reserveringId) => {
+        navigate('ReserveringWijzigen', { state: { reserveringId } });
+    };
 
 
 
@@ -172,8 +173,8 @@ const MijnReserveringen = () => {
                                         <p><strong>Brandstoftype:</strong> {voertuig.brandstofType}</p>
                                         <p><strong>Totaalprijs:</strong> €{voertuig.totaalPrijs}</p>
 
-                                        <button className="ReserveringWijzigenKnop" onClick={WijzigReservering}>
-                                            Wijzigen
+                                        <button onClick={() => handleReserveringClick(voertuig.reserveringsId)}>
+                                            Wijzig Reservering
                                         </button>
                                     </div>
                                 )}
