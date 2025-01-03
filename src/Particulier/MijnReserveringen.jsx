@@ -52,6 +52,7 @@ const MijnReserveringen = () => {
                 setReserveringen((prevReserveringen) =>
                     prevReserveringen.filter((reservering) => reservering.reserveringsId !== ReserveringId)
                 );
+                showNotification(ReserveringId, "red", "Verwijderd", 3000);
             } else {
                 throw new Error(`Verwijderen mislukt: ${response.statusText}`);
             }
@@ -66,6 +67,49 @@ const MijnReserveringen = () => {
         const date = new Date(datum);
         return date.toLocaleDateString("nl-NL", { day: "2-digit", month: "2-digit", year: "numeric" });
     };
+
+    let timeoutId; // Variabele om de timer bij te houden
+
+    function showNotification(ReserveringId, bgColor, actie, duration) {
+        const notification = document.getElementById("notification");
+        const notificationText = document.getElementById("notificationText");
+        const progressBar = document.getElementById("progressBar");
+
+        // Tekst aanpassen
+        notificationText.innerHTML = "Reservering #" + ReserveringId + " " + actie;
+
+        // Achtergrondkleur instellen
+        notification.style.backgroundColor = bgColor;
+
+        // Annuleer bestaande timer en animatie
+        if (timeoutId) {
+            clearTimeout(timeoutId);
+            progressBar.classList.remove("animated"); // Reset animatie
+            void progressBar.offsetWidth; // Forceer hertekening
+        }
+
+        // Start progressBar-animatie opnieuw
+        progressBar.style.animationDuration = `${duration}ms`;
+        progressBar.classList.add("animated");
+
+        // Toon de notificatie
+        notification.classList.remove("hidden");
+        notification.classList.add("visible");
+
+        // Stel een nieuwe timeout in
+        timeoutId = setTimeout(() => {
+            notification.classList.remove("visible");
+            notification.classList.add("hidden");
+            progressBar.classList.remove("animated"); // Stop de animatie
+        }, duration);
+    }
+
+
+    function WijzigReservering() {
+
+    }
+
+
 
     if (loading) return <div className="loading">Laden...</div>;
     if (error) return <div className="error">{error}</div>;
@@ -127,6 +171,10 @@ const MijnReserveringen = () => {
                                         <p><strong>Aanschafjaar:</strong> {voertuig.aanschafjaar}</p>
                                         <p><strong>Brandstoftype:</strong> {voertuig.brandstofType}</p>
                                         <p><strong>Totaalprijs:</strong> €{voertuig.totaalPrijs}</p>
+
+                                        <button className="ReserveringWijzigenKnop" onClick={WijzigReservering}>
+                                            Wijzigen
+                                        </button>
                                     </div>
                                 )}
                             </div>
@@ -134,6 +182,11 @@ const MijnReserveringen = () => {
                     ))
                 )}
             </div>
+            <div id="notification" className="hidden">
+                <div id="notificationText"></div>
+                <div id="progressBar"></div>
+            </div>
+
         </div>
     );
 };
