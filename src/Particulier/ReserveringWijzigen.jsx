@@ -102,12 +102,12 @@ const ReserveringWijzigen = () => {
 
     // Reserveer functie
     const handleReserveer = async (voertuigId) => {
-            const data = {
-                begindatum: begindatum,
-                einddatum : einddatum,
-                voertuigId: voertuigId,
-                AccountId: currentAccountId
-            };
+        const data = {
+            begindatum: begindatum,
+            einddatum : einddatum,
+            voertuigId: voertuigId,
+            AccountId: currentAccountId
+        };
 
         setLoading(true);
         try {

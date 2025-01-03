@@ -21,7 +21,7 @@ function RegistreerBedrijf() {
         const email = formData.get('email');
         const wachtwoord = formData.get('wachtwoord');
         const bedrijfsnaam = formData.get('bedrijfsnaam');
-        const domeinnaam = formData.get('domeinnaam');
+        const domeinnaam = formData.get('Domeinnaam');
         const kvkNummer = formData.get('kvkNummer');
         const postcode = formData.get('postcode');
         const huisnummer = formData.get('huisnummer');
@@ -31,8 +31,8 @@ function RegistreerBedrijf() {
 
 
         // Haal het domein van het e-mailadres op
-        const emailDomein = email.split('@')[1]?.split('.')[0]?.toLowerCase();
-
+        const emailDomein = email.split('@')[1]?.toLowerCase();
+        console.log(domeinnaam)
         // Controleer of de bedrijfsnaam overeenkomt met het e-maildomein
         if (domeinnaam !== emailDomein) {
             alert("Emailadres klopt niet met de bijbehorende bedrijfsnaam!");
