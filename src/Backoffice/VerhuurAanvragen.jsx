@@ -28,7 +28,7 @@ function VerhuurAanvragen() {
     useEffect(() => {
         const fetchVoertuigen = async () => {
             try {
-                const url = `${apiBaseUrl}/reserveringen`;
+                const url = `${apiBaseUrl}/gereserveerdevoertuigen`;
                 const response = await fetch(url);
                 if (!response.ok) {
                     throw new Error("Netwerkfout: " + response.statusText);
@@ -127,7 +127,7 @@ function VerhuurAanvragen() {
                     <div className="no-vehicles">Geen voertuigen gevonden</div>
                 ) : (
                     voertuigen.map((voertuig) => (
-                        <div key={voertuig.reserveringId} className="voertuig-card">
+                        <div key={voertuig.voertuigId} className="voertuig-card">
                             <div className="voertuig-photo">
                                 <img
                                     className="voertuig-photo"
@@ -145,28 +145,28 @@ function VerhuurAanvragen() {
                                 <p><strong>Begindatum:</strong> {voertuig.begindatum}</p>
                                 <p><strong>Einddatum:</strong> {voertuig.einddatum}</p>
                                 <p><strong>Status:</strong> {voertuig.voertuigStatus}</p>
-                                <button onClick={() => handleGoedkeuren(voertuig.ReserveringId)}
+                                <button onClick={() => handleGoedkeuren(voertuig.voertuigId)}
                                         style={{
-                                            backgroundColor: selectedAction === true && selectedReserveringId === voertuig.reserveringId ? 'grey' : '#040404',
+                                            backgroundColor: selectedAction === true && selectedReserveringId === voertuig.voertuigId ? 'grey' : '#040404',
                                         }}
                                 >
                                     Goedkeuren
                                 </button>
-                                <button onClick={() => handleAfkeuren(voertuig.reserveringId)}
+                                <button onClick={() => handleAfkeuren(voertuig.voertuigId)}
                                         style={{
-                                            backgroundColor: selectedAction === false && selectedReserveringId === voertuig.reserveringId ? 'grey' : '#040404',
+                                            backgroundColor: selectedAction === false && selectedReserveringId === voertuig.voertuigId ? 'grey' : '#040404',
                                         }}>
                                     Afkeuren
                                 </button>
                             </div>
-                            {selectedReserveringId === voertuig.reserveringId && (
+                            {selectedReserveringId === voertuig.voertuigId && (
                                 <div >
                                       <textarea
                                           placeholder="Voeg hier een opmerking toe..."
                                           value={comment}
-                                          onChange={(e) => handleCommentChange(e, voertuig.reserveringId)}
+                                          onChange={(e) => handleCommentChange(e, voertuig.voertuigId)}
                                       />
-                                    <button  onClick={() => handleCommentSubmit(voertuig.reserveringId)}>
+                                    <button  onClick={() => handleCommentSubmit(voertuig.voertuigId)}>
                                         Verzenden
                                     </button>
                                 </div>
