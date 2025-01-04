@@ -1,0 +1,29 @@
+﻿.button-container {
+    display: flex;
+    justify-content: center; /* Horizontaal centreren */
+    align-items: center; /* Verticaal centreren */
+    height: 100%; /* Volledige hoogte van het scherm */
+    gap: 20px; /* Ruimte tussen de knoppen */
+}
+
+.grote-knop {
+    width: 250px; /* Vaste breedte */
+    height: 100px; /* Vaste hoogte */
+    padding: 0; /* Geen extra padding nodig met vaste hoogte en breedte */
+    font-size: 20px; /* Tekstgrootte aangepast voor de knopgrootte */
+    border: none; /* Geen rand */
+    border-radius: 15px; /* Ronde hoeken */
+    cursor: pointer; /* Verandert de cursor naar hand bij hover */
+    text-align: center; /* Zorgt ervoor dat de tekst gecentreerd wordt */
+    transition: background-color 0.3s ease; /* Zachte overgang bij hover */
+    background-color: #333; /* Standaard achtergrondkleur */
+    color: #fff; /* Tekstkleur */
+}
+
+.grote-knop:hover {
+    background-color: #555; /* Donkerdere kleur bij hover */
+}
+
+.grote-knop:active {
+    background-color: #222; /* Nog donkerdere kleur bij klikken */
+}
