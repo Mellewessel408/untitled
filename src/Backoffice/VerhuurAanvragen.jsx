@@ -25,23 +25,24 @@ function VerhuurAanvragen() {
             navigate('/inlogpagina');
         }
     });
-    useEffect(() => {
+
         const fetchReserveringen = async () => {
             try {
-                const response = await fetch("https://localhost:44318/api/reservering/GetAlleVoertuigenMetReserveringen");
+                const response = await fetch(apiBaseUrl + "/voertuig/GetAlleVoertuigenMetReserveringen");
                 if (!response.ok) {
                     throw new Error("Failed to fetch data");
                 }
-                const data = await response.json();
-                setReservering(data);
+                setReservering(response.data || []);
             } catch (err) {
                 setError(err.message);
             } finally {
                 setLoading(false);
             }
-            fetchReserveringen();
         }
-    });
+    useEffect(() => {
+        fetchReserveringen();
+    }, );
+
 
 
         const handleLogout = () => {
@@ -85,8 +86,12 @@ function VerhuurAanvragen() {
             }
         }
 
+    const formatDatum = (dateString) => {
+        const date = new Date(dateString);
+        return isNaN(date) ? "Onbekend" : date.toLocaleDateString("nl-NL");
+    };
 
-        const handleCommentSubmit = (id) => {
+    const handleCommentSubmit = (id) => {
             alert(`Commentaar verzonden: ${comment} voor ${id}`);
             setShowCommentField(false);
             setSelectedReserveringId(null)
