@@ -32,7 +32,8 @@ function RegistreerBedrijf() {
 
         // Haal het domein van het e-mailadres op
         const emailDomein = email.split('@')[1]?.toLowerCase();
-        console.log(domeinnaam)
+        console.log(domeinnaam);
+        console.log(emailDomein);
         // Controleer of de bedrijfsnaam overeenkomt met het e-maildomein
         if (domeinnaam !== emailDomein) {
             alert("Emailadres klopt niet met de bijbehorende bedrijfsnaam!");
@@ -75,15 +76,17 @@ function RegistreerBedrijf() {
 
             if (response.ok) {
                 // Als de request succesvol is
-                const data = await response.json();
-                console.log('Account succesvol aangemaakt', data);
-                alert('Account succesvol aangemaakt!');
-                login(data.token); // Dit kan variëren afhankelijk van je API
+                console.log("Object terughalen voor AccountId");
+                const IdResponse = await fetch('https://localhost:44318/api/ZakelijkBeheerder/KrijgSpecifiekAccountEmail?email=' + email);
+                const IdData = await IdResponse.json();
+                if (IdData?.accountId) {
+                    login(IdData.accountId); // Account-ID instellen vanuit de response
+                }
+                console.log('Account succesvol aangemaakt');
                 navigate('/HoofdschermZakelijkBeheerder');
             } else {
                 // Als de request niet succesvol is (bijvoorbeeld BadRequest)
                 const errorMessage = await response.text(); // Krijg de tekst van de foutmelding
-                console.error('Foutmelding van server:', errorMessage);
                 alert(`Fout: ${errorMessage}`);
             }
         } catch (error) {
@@ -113,7 +116,7 @@ function RegistreerBedrijf() {
 
                 <div>
                     <label htmlFor="Domeinnaam">Domeinnaam:</label>
-                    <input type="text" id="Domeinnaam" name="Domeinnaam" required placeholder="Vul je Domein in..."/>
+                    <input type="text" id="Domeinnaam" name="Domeinnaam" required placeholder="bv. gmail.com"/>
                 </div>
 
                 <div>

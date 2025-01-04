@@ -16,11 +16,11 @@ function HoofdschermZakelijkHuurder() {
     });
 
     const AutoHuren = () => {
-        navigate('/VoertuigenSelectieZakelijkHuurder');
+        navigate('/VoertuigenSelectie');
     };
 
     const MijnReservering = () => {
-        // Voeg actie toe voor MijnReservering als dat nodig is
+        navigate('MijnReserveringen');
     };
 
     // const MijnProfiel = () => {

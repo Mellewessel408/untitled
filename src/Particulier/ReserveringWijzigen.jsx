@@ -16,16 +16,15 @@ const ReserveringWijzigen = () => {
     const [filteredVoertuigen, setFilteredVoertuigen] = useState([]);
     const [begindatum, setBegindatum] = useState(null);
     const [einddatum, setEinddatum] = useState(null);
-    const [showDetails, setShowDetails] = useState(null); // Show details voor geselecteerd voertuig
-    const [showConfirm, setShowConfirm] = useState(null); // Voor bevestiging van reserveren
-    const [selectedVoertuig, setSelectedVoertuig] = useState(null); // Voor het geselecteerde voertuig om te reserveren
-    const [timeRemaining, setTimeRemaining] = useState(30); // Resterende tijd voor de bevestiging
-    const [timerActive, setTimerActive] = useState(false); // Om de timer aan en uit te zetten
+    const [showDetails, setShowDetails] = useState(null);
+    const [showConfirm, setShowConfirm] = useState(null);
+    const [selectedVoertuig, setSelectedVoertuig] = useState(null);
+    const [timeRemaining, setTimeRemaining] = useState(30);
+    const [timerActive, setTimerActive] = useState(false);
     const [reservering, setReservering] = useState();
     const location = useLocation();
-    const { reserveringId } = location.state || {}; // Haal de reserveringId op uit de state
+    const { reserveringId } = location.state || {};
 
-// Haal de voertuigen op
     useEffect(() => {
         if (currentAccountId === 0) {
             alert("U bent ingelogd zonder AccountId");
@@ -38,13 +37,6 @@ const ReserveringWijzigen = () => {
 
     }, [currentAccountId, navigate, reserveringId]);
 
-
-
-
-
-
-
-
     const fetchVoertuigen = async (reserveringId) => {
         setLoading(true);
 
@@ -56,7 +48,6 @@ const ReserveringWijzigen = () => {
             }
             const data = await response.json();
             setMijnVoertuig({ ...data });
-            console.log(data);
             setBegindatum(data.begindatum);
             setEinddatum(data.einddatum);
 
@@ -66,7 +57,14 @@ const ReserveringWijzigen = () => {
                 throw new Error(`Netwerkfout (${response2.status}): ${response2.statusText}`);
             }
             const data2 = await response2.json();
-            setVoertuigen(data2.$values || []);
+
+            // Voeg de kosten per voertuig toe
+            const updatedVoertuigen = data2.$values.map(voertuig => {
+                const days = (new Date(data.einddatum) - new Date(data.begindatum)) / (1000 * 60 * 60 * 24); // Aantal dagen tussen begindatum en einddatum
+                const bijkomendeKosten = 100 + 100 * days; // Kosten berekening
+                return { ...voertuig, bijkomendeKosten };
+            });
+            setVoertuigen(updatedVoertuigen);
         } catch (err) {
             console.error(err);
             setError(`Kan voertuigen niet ophalen: ${err.message}`);
@@ -92,15 +90,11 @@ const ReserveringWijzigen = () => {
         setFilteredVoertuigen(filtered);
     }, [searchTerm, voertuigen]);
 
-
-
-    // Logout functie
     const handleLogout = () => {
         logout();
         navigate('/Inlogpagina');
     };
 
-    // Reserveer functie
     const handleReserveer = async (voertuigId) => {
         const data = {
             begindatum: begindatum,
@@ -124,7 +118,6 @@ const ReserveringWijzigen = () => {
                 throw new Error(`Netwerkfout (${response.status}): ${response.statusText}`);
             }
 
-
             setVoertuigen((prevVoertuigen) =>
                 prevVoertuigen.map((voertuig) =>
                     voertuig.voertuigId === voertuigId
@@ -137,26 +130,21 @@ const ReserveringWijzigen = () => {
             console.error("Fout bij reserveren:", error);
             alert("Er is een probleem opgetreden bij het reserveren van het voertuig.");
         }
-
     };
 
-    // Functie om details van het voertuig weer te geven
     const toggleDetails = (voertuigId) => {
-        setShowDetails(showDetails === voertuigId ? null : voertuigId); // Toggle details
+        setShowDetails(showDetails === voertuigId ? null : voertuigId);
     };
 
-    // Bevestig reservering
     const showReservationConfirm = (voertuigId) => {
         if (begindatum == null || einddatum == null) {
             alert(`Fout bij reserveren: Vul een datum in.`);
             return;
         }
 
-        setSelectedVoertuig(voertuigId); // Zet het geselecteerde voertuig
-        setShowConfirm(true); // Zet de bevestiging dialoog op true
-        setTimeRemaining(30); // Zet de timer op 30 seconden
-
-        // Start de timer
+        setSelectedVoertuig(voertuigId);
+        setShowConfirm(true);
+        setTimeRemaining(30);
         setTimerActive(true);
     };
 
@@ -164,34 +152,29 @@ const ReserveringWijzigen = () => {
         let timer;
 
         if (timerActive && timeRemaining > 0) {
-            // Verminder de tijd elke seconde
             timer = setInterval(() => {
                 setTimeRemaining((prevTime) => prevTime - 1);
             }, 1000);
         } else if (timeRemaining === 0) {
-            // Annuleer de reservering als de tijd op is
             cancelReservation();
         }
 
-        // Cleanup de timer wanneer de component unmount
         return () => clearInterval(timer);
     }, [timerActive, timeRemaining]);
 
     const cancelReservation = () => {
-        setShowConfirm(false); // Annuleer de bevestigingsdialoog
-        setSelectedVoertuig(null); // Reset het geselecteerde voertuig
-        setTimerActive(false); // Zet de timer uit
+        setShowConfirm(false);
+        setSelectedVoertuig(null);
+        setTimerActive(false);
     };
 
     const confirmReservation = () => {
         if (selectedVoertuig !== null) {
-            handleReserveer(selectedVoertuig); // Bevestig de reservering
-            setShowConfirm(false); // Sluit de bevestigingsdialoog
-            setTimerActive(false); // Zet de timer uit
+            handleReserveer(selectedVoertuig);
+            setShowConfirm(false);
+            setTimerActive(false);
         }
     };
-
-
 
     if (loading) return <div className="loading">Laden...</div>;
     if (error) return <div className="error">{error}</div>;
@@ -200,9 +183,7 @@ const ReserveringWijzigen = () => {
         <div className="voertuigen-container">
             <header className="header">
                 <h1>Reservering wijzigen</h1>
-                <button className="logout-button small" onClick={handleLogout}>
-                    Log uit
-                </button>
+                <button className="logout-button small" onClick={handleLogout}>Log uit</button>
             </header>
 
             <div className="search-filter">
@@ -210,7 +191,6 @@ const ReserveringWijzigen = () => {
                     type="date"
                     id="begindatum"
                     placeholder="Kies begindatum"
-                    className="flatpickr-calander"
                     value={begindatum}
                     onChange={(e) => setBegindatum(e.target.value)}
                     min={new Date().toISOString().split('T')[0]}
@@ -219,12 +199,8 @@ const ReserveringWijzigen = () => {
                     type="date"
                     id="einddatum"
                     placeholder="Kies einddatum"
-                    className="flatpickr-calander"
                     value={einddatum}
-                    onChange={(e) => {
-                        const newEinddatum = e.target.value;
-                        setEinddatum(newEinddatum);
-                    }}
+                    onChange={(e) => setEinddatum(e.target.value)}
                     min={begindatum || new Date().toISOString().split('T')[0]}
                 />
                 <input
@@ -235,30 +211,21 @@ const ReserveringWijzigen = () => {
                     className="search-bar"
                 />
             </div>
+
             <div className="voertuigen-grid">
-                {/* Huidige reservering */}
                 {mijnVoertuig && (
                     <div className="huidige-reservering">
-                        {/*<h2>Huidige reservering</h2>*/}
                         <div className="voertuig-card">
                             <div className="voertuig-photo">
-                                <img
-                                    className="voertuig-photo"
-                                    src={carAndAllLogo}
-                                    alt="CarAndAll Logo"
-                                />
+                                <img className="voertuig-photo" src={carAndAllLogo} alt="CarAndAll Logo" />
                             </div>
                             <div className="voertuig-info">
                                 <h3 className="kenteken">Jouw Reservering (#{mijnVoertuig.reserveringsId})</h3>
                                 <p><strong>Voertuigtype:</strong> {mijnVoertuig.voertuigType}</p>
                                 <p><strong>Voertuig:</strong> {mijnVoertuig.merk} {mijnVoertuig.model}</p>
-                                <p>
-                                    <strong>Begindatum:</strong> {new Date(mijnVoertuig.begindatum).toLocaleDateString("nl-NL")}
-                                </p>
-                                <p>
-                                    <strong>Einddatum:</strong> {new Date(mijnVoertuig.einddatum).toLocaleDateString("nl-NL")}
-                                </p>
-
+                                <p><strong>Begindatum:</strong> {new Date(mijnVoertuig.begindatum).toLocaleDateString("nl-NL")}</p>
+                                <p><strong>Einddatum:</strong> {new Date(mijnVoertuig.einddatum).toLocaleDateString("nl-NL")}</p>
+                                <p><strong>Bijkomende kosten:</strong> €{100 + 100 * ((new Date(mijnVoertuig.einddatum) - new Date(mijnVoertuig.begindatum)) / (1000 * 60 * 60 * 24))}</p>
                                 <button
                                     className="behoud-reservering-button"
                                     onClick={() => alert("Reservering behouden!")}
@@ -270,26 +237,20 @@ const ReserveringWijzigen = () => {
                     </div>
                 )}
 
-
                 {filteredVoertuigen.length === 0 ? (
                     <div className="no-vehicles">Geen voertuigen gevonden</div>
                 ) : (
                     filteredVoertuigen.map((voertuig) => (
                         <div key={voertuig.voertuigId} className="voertuig-card">
                             <div className="voertuig-photo">
-                                <img
-                                    className="voertuig-photo"
-                                    src={carAndAllLogo}
-                                    alt="CarAndAll Logo"
-                                />
+                                <img className="voertuig-photo" src={carAndAllLogo} alt="CarAndAll Logo" />
                             </div>
                             <div className="voertuig-info">
                                 <h3 className="kenteken">{voertuig.kenteken}</h3>
                                 <p><strong>Merk:</strong> {voertuig.merk}</p>
                                 <p><strong>Model:</strong> {voertuig.model}</p>
                                 <p><strong>Voertuigtype:</strong> {voertuig.voertuigType}</p>
-
-                                {/* Als de bevestigingsdialoog nog niet getoond is */}
+                                <p><strong>Bijkomende kosten:</strong> €{voertuig.bijkomendeKosten}</p>
                                 {!showConfirm && (
                                     <div className="button-container">
                                         <button
@@ -311,13 +272,10 @@ const ReserveringWijzigen = () => {
                                     <div>
                                         <p className="Confirmatievraag">Weet je het zeker? ({timeRemaining}s)</p>
                                         <button className="AnnuleerKnop" onClick={cancelReservation}>Stop</button>
-                                        <button className="ReserveerKnop" onClick={confirmReservation}>Ja
-                                            Reserveer
-                                        </button>
+                                        <button className="ReserveerKnop" onClick={confirmReservation}>Ja Reserveer</button>
                                     </div>
                                 )}
 
-                                {/* Details tonen als de knop is ingedrukt */}
                                 {showDetails === voertuig.voertuigId && (
                                     <div className="voertuig-details">
                                         <p><strong>Kleur:</strong> {voertuig.kleur}</p>

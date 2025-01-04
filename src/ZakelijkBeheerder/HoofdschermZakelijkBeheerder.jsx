@@ -19,8 +19,34 @@ function HoofdschermZakelijkBeheerder() {
         navigate('/Inlogpagina');
     };
 
-    const VoertuigenOverzicht = () => {
+    const VoertuigenOverzicht = async () => {
+        try {
 
+            const response2 = await fetch(`https://localhost:44318/api/ZakelijkBeheerder/KrijgBedrijfId?accountId=${currentAccountId}`);
+            if (response2.ok) {
+                const data2 = await response2.json();
+                console.log(data2);
+
+                // Verstuur het DELETE-verzoek naar de backend en wacht op het antwoord
+                const response = await fetch(`https://localhost:44318/api/Bedrijf/KrijgAlleBedrijfstatistieken?bedrijfsId=37`, {
+                    method: 'GET',
+                    headers: {'Content-Type': 'application/json'},
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    // Controleer of het verzoek succesvol was
+                    console.log(data);
+
+                } else {
+                    throw new Error('Er is iets misgegaan bij het verkrijgen van de gegevens');
+                }
+            }
+        } catch (error) {
+            // Foutafhandeling
+            console.error('Er is een fout opgetreden:', error.message);
+            alert('Er is iets misgegaan bij het verwijderen van het bedrijf! Fout details: ' + JSON.stringify(error, null, 2));
+        }
     }
     const MedewerkersBeheren = () => {
 
@@ -74,8 +100,8 @@ function HoofdschermZakelijkBeheerder() {
             <button onClick={MedewerkersBeheren}></button>
             <button onClick={AbbonementsBeheer}></button>
             <button onClick={VerhuurActiviteiten}></button>
-            <button onClick={MedewerkerVerwijderen}>Medewerker toevoegen</button>
-            <button onClick={VoegMedewerkerToe}>Medewerker toevoegen</button>
+            <button onClick={MedewerkerVerwijderen}>Verwijder medewerker</button>
+            <button onClick={VoegMedewerkerToe}>Voeg medewerker toe</button>
             <button onClick={BedrijfVerwijderen} className="fetusDeletus">Het Bedrijf Verwijderen</button>
             <button className="logout-button" onClick={LogUit}>Log uit</button>
         </div>

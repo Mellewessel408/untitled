@@ -76,9 +76,10 @@ function VoegMedewerkerToe() {
 
         // Haal het domein van het e-mailadres op
         const emailDomein = email.split('@')[1]?.toLowerCase();
-
+console.log(emailDomein);
+console.log(bedrijfDomein);
         // Controleer of de bedrijfsnaam overeenkomt met het e-maildomein
-        if (bedrijfDomein !== ('@' + emailDomein)) {
+        if (bedrijfDomein !== emailDomein) {
             alert("Emailadres klopt niet met de bijbehorende bedrijfsdomein!");
             return;
         }

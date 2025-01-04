@@ -16,12 +16,12 @@ function ProfielWijzigen(){
 
         const formData = new FormData(event.target);
         const naam = formData.get('naam');
-        const email = formData.get('email');
         const telefoonnummer = formData.get('telefoonnummer');
-        const postcode = formData.get('postcode');
-        const huisnummer = formData.get('huisnummer');
         const wachtwoord = formData.get('wachtwoord');
         const herhaalWachtwoord = formData.get('herhaalWachtwoord');
+        const postcode = formData.get('postcode');
+        const huisnummer = formData.get('huisnummer');
+        const email = "";
 
         if (wachtwoord !== herhaalWachtwoord) {
             alert('Wachtwoorden komen niet overeen. Probeer het opnieuw.');
@@ -29,12 +29,13 @@ function ProfielWijzigen(){
         }
 
         const dto = {
-            email: email,
-            wachtwoord: wachtwoord,
             naam: naam,
             telefoonnummer: Number(telefoonnummer),
+            email: email,
+            wachtwoord: wachtwoord,
             postcode: postcode,
             huisnummer: Number(huisnummer),
+
         };
 
         try {
@@ -52,6 +53,7 @@ function ProfielWijzigen(){
 
                 console.log('Account succesvol geupdate');
                 alert('account succesvol geupdate');
+                navigate('');
             } else {
                 const errorMessage = await response.text();
                 alert(`Fout: ${errorMessage}`);
@@ -71,17 +73,17 @@ function ProfielWijzigen(){
             <h1>Wijzig Profiel</h1>
 
             <form onSubmit={Wijzigen}>
-                <div>
-                    <label htmlFor="email">Emailadres:</label>
-                    <input type="email" id="email" name="email" required placeholder="Vul je emailadres in..."/>
-                </div>
 
                 <div>
                     <label htmlFor="naam">Naam:</label>
                     <input type="text" id="naam" name="naam" required
                            placeholder="Vul uw naam in"/>
                 </div>
-
+                <div>
+                    <label htmlFor="telefoonnummer">Telefoonnummer:</label>
+                    <input type="tel" id="telefoonnummer" name="telefoonnummer" required
+                           placeholder="Vul je Telefoonnummer in..."/>
+                </div>
                 <div>
                     <label htmlFor="wachtwoord">Wachtwoord: </label>
                     <input type="password" id="wachtwoord" name="wachtwoord" required
@@ -106,11 +108,7 @@ function ProfielWijzigen(){
                            placeholder="Vul je Huisnummer in..."/>
                 </div>
 
-                <div>
-                    <label htmlFor="telefoonnummer">Telefoonnummer:</label>
-                    <input type="tel" id="telefoonnummer" name="telefoonnummer" required
-                           placeholder="Vul je Telefoonnummer in..."/>
-                </div>
+
                 <div className="button-container">
                     <button type="submit">Wijzig</button>
                     <button type="button" onClick={() => navigate('/ProfielPagina')}>Terug</button>

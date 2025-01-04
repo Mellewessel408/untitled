@@ -47,6 +47,8 @@ function App() {
                     <Route path="/HoofdschermFrontoffice" element={<HoofdschermFrontoffice />} />
                     <Route path="/HoofdschermZakelijkBeheerder" element={<HoofdschermZakelijkBeheerder />} />
                     <Route path="/HoofdschermParticulier/MijnReserveringen" element={<MijnReserveringen />} />
+                    <Route path="/HoofdschermZakelijkHuurder/MijnReserveringen" element={<MijnReserveringen />} />
+
                     <Route path="/HoofdschermParticulier/MijnReserveringen/ReserveringWijzigen" element={<ReserveringWijzigen />} />
                     <Route path="/HoofdschermZakelijkBeheerder/VoegMedewerkerToe" element={<VoegMedewerkerToe />} />
                     <Route path="/HoofdschermZakelijkBeheerder/MedewerkerVerwijderen" element={<MedewerkerVerwijderen />} />
