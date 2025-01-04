@@ -19,6 +19,7 @@ import VoertuigenSelectieZakelijkHuurder from "./ZakelijkHuurder/VoertuigenSelec
 import HoofdschermZakelijkHuurder from "./ZakelijkHuurder/HoofdschermZakelijkHuurder.jsx";
 import MijnReserveringen from "./Particulier/MijnReserveringen.jsx";
 import ReserveringWijzigen from "./Particulier/ReserveringWijzigen.jsx";
+import AbonnementWijzigen from "./ZakelijkBeheerder/AbonnementWijzigen.jsx";
 
 function App() {
     return (
@@ -52,6 +53,7 @@ function App() {
                     <Route path="/HoofdschermZakelijkBeheerder/MedewerkerVerwijderen" element={<MedewerkerVerwijderen />} />
                     <Route path="/HoofdschermZakelijkHuurder" element={<HoofdschermZakelijkHuurder />} />
                     <Route path="/VoertuigenSelectie" element={<VoertuigenSelectie />} />
+                    <Route path="/HoofdschermZakelijkBeheerder/AbonnementWijzigen" element={<AbonnementWijzigen />} />
                     <Route path="/VoertuigenSelectieFrontoffice" element={<VoertuigselectieFrontoffice />} />
                     <Route path="/VoertuigenSelectieZakelijkHuurder" element={<VoertuigenSelectieZakelijkHuurder />} />
                     <Route path="*" element={<Pagina404 />}/>

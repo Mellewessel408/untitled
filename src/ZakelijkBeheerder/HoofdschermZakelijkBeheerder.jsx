@@ -25,8 +25,8 @@ function HoofdschermZakelijkBeheerder() {
     const MedewerkersBeheren = () => {
 
     }
-    const AbbonementsBeheer = () => {
-
+    const AbonnementWijzigen = () => {
+        navigate('AbonnementWijzigen')
     }
     const VerhuurActiviteiten = () => {
 
@@ -72,10 +72,10 @@ function HoofdschermZakelijkBeheerder() {
             <h2>Wat wil je vandaag doen</h2>
             <button onClick={VoertuigenOverzicht}></button>
             <button onClick={MedewerkersBeheren}></button>
-            <button onClick={AbbonementsBeheer}></button>
+            <button onClick={AbonnementWijzigen}> Wijzig Abonnement</button>
             <button onClick={VerhuurActiviteiten}></button>
-            <button onClick={MedewerkerVerwijderen}>Medewerker toevoegen</button>
             <button onClick={VoegMedewerkerToe}>Medewerker toevoegen</button>
+            <button onClick={MedewerkerVerwijderen}>Medewerker Verwijderen</button>
             <button onClick={BedrijfVerwijderen} className="fetusDeletus">Het Bedrijf Verwijderen</button>
             <button className="logout-button" onClick={LogUit}>Log uit</button>
         </div>

@@ -34,10 +34,10 @@ function RegistreerBedrijf() {
         const emailDomein = email.split('@')[1]?.toLowerCase();
         console.log(domeinnaam)
         // Controleer of de bedrijfsnaam overeenkomt met het e-maildomein
-        if (domeinnaam !== emailDomein) {
-            alert("Emailadres klopt niet met de bijbehorende bedrijfsnaam!");
-            return;
-        }
+        // if (domeinnaam !== emailDomein) {
+        //     alert("Emailadres klopt niet met de bijbehorende bedrijfsnaam!");
+        //     return;
+        // }
 
         // Verzamel de data in een object om te verzenden
         const BedrijfsData = {
