@@ -6,6 +6,7 @@ import RegistreerBedrijf from "./Login/RegistreerBedrijf.jsx";
 import HoofdschermMedewerker from "./Frontoffice/HoofdschermFrontoffice.jsx";
 import HoofdschermParticulier from "./Particulier/HoofdschermParticulier.jsx";
 import HoofdschermZakelijkBeheerder from "./ZakelijkBeheerder/HoofdschermZakelijkBeheerder.jsx";
+import MedewerkersBeheren from "./ZakelijkBeheerder/MedewerkersBeheren.jsx";
 import VoegMedewerkerToe from "./ZakelijkBeheerder/VoegMedewerkerToe.jsx";
 import MedewerkerVerwijderen from "./ZakelijkBeheerder/MedewerkerVerwijderen.jsx";
 import HoofdschermFrontoffice from "./Frontoffice/HoofdschermFrontoffice.jsx";
@@ -51,8 +52,9 @@ function App() {
                     <Route path="/HoofdschermZakelijkHuurder/MijnReserveringen" element={<MijnReserveringen />} />
 
                     <Route path="/HoofdschermParticulier/MijnReserveringen/ReserveringWijzigen" element={<ReserveringWijzigen />} />
-                    <Route path="/HoofdschermZakelijkBeheerder/VoegMedewerkerToe" element={<VoegMedewerkerToe />} />
-                    <Route path="/HoofdschermZakelijkBeheerder/MedewerkerVerwijderen" element={<MedewerkerVerwijderen />} />
+                    <Route path="/HoofdschermZakelijkBeheerder/MedewerkersBeheren" element={<MedewerkersBeheren />} />
+                    <Route path="/HoofdschermZakelijkBeheerder/MedewerkersBeheren/VoegMedewerkerToe" element={<VoegMedewerkerToe />} />
+                    <Route path="/HoofdschermZakelijkBeheerder/MedewerkersBeheren/MedewerkerVerwijderen" element={<MedewerkerVerwijderen />} />
                     <Route path="/HoofdschermZakelijkHuurder" element={<HoofdschermZakelijkHuurder />} />
                     <Route path="/VoertuigenSelectie" element={<VoertuigenSelectie />} />
                     <Route path="/HoofdschermZakelijkBeheerder/AbonnementWijzigen" element={<AbonnementWijzigen />} />

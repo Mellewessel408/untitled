@@ -49,21 +49,13 @@ function HoofdschermZakelijkBeheerder() {
         }
     }
     const MedewerkersBeheren = () => {
-
+        navigate('MedewerkersBeheren')
     }
     const AbonnementWijzigen = () => {
         navigate('AbonnementWijzigen')
     }
     const VerhuurActiviteiten = () => {
 
-    }
-
-    const VoegMedewerkerToe = () => {
-        navigate('VoegMedewerkerToe');
-    }
-
-    const MedewerkerVerwijderen = () => {
-        navigate('MedewerkerVerwijderen');
     }
 
     const BedrijfVerwijderen = async () => {
@@ -96,12 +88,10 @@ function HoofdschermZakelijkBeheerder() {
         <div className="hoofdscherm-container">
             <h2>Welkom, {currentAccountId}!</h2>
             <h2>Wat wil je vandaag doen</h2>
-            <button onClick={VoertuigenOverzicht}></button>
-            <button onClick={MedewerkersBeheren}></button>
+            <button onClick={VoertuigenOverzicht}>Voertuigen overzicht</button>
+            <button onClick={MedewerkersBeheren}>Medewerkers beheren</button>
             <button onClick={AbonnementWijzigen}> Wijzig Abonnement</button>
-            <button onClick={VerhuurActiviteiten}></button>
-            <button onClick={VoegMedewerkerToe}>Medewerker toevoegen</button>
-            <button onClick={MedewerkerVerwijderen}>Medewerker Verwijderen</button>
+            <button onClick={VerhuurActiviteiten}>Verhuur activiteiten</button>
             <button onClick={BedrijfVerwijderen} className="fetusDeletus">Het Bedrijf Verwijderen</button>
             <button className="logout-button" onClick={LogUit}>Log uit</button>
         </div>
