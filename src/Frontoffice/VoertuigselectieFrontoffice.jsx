@@ -44,21 +44,37 @@ const VoertuigenComponent = () => {
     }, []); // Run only on component mount
 
     // Filter vehicles based on search term, status, and vehicle type
+    // useEffect(() => {
+    //     const filtered = voertuigen.filter((voertuig) => {
+    //         const matchesSearchTerm = (
+    //             voertuig.merk.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    //             voertuig.model.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    //             voertuig.kleur.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    //             voertuig.kenteken.toLowerCase().includes(searchTerm.toLowerCase())
+    //         );
+    //         const matchesStatus = statusFilter ? voertuig.voertuigStatus === statusFilter : true;
+    //         const matchesVehicleType = vehicleTypeFilter ? voertuig.voertuigType === vehicleTypeFilter : true;
+    //
+    //         return matchesSearchTerm && matchesStatus && matchesVehicleType; // Filter on search term, status, and vehicle type
+    //     });
+    //     setFilteredVoertuigen(filtered); // Update filtered vehicles based on search, status, and vehicle type
+    // }, [searchTerm, statusFilter, vehicleTypeFilter, voertuigen]);Run whenever these values change
+
     useEffect(() => {
         const filtered = voertuigen.filter((voertuig) => {
-            const matchesSearchTerm = (
-                voertuig.merk.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                voertuig.model.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                voertuig.kleur.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                voertuig.kenteken.toLowerCase().includes(searchTerm.toLowerCase())
-            );
-            const matchesStatus = statusFilter ? voertuig.voertuigStatus === statusFilter : true;
-            const matchesVehicleType = vehicleTypeFilter ? voertuig.voertuigType === vehicleTypeFilter : true;
-
-            return matchesSearchTerm && matchesStatus && matchesVehicleType; // Filter on search term, status, and vehicle type
+            return Object.keys(voertuig).some((key) => {
+                const value = voertuig[key];
+                if (typeof value === "string") {
+                    return value.toLowerCase().includes(searchTerm.toLowerCase());
+                }
+                if (typeof value === "number") {
+                    return value.toString().includes(searchTerm);
+                }
+                return false;
+            });
         });
-        setFilteredVoertuigen(filtered); // Update filtered vehicles based on search, status, and vehicle type
-    }, [searchTerm, statusFilter, vehicleTypeFilter, voertuigen]); // Run whenever these values change
+        setFilteredVoertuigen(filtered);
+    }, [searchTerm, voertuigen]);
 
     // Update vehicle status
     const updateData = async (voertuigId) => {
