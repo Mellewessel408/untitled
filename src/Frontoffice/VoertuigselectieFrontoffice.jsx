@@ -79,7 +79,7 @@ const VoertuigenComponent = () => {
         }
 
         // If we are changing to "Uitgegeven", we need to send the dates
-        const url = `https://localhost:44318/api/Frontoffice/updatevoertuigstatus?id=${voertuigId}&begindatum=${begindatum || ''}&einddatum=${einddatum || ''}`;
+        const url = `https://localhost:44318/api/Frontoffice/updatevoertuigstatus?id=${voertuigId}&begindatum=${begindatum}&einddatum=${einddatum}`;
         try {
             const response = await fetch(url, {
                 method: 'PUT',
