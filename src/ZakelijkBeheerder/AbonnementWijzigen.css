@@ -27,3 +27,62 @@
 .grote-knop:active {
     background-color: #222; /* Nog donkerdere kleur bij klikken */
 }
+
+.card-container {
+    display: flex;
+    justify-content: space-around; /* Space between cards */
+    align-items: flex-start;
+    gap: 20px; /* Adjust spacing between cards */
+    flex-wrap: wrap; /* Wrap cards if screen size is small */
+}
+
+
+.card {
+    background-color: #fff;
+    padding: 40px; /* Increase padding */
+    border-radius: 15px; /* Slightly larger corner radius */
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); /* Enhance shadow */
+    width: 90%;
+    max-width: 500px; /* Increase max width */
+    text-align: center;
+    font-size: 18px; /* Increase font size inside the card */
+}
+
+
+/* Style the labels */
+.card-labels {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column; /* Stack labels vertically */
+    align-items: flex-start; /* Align labels to the left */
+}
+
+.card-label {
+    margin: 15px 0;
+    font-size: 18px; /* Slightly larger text */
+    color: #495057;
+    line-height: 1.5; /* Increase line spacing */
+}
+
+
+.card-buttons button {
+    padding: 15px 30px; /* Increase padding for a larger button */
+    font-size: 18px; /* Larger text */
+    border: none;
+    border-radius: 8px; /* Slightly larger corner radius */
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.card-buttons button:hover {
+    background-color: #0056b3;
+    transform: scale(1.05); /* Add a hover scaling effect */
+}
+
+.card-buttons button:active {
+    background-color: #003f7f;
+}
+
+
