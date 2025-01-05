@@ -101,7 +101,8 @@ const VoertuigenComponent = () => {
             begindatum: begindatum,
             einddatum: einddatum,
             voertuigId: voertuigId,
-            AccountId: currentAccountId
+            AccountId: currentAccountId,
+            VoertuigStatus: "Gereserveerd"
         };
         setLoading(true);
         try {
