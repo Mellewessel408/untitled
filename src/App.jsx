@@ -52,6 +52,7 @@ function App() {
                     <Route path="/HoofdschermZakelijkHuurder/MijnReserveringen" element={<MijnReserveringen />} />
 
                     <Route path="/HoofdschermParticulier/MijnReserveringen/ReserveringWijzigen" element={<ReserveringWijzigen />} />
+                    <Route path="/HoofdschermZakelijkHuurder/MijnReserveringen/ReserveringWijzigen" element={<ReserveringWijzigen />} />
                     <Route path="/HoofdschermZakelijkBeheerder/MedewerkersBeheren" element={<MedewerkersBeheren />} />
                     <Route path="/HoofdschermZakelijkBeheerder/MedewerkersBeheren/VoegMedewerkerToe" element={<VoegMedewerkerToe />} />
                     <Route path="/HoofdschermZakelijkBeheerder/MedewerkersBeheren/MedewerkerVerwijderen" element={<MedewerkerVerwijderen />} />

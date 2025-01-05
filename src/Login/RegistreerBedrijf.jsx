@@ -35,10 +35,10 @@ function RegistreerBedrijf() {
         console.log(domeinnaam);
         console.log(emailDomein);
         // Controleer of de bedrijfsnaam overeenkomt met het e-maildomein
-        // if (domeinnaam !== emailDomein) {
-        //     alert("Emailadres klopt niet met de bijbehorende bedrijfsnaam!");
-        //     return;
-        // }
+         if (domeinnaam !== emailDomein) {
+             alert("Emailadres klopt niet met de bijbehorende bedrijfsnaam!");
+             return;
+        }
 
         // Verzamel de data in een object om te verzenden
         const BedrijfsData = {
@@ -115,8 +115,8 @@ function RegistreerBedrijf() {
                 </div>
 
                 <div>
-                    <label htmlFor="Domeinnaam">Domeinnaam:</label>
-                    <input type="text" id="Domeinnaam" name="Domeinnaam" required placeholder="bv. gmail.com"/>
+                    <label htmlFor="Domeinnaam">Domeinnaam: (bijv. gmail.com)</label>
+                    <input type="text" id="Domeinnaam" name="Domeinnaam" required placeholder="Vul je domeinnaam in..."/>
                 </div>
 
                 <div>

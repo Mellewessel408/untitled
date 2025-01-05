@@ -2,18 +2,20 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './HoofdschermParticulier.css';
 import logo from '../assets/CarAndAll_Logo.webp';
-import { AccountProvider, useAccount } from "../Login/AccountProvider.jsx"; // Gebruik de useAccount hook om de context te gebruiken
+import { useAccount } from "../Login/AccountProvider.jsx"; // Gebruik de useAccount hook om de context te gebruiken
 
 function HoofdschermParticulier() {
     const navigate = useNavigate();
     const { currentAccountId, logout } = useAccount(); // Haal de currentAccountId uit de context
+    const [accountNaam, setAccountNaam] = useState('');
 
     useEffect(() => {
         if (currentAccountId === 0) {
             alert("U bent ingelogd zonder AccountId");
             navigate('/inlogpagina');
         }
-    });
+        KrijgNaam();
+    }, [currentAccountId, navigate]);
 
     const AutoHuren = () => {
         navigate('/VoertuigenSelectie');
@@ -34,14 +36,12 @@ function HoofdschermParticulier() {
 
     const AccountVerwijderen = async () => {
         try {
-            // Verstuur het DELETE-verzoek naar de backend en wacht op het antwoord
             const response = await fetch(`https://localhost:44318/api/Particulier/VerwijderParticulier?id=${currentAccountId}`, {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
             });
 
             if (response.ok) {
-                // Controleer of het verzoek succesvol was
                 console.log('Account succesvol verwijderd');
                 alert('Account succesvol verwijderd!');
                 navigate('/InlogPagina');
@@ -49,16 +49,35 @@ function HoofdschermParticulier() {
                 throw new Error('Er is iets misgegaan bij het verwijderen van het account');
             }
         } catch (error) {
-            // Foutafhandeling
             console.error('Er is een fout opgetreden:', error.message);
             alert('Er is iets misgegaan bij het verwijderen van het account! Fout details: ' + JSON.stringify(error, null, 2));
+        }
+    };
+
+    const KrijgNaam = async () => {
+        try {
+            const response = await fetch(`https://localhost:44318/api/ZakelijkBeheerder/KrijgSpecifiekAccount?id=${currentAccountId}`, {
+                method: 'GET',
+                headers: {'Content-Type': 'application/json'},
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log(data);
+                setAccountNaam(data.email);
+            } else {
+                throw new Error('Er is iets misgegaan bij het ophalen van de accountnaam');
+            }
+        } catch (error) {
+            console.error('Er is een fout opgetreden:', error.message);
+            alert('Er is iets misgegaan bij het ophalen van de accountnaam! Fout details: ' + JSON.stringify(error, null, 2));
         }
     };
 
     return (
         <div className="hoofdscherm-container">
             <img src={logo} alt="Carandall Logo"/>
-            <h1>Welkom {currentAccountId}</h1>
+            <h1>Welkom {accountNaam}</h1>
             <h2>Wat wil je vandaag doen?</h2>
             <button onClick={AutoHuren}>Auto huren</button>
             <button onClick={MijnReservering}>Mijn reserveringen</button>

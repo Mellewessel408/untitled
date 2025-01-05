@@ -1,18 +1,25 @@
 import {useNavigate} from 'react-router-dom';
 import '../Particulier/HoofdschermParticulier.css';
 import {AccountProvider, useAccount} from "../Login/AccountProvider.jsx";
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import VoegMedewerkerToe from "./VoegMedewerkerToe.jsx";
 
 function HoofdschermZakelijkBeheerder() {
     const navigate = useNavigate();
     const { currentAccountId, logout } = useAccount(); // Haal de currentAccountId uit de context
+    const [accountNaam, setAccountNaam] = useState('');
     useEffect(() => {
         if (currentAccountId === 0) {
             alert("U bent ingelogd zonder AccountId")
             navigate('/inlogpagina');
         }
-    })
+        const fetchNaam = async () => {
+            const naam = await KrijgNaam();
+
+        };
+        fetchNaam();
+    }, [currentAccountId, navigate]);
+
 
     const LogUit = () => {
         logout();
@@ -24,11 +31,11 @@ function HoofdschermZakelijkBeheerder() {
 
             const response2 = await fetch(`https://localhost:44318/api/ZakelijkBeheerder/KrijgBedrijfId?accountId=${currentAccountId}`);
             if (response2.ok) {
-                const data2 = await response2.json();
+                const data2 = await response2.text();
                 console.log(data2);
 
                 // Verstuur het DELETE-verzoek naar de backend en wacht op het antwoord
-                const response = await fetch(`https://localhost:44318/api/Bedrijf/KrijgAlleBedrijfstatistieken?bedrijfsId=37`, {
+                const response = await fetch(`https://localhost:44318/api/Bedrijf/KrijgAlleBedrijfstatistieken?bedrijfsId=${data2}`, {
                     method: 'GET',
                     headers: {'Content-Type': 'application/json'},
                 });
@@ -48,6 +55,25 @@ function HoofdschermZakelijkBeheerder() {
             alert('Er is iets misgegaan bij het verwijderen van het bedrijf! Fout details: ' + JSON.stringify(error, null, 2));
         }
     }
+    const KrijgNaam = async () => {
+        try {
+            const response = await fetch(`https://localhost:44318/api/ZakelijkBeheerder/KrijgAccountemail?accountId=${currentAccountId}`, {
+                method: 'GET',
+                headers: {'Content-Type': 'application/json'},
+            });
+
+            if (response.ok) {
+                const data = await response.text();
+                console.log(data);
+                setAccountNaam(data);
+            } else {
+                throw new Error('Er is iets misgegaan bij het ophalen van de accountnaam');
+            }
+        } catch (error) {
+            console.error('Er is een fout opgetreden:', error.message);
+            alert('Er is iets misgegaan bij het ophalen van de accountnaam! Fout details: ' + JSON.stringify(error, null, 2));
+        }
+    };
     const MedewerkersBeheren = () => {
         navigate('MedewerkersBeheren')
     }
@@ -86,7 +112,7 @@ function HoofdschermZakelijkBeheerder() {
 
     return (
         <div className="hoofdscherm-container">
-            <h2>Welkom, {currentAccountId}!</h2>
+            <h2>Welkom, {accountNaam}!</h2>
             <h2>Wat wil je vandaag doen</h2>
             <button onClick={VoertuigenOverzicht}>Voertuigen overzicht</button>
             <button onClick={MedewerkersBeheren}>Medewerkers beheren</button>

@@ -73,6 +73,26 @@ const ReserveringWijzigen = () => {
         }
     };
 
+    const fetchVoertuigenDatum = async (begindatum, einddatum) => {
+
+        try {
+            const url = `https://localhost:44318/api/Voertuig/krijgallevoertuigenDatum?begindatum=${begindatum}&einddatum=${einddatum}`;
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`Netwerkfout (${response.status}): ${response.statusText}`);
+            }
+            const data = await response.json();
+            setVoertuigen(data.$values || []);
+        } catch (err) {
+            console.error(err);
+            setError(`Kan voertuigen niet ophalen: ${err.message}`);
+        } finally {
+            setTimeout(() => {
+                setLoading(false); // Zet loading op false na de vertraging
+            }, 1000); // Stel de vertraging in, bijvoorbeeld 1000ms (1 seconde)
+        }
+    };
+
     // Filter voertuigen
     useEffect(() => {
         const filtered = voertuigen.filter((voertuig) => {
@@ -200,7 +220,11 @@ const ReserveringWijzigen = () => {
                     id="einddatum"
                     placeholder="Kies einddatum"
                     value={einddatum}
-                    onChange={(e) => setEinddatum(e.target.value)}
+                    onChange={(e) => {
+                        const newEinddatum = e.target.value;
+                        setEinddatum(newEinddatum);
+                        fetchVoertuigenDatum(begindatum, newEinddatum);
+                    }}
                     min={begindatum || new Date().toISOString().split('T')[0]}
                 />
                 <input
