@@ -112,6 +112,10 @@ const VoertuigenComponent = () => {
     // Event handler for button click
     const handleButtonClick = (voertuigId) => {
         updateData(voertuigId);
+        if (begindatum == null || einddatum == null) {
+            alert("Fout bij status veranderen: Vul een begin- en einddatum in.");
+            return;
+        }
     };
 
     // Toggle details visibility
@@ -209,6 +213,9 @@ const VoertuigenComponent = () => {
                                 <p><strong>Merk:</strong> {voertuig.merk}</p>
                                 <p><strong>Model:</strong> {voertuig.model}</p>
                                 <p><strong>Status:</strong> {voertuig.voertuigStatus}</p>
+                                {/*<p><strong>Begin datum:</strong> {voertuig.begindatum}</p>*/}
+                                {/*<p><strong>Eind datum:</strong> {voertuig.einddatum}</p>*/}
+                                {/*<p><strong>Huurder:</strong> {reservering.accountId}</p>*/}
 
                                 {/* Status button and Details */}
                                 <div className="button-container">
