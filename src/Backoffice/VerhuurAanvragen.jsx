@@ -26,26 +26,33 @@ function VerhuurAanvragen() {
         }
     });
 
-        const fetchReserveringen = async () => {
-            try {
-                const response = await fetch(apiBaseUrl + "/voertuig/GetAlleVoertuigenMetReserveringen");
-                if (!response.ok) {
-                    throw new Error("Failed to fetch data");
-                }
-                setReservering(response.data || []);
-            } catch (err) {
-                setError(err.message);
-            } finally {
-                setLoading(false);
+    const fetchReserveringen = async () => {
+        try {
+            const response = await fetch(apiBaseUrl + "/voertuig/GetAlleVoertuigenMetReserveringen");
+            if (!response.ok) {
+                throw new Error("Failed to fetch data");
             }
+
+            // Parse de JSON-data
+            const result = await response.json();
+
+            // Controleer de structuur en stel de data in
+            setReservering(result.$values || []);
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
         }
+    };
     useEffect(() => {
         fetchReserveringen();
-    }, );
+    }, []); // Lege afhankelijkheden zorgen ervoor dat dit alleen bij mount gebeurt.
 
 
 
-        const handleLogout = () => {
+
+
+    const handleLogout = () => {
             LogUit(); // Roep de logout-functie aan
             navigate('/Inlogpagina'); // Navigeren naar inlogpagina
         };
@@ -63,22 +70,26 @@ function VerhuurAanvragen() {
             setComment(e.target.value);
 
         };
-        const verstuurdata = async (event, id) => {
-            event.preventDefault(); // Voorkomt dat het formulier standaard wordt ingediend
+        const verstuurdata = async (id) => {
+
 
             const data = {
                 reserveringId: id,
                 comment: comment,
                 keuze: selectedAction
             }
+            console.log(data);
 
             try {
                 // Verstuur het POST-verzoek naar de backend
-                await fetch('https://localhost:44318/api/accountmedewerkerbackoffice/verhuuraanvraagkeuren', {
-                    method: 'POST',
+                const response = await fetch('https://localhost:44318/api/Backoffice/verhuuraanvraagkeuren', {
+                    method: 'PUT',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify(data),
                 });
+                if (response.ok) {
+
+                }
             } catch (error) {
                 // Foutafhandelingslogica
                 console.error('Er is een fout opgetreden:', error.message);
@@ -92,11 +103,12 @@ function VerhuurAanvragen() {
     };
 
     const handleCommentSubmit = (id) => {
-            alert(`Commentaar verzonden: ${comment} voor ${id}`);
+        verstuurdata(id);
+        alert(`Commentaar verzonden: ${comment} voor ${id}`);
             setShowCommentField(false);
-            setSelectedReserveringId(null)
+            setSelectedReserveringId(null);
             setComment("");
-            verstuurdata(id);
+
         };
 
         const LogUit = () => {
@@ -104,6 +116,7 @@ function VerhuurAanvragen() {
             navigate('/Inlogpagina');
         };
         const handleAfkeuren = (id) => {
+            console.log(id);
             setSelectedReserveringId(id)
             setShowCommentField(true);
             setSelectedAction(false);
@@ -128,7 +141,7 @@ function VerhuurAanvragen() {
                     <div className="no-vehicles">Geen voertuigen gevonden</div>
                 ) : (
                     reserveringen.map((voertuig) => (
-                        <div key={voertuig.voertuigId} className="voertuig-card">
+                        <div key={voertuig.reserveringsId} className="voertuig-card">
                             <div className="voertuig-photo">
                                 <img
                                     className="voertuig-photo"
@@ -136,27 +149,69 @@ function VerhuurAanvragen() {
                                     alt="CarAndAll Logo"
                                 />
                             </div>
+
                             <div className="voertuig-info">
-                                <h3 className="kenteken">ReserveringsId #{voertuig.reserveringsId}</h3>
-                                <p><strong>Voertuigtype:</strong> {voertuig.voertuigType}</p>
-                                <p><strong>Begindatum:</strong> {formatDatum(voertuig.begindatum)}</p>
-                                <p><strong>Einddatum:</strong> {formatDatum(voertuig.einddatum)}</p>
+                                <h3 className="kenteken">
+                                    ReserveringsId #{voertuig.reserveringsId}
+                                </h3>
                                 <p>
-                                    <strong>Betalingsstatus:</strong> {voertuig.isBetaald ? "Betaald" : `Nog te betalen €${voertuig.totaalPrijs || 0}`}
+                                    <strong>Voertuigtype:</strong> {voertuig.voertuigType}
+                                </p>
+                                <p>
+                                    <strong>Begindatum:</strong> {formatDatum(voertuig.begindatum)}
+                                </p>
+                                <p>
+                                    <strong>Einddatum:</strong> {formatDatum(voertuig.einddatum)}
+                                </p>
+                                <p>
+                                    <strong>Betalingsstatus:</strong>{" "}
+                                    {voertuig.isBetaald ? "Betaald" : `Nog te betalen €${voertuig.totaalPrijs || 0}`}
                                 </p>
 
+                                <div className="voertuig-details">
+                                    <p><strong>Kenteken:</strong> {voertuig.kenteken}</p>
+                                    <p><strong>Voertuig:</strong> {voertuig.merk} {voertuig.model}</p>
+                                    <p><strong>Kleur:</strong> {voertuig.kleur}</p>
+                                    <p><strong>Aanschafjaar:</strong> {voertuig.aanschafjaar}</p>
+                                    <p><strong>Brandstoftype:</strong> {voertuig.brandstofType}</p>
+                                    <p><strong>Totaalprijs:</strong> €{voertuig.totaalPrijs}</p>
 
+                                    <button
+                                        onClick={() => handleGoedkeuren(voertuig.reserveringsId)}
+                                        style={{
+                                            backgroundColor:
+                                                selectedAction === true && selectedReserveringId === voertuig.reserveringsId
+                                                    ? 'grey'
+                                                    : '#040404',
+                                        }}
+                                    >
+                                        Goedkeuren
+                                    </button>
+                                    <button
+                                        onClick={() => handleAfkeuren(voertuig.reserveringsId)}
+                                        style={{
+                                            backgroundColor:
+                                                selectedAction === false && selectedReserveringId === voertuig.reserveringsId
+                                                    ? 'grey'
+                                                    : '#040404',
+                                        }}
+                                    >
+                                        Afkeuren
+                                    </button>
+                                </div>
 
-
-                                    <div className="voertuig-details">
-                                        <p><strong>Kenteken:</strong> {voertuig.kenteken}</p>
-                                        <p><strong>Voertuig:</strong> {voertuig.merk} {voertuig.model}</p>
-                                        <p><strong>Kleur:</strong> {voertuig.kleur}</p>
-                                        <p><strong>Aanschafjaar:</strong> {voertuig.aanschafjaar}</p>
-                                        <p><strong>Brandstoftype:</strong> {voertuig.brandstofType}</p>
-                                        <p><strong>Totaalprijs:</strong> €{voertuig.totaalPrijs}</p>
+                                {selectedReserveringId === voertuig.reserveringsId && (
+                                    <div className="comment-section">
+                                    <textarea
+                                        placeholder="Voeg hier een opmerking toe..."
+                                        value={comment}
+                                        onChange={(e) => handleCommentChange(e, voertuig.reserveringId)}
+                                    />
+                                        <button onClick={() => handleCommentSubmit(voertuig.reserveringsId)}>
+                                            Verzenden
+                                        </button>
                                     </div>
-
+                                )}
                             </div>
                         </div>
                     ))
@@ -164,6 +219,7 @@ function VerhuurAanvragen() {
             </div>
         </div>
     );
+
 
 }
 
