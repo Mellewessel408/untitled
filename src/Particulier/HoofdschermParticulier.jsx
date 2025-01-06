@@ -64,7 +64,7 @@ function HoofdschermParticulier() {
             if (response.ok) {
                 const data = await response.json();
                 console.log(data);
-                setAccountNaam(data.email);
+                setAccountNaam(data.naam);
             } else {
                 throw new Error('Er is iets misgegaan bij het ophalen van de accountnaam');
             }

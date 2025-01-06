@@ -17,10 +17,8 @@ const ReserveringWijzigen = () => {
     const [begindatum, setBegindatum] = useState(null);
     const [einddatum, setEinddatum] = useState(null);
     const [showDetails, setShowDetails] = useState(null);
-    const [showConfirm, setShowConfirm] = useState(null);
-    const [selectedVoertuig, setSelectedVoertuig] = useState(null);
-    const [timeRemaining, setTimeRemaining] = useState(30);
-    const [timerActive, setTimerActive] = useState(false);
+
+
     const [reservering, setReservering] = useState();
     const location = useLocation();
     const { reserveringId } = location.state || {};
@@ -47,7 +45,7 @@ const ReserveringWijzigen = () => {
                 throw new Error(`Netwerkfout (${response.status}): ${response.statusText}`);
             }
             const data = await response.json();
-            setMijnVoertuig({ ...data });
+            setMijnVoertuig(data);
             setBegindatum(data.begindatum);
             setEinddatum(data.einddatum);
 
@@ -61,7 +59,15 @@ const ReserveringWijzigen = () => {
             // Voeg de kosten per voertuig toe
             const updatedVoertuigen = data2.$values.map(voertuig => {
                 const days = (new Date(data.einddatum) - new Date(data.begindatum)) / (1000 * 60 * 60 * 24); // Aantal dagen tussen begindatum en einddatum
-                const bijkomendeKosten = 100 + 100 * days; // Kosten berekening
+                let bijkomendeKosten = 0;
+                if(voertuig.voertuigType === "Auto") {
+                    bijkomendeKosten = 100 + 100 * days - data.totaalPrijs; // Zorg ervoor dat `totaalPrijs` bestaat
+                } else if (voertuig.voertuigType === "Caravan") {
+                    bijkomendeKosten = 200 + 200 * days - data.totaalPrijs;
+                } else if (voertuig.voertuigType === "Camper") {
+                    bijkomendeKosten = 300 + 300 * days - data.totaalPrijs;
+                }
+
                 return { ...voertuig, bijkomendeKosten };
             });
             setVoertuigen(updatedVoertuigen);
@@ -73,8 +79,8 @@ const ReserveringWijzigen = () => {
         }
     };
 
-    const fetchVoertuigenDatum = async (begindatum, einddatum) => {
 
+    const fetchVoertuigenDatum = async (begindatum, einddatum) => {
         try {
             const url = `https://localhost:44318/api/Voertuig/krijgallevoertuigenDatum?begindatum=${begindatum}&einddatum=${einddatum}`;
             const response = await fetch(url);
@@ -82,16 +88,36 @@ const ReserveringWijzigen = () => {
                 throw new Error(`Netwerkfout (${response.status}): ${response.statusText}`);
             }
             const data = await response.json();
-            setVoertuigen(data.$values || []);
+            const voertuigen = data.$values || [];
+            const updatedVoertuigen = voertuigen.map(voertuig => {
+
+                const voertuigBegindatum = new Date(begindatum);
+                const voertuigEinddatum = new Date(einddatum);
+
+                const days = (voertuigEinddatum - voertuigBegindatum) / (1000 * 60 * 60 * 24);
+                console.log(mijnVoertuig.totaalPrijs);
+                let bijkomendeKosten = 0;
+                if(voertuig.voertuigType === "Auto") {
+                    bijkomendeKosten = 100 + 100 * days - mijnVoertuig.totaalPrijs; // Zorg ervoor dat `totaalPrijs` bestaat
+                } else if (voertuig.voertuigType === "Caravan") {
+                    bijkomendeKosten = 200 + 200 * days - mijnVoertuig.totaalPrijs;
+                } else if (voertuig.voertuigType === "Camper") {
+                    bijkomendeKosten = 300 + 300 * days - mijnVoertuig.totaalPrijs;
+                }
+                return { ...voertuig, bijkomendeKosten };
+            });
+
+            setVoertuigen(updatedVoertuigen);
         } catch (err) {
             console.error(err);
             setError(`Kan voertuigen niet ophalen: ${err.message}`);
         } finally {
             setTimeout(() => {
-                setLoading(false); // Zet loading op false na de vertraging
-            }, 1000); // Stel de vertraging in, bijvoorbeeld 1000ms (1 seconde)
+                setLoading(false);
+            }, 1000);
         }
     };
+
 
     // Filter voertuigen
     useEffect(() => {
@@ -115,13 +141,15 @@ const ReserveringWijzigen = () => {
         navigate('/Inlogpagina');
     };
 
-    const handleReserveer = async (voertuigId) => {
+    const handleReserveer = async (voertuig) => {
         const data = {
             begindatum: begindatum,
             einddatum : einddatum,
-            voertuigId: voertuigId,
-            AccountId: currentAccountId
+            voertuigId: voertuig.voertuigId,
+            AccountId: currentAccountId,
+            VoertuigStatus: "Gereserveerd"
         };
+        console.log(data)
 
         setLoading(true);
         try {
@@ -139,10 +167,10 @@ const ReserveringWijzigen = () => {
             }
 
             setVoertuigen((prevVoertuigen) =>
-                prevVoertuigen.map((voertuig) =>
-                    voertuig.voertuigId === voertuigId
-                        ? { ...voertuig, voertuigStatus: "Gereserveerd" }
-                        : voertuig
+                prevVoertuigen.map((voertuigje) =>
+                    voertuigje.voertuigId === voertuig.voertuigId
+                        ? { ...voertuigje, voertuigStatus: "Gereserveerd" }
+                        : voertuigje
                 )
             );
             navigate('/HoofdschermParticulier/MijnReserveringen');
@@ -155,45 +183,32 @@ const ReserveringWijzigen = () => {
     const toggleDetails = (voertuigId) => {
         setShowDetails(showDetails === voertuigId ? null : voertuigId);
     };
-
-    const showReservationConfirm = (voertuigId) => {
-        if (begindatum == null || einddatum == null) {
-            alert(`Fout bij reserveren: Vul een datum in.`);
+    const ReserveringBehouden = () => {
+        var begindatum = document.getElementById("begindatum").innerHTML;
+        console.log("begindatum " + begindatum);
+        var einddatum = document.getElementById("einddatum").innerHTML;
+        if (!((begindatum != null && einddatum != null) || (begindatum == null && einddatum == null))) {
+            alert("Vul een eerst een datum in");
             return;
+        } else {
+            handleReserveer(mijnVoertuig);
+            alert("Reservering Behouden!");
         }
-
-        setSelectedVoertuig(voertuigId);
-        setShowConfirm(true);
-        setTimeRemaining(30);
-        setTimerActive(true);
     };
+    const prijs = (voertuig) => {
+        const voertuigBegindatum = new Date(begindatum);
+        const voertuigEinddatum = new Date(einddatum);
 
-    useEffect(() => {
-        let timer;
-
-        if (timerActive && timeRemaining > 0) {
-            timer = setInterval(() => {
-                setTimeRemaining((prevTime) => prevTime - 1);
-            }, 1000);
-        } else if (timeRemaining === 0) {
-            cancelReservation();
+        const days = (voertuigEinddatum - voertuigBegindatum) / (1000 * 60 * 60 * 24);
+        let bijkomendeKosten = 0;
+        if(voertuig.voertuigType === "Auto") {
+            bijkomendeKosten = 100 + 100 * days - mijnVoertuig.totaalPrijs; // Zorg ervoor dat `totaalPrijs` bestaat
+        } else if (voertuig.voertuigType === "Caravan") {
+            bijkomendeKosten = 200 + 200 * days - mijnVoertuig.totaalPrijs;
+        } else if (voertuig.voertuigType === "Camper") {
+            bijkomendeKosten = 300 + 300 * days - mijnVoertuig.totaalPrijs;
         }
-
-        return () => clearInterval(timer);
-    }, [timerActive, timeRemaining]);
-
-    const cancelReservation = () => {
-        setShowConfirm(false);
-        setSelectedVoertuig(null);
-        setTimerActive(false);
-    };
-
-    const confirmReservation = () => {
-        if (selectedVoertuig !== null) {
-            handleReserveer(selectedVoertuig);
-            setShowConfirm(false);
-            setTimerActive(false);
-        }
+        return bijkomendeKosten;
     };
 
     if (loading) return <div className="loading">Laden...</div>;
@@ -249,10 +264,10 @@ const ReserveringWijzigen = () => {
                                 <p><strong>Voertuig:</strong> {mijnVoertuig.merk} {mijnVoertuig.model}</p>
                                 <p><strong>Begindatum:</strong> {new Date(mijnVoertuig.begindatum).toLocaleDateString("nl-NL")}</p>
                                 <p><strong>Einddatum:</strong> {new Date(mijnVoertuig.einddatum).toLocaleDateString("nl-NL")}</p>
-                                <p><strong>Bijkomende kosten:</strong> €{100 + 100 * ((new Date(mijnVoertuig.einddatum) - new Date(mijnVoertuig.begindatum)) / (1000 * 60 * 60 * 24))}</p>
+                                <p><strong>Bijkomende kosten:</strong> €{prijs(mijnVoertuig)}</p>
                                 <button
                                     className="behoud-reservering-button"
-                                    onClick={() => alert("Reservering behouden!")}
+                                    onClick={ReserveringBehouden}
                                 >
                                     Behoud reservering
                                 </button>
@@ -275,11 +290,11 @@ const ReserveringWijzigen = () => {
                                 <p><strong>Model:</strong> {voertuig.model}</p>
                                 <p><strong>Voertuigtype:</strong> {voertuig.voertuigType}</p>
                                 <p><strong>Bijkomende kosten:</strong> €{voertuig.bijkomendeKosten}</p>
-                                {!showConfirm && (
+
                                     <div className="button-container">
                                         <button
                                             className="reserveer-button"
-                                            onClick={() => handleReserveer(voertuig.voertuigId)}
+                                            onClick={() => handleReserveer(voertuig)}
                                         >
                                             Reserveer
                                         </button>
@@ -290,15 +305,7 @@ const ReserveringWijzigen = () => {
                                             Details
                                         </button>
                                     </div>
-                                )}
 
-                                {showConfirm && selectedVoertuig === voertuig.voertuigId && (
-                                    <div>
-                                        <p className="Confirmatievraag">Weet je het zeker? ({timeRemaining}s)</p>
-                                        <button className="AnnuleerKnop" onClick={cancelReservation}>Stop</button>
-                                        <button className="ReserveerKnop" onClick={confirmReservation}>Ja Reserveer</button>
-                                    </div>
-                                )}
 
                                 {showDetails === voertuig.voertuigId && (
                                     <div className="voertuig-details">
