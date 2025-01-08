@@ -70,6 +70,7 @@ function VerhuurAanvragen() {
             setComment(e.target.value);
 
         };
+
         const verstuurdata = async (id) => {
 
 
@@ -105,6 +106,7 @@ function VerhuurAanvragen() {
     const handleCommentSubmit = (id) => {
         verstuurdata(id);
         alert(`Commentaar verzonden: ${comment} voor ${id}`);
+        fetchReserveringen();
             setShowCommentField(false);
             setSelectedReserveringId(null);
             setComment("");
