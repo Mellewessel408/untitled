@@ -14,7 +14,12 @@ function KiesGebruiker() {
         navigate('/Registreren')
     };
 
+    const handelInloggen = () => {
+        navigate('/InlogPagina')
+    }
+
     return (
+        <>
         <div className="button-container">
 
             <button className="grote-knop" onClick={handelRegistreerBedrijf}>Bedrijf
@@ -26,6 +31,11 @@ function KiesGebruiker() {
 
             </button>
         </div>
+            <div className="button-container">
+                <button onClick={handelInloggen}>Inloggen</button>
+            </div>
+
+        </>
     );
 }
 

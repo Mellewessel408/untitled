@@ -4,6 +4,7 @@ import {useAccount} from "../Login/AccountProvider.jsx";
 import React from "react";
 import { useNavigate } from 'react-router-dom';
 
+//Nieuw
 function ProfielWijzigen(){
     const { currentAccountId } = useAccount();
     const accountIdString = String(currentAccountId)

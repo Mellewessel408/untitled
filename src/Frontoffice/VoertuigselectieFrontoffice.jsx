@@ -66,7 +66,7 @@ const VoertuigenComponent = () => {
         let updatedStatus = voertuig.voertuigStatus;
 
         // Transition logic based on current status
-        if (updatedStatus === "Gereserveerd") {
+        if (updatedStatus === "IsGoedgekeurd") {
             updatedStatus = "Uitgegeven"; // Transition "Gereserveerd" to "Uitgegeven"
         } else if (updatedStatus === "Uitgegeven") {
             updatedStatus = "Beschikbaar"; // Transition "Uitgegeven" to "Beschikbaar"
@@ -200,6 +200,7 @@ const VoertuigenComponent = () => {
                     <div className="no-vehicles">Geen voertuigen gevonden</div>
                 ) : (
                     filteredVoertuigen.map((voertuig) => (
+
                         <div key={voertuig.voertuigId} className="voertuig-card">
                             <div className="voertuig-photo">
                                 <img
@@ -213,12 +214,11 @@ const VoertuigenComponent = () => {
                                 <p><strong>Merk:</strong> {voertuig.merk}</p>
                                 <p><strong>Model:</strong> {voertuig.model}</p>
                                 <p><strong>Status:</strong> {voertuig.voertuigStatus}</p>
-                                {/*<p><strong>Begin datum:</strong> {voertuig.begindatum}</p>*/}
-                                {/*<p><strong>Eind datum:</strong> {voertuig.einddatum}</p>*/}
-                                {/*<p><strong>Huurder:</strong> {reservering.accountId}</p>*/}
+
 
                                 {/* Status button and Details */}
                                 <div className="button-container">
+
                                     <button
                                         className="reserveer-button"
                                         onClick={() => handleButtonClick(voertuig.voertuigId)}

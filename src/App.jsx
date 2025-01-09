@@ -21,6 +21,8 @@ import HoofdschermZakelijkHuurder from "./ZakelijkHuurder/HoofdschermZakelijkHuu
 import MijnReserveringen from "./Particulier/MijnReserveringen.jsx";
 import ReserveringWijzigen from "./Particulier/ReserveringWijzigen.jsx";
 import AbonnementWijzigen from "./ZakelijkBeheerder/AbonnementWijzigen.jsx";
+import VoertuigOverzicht from "./ZakelijkBeheerder/VoertuigOverzicht.jsx";
+import BedrijfsVoertuigen from "./ZakelijkBeheerder/BedrijfsVoertuigen.jsx";
 
 function App() {
     return (
@@ -56,6 +58,8 @@ function App() {
                     <Route path="/HoofdschermZakelijkBeheerder/MedewerkersBeheren" element={<MedewerkersBeheren />} />
                     <Route path="/HoofdschermZakelijkBeheerder/MedewerkersBeheren/VoegMedewerkerToe" element={<VoegMedewerkerToe />} />
                     <Route path="/HoofdschermZakelijkBeheerder/MedewerkersBeheren/MedewerkerVerwijderen" element={<MedewerkerVerwijderen />} />
+                    <Route path="/HoofdschermZakelijkBeheerder/VoertuigOverzicht" element={<VoertuigOverzicht />} />
+                    <Route path="/HoofdschermZakelijkBeheerder/Bedrijfsvoertuigen" element={<BedrijfsVoertuigen />} />
                     <Route path="/HoofdschermZakelijkHuurder" element={<HoofdschermZakelijkHuurder />} />
                     <Route path="/VoertuigenSelectie" element={<VoertuigenSelectie />} />
                     <Route path="/HoofdschermZakelijkBeheerder/AbonnementWijzigen" element={<AbonnementWijzigen />} />

@@ -4,6 +4,7 @@ import './HoofdschermParticulier.css';
 import logo from '../assets/CarAndAll_Logo.webp';
 import { useAccount } from "../Login/AccountProvider.jsx"; // Gebruik de useAccount hook om de context te gebruiken
 
+//Nieuw
 function HoofdschermParticulier() {
     const navigate = useNavigate();
     const { currentAccountId, logout } = useAccount(); // Haal de currentAccountId uit de context
