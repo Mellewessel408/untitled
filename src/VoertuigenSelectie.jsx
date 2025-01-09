@@ -104,6 +104,7 @@ const VoertuigenComponent = () => {
             AccountId: currentAccountId,
             VoertuigStatus: "Gereserveerd"
         };
+
         setLoading(true);
         try {
             const url = new URL("https://localhost:44318/api/Voertuig/reserveerVoertuig");
@@ -143,6 +144,10 @@ const VoertuigenComponent = () => {
     const showReservationConfirm = (voertuigId) => {
         if (begindatum == null || einddatum == null) {
             alert(`Fout bij reserveren: Vul een datum in.`);
+            return;
+        }
+        if (begindatum > einddatum) {
+            alert("Begindatum moet eerder zijn dan de einddatum");
             return;
         }
 
@@ -207,6 +212,7 @@ const VoertuigenComponent = () => {
                     value={begindatum}
                     onChange={(e) => setBegindatum(e.target.value)}
                     min={new Date().toISOString().split('T')[0]}
+                    max={einddatum}
                 />
                 <input
                     type="date"

@@ -265,6 +265,7 @@ const ReserveringWijzigen = () => {
                                 <p><strong>Begindatum:</strong> {new Date(mijnVoertuig.begindatum).toLocaleDateString("nl-NL")}</p>
                                 <p><strong>Einddatum:</strong> {new Date(mijnVoertuig.einddatum).toLocaleDateString("nl-NL")}</p>
                                 <p><strong>Bijkomende kosten:</strong> €{prijs(mijnVoertuig)}</p>
+
                                 <button
                                     className="behoud-reservering-button"
                                     onClick={ReserveringBehouden}

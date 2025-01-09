@@ -1,219 +1,288 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAccount } from "../Login/AccountProvider.jsx";
 import "../VoertuigenSelectie.css";
 import carAndAllLogo from '../assets/CarAndAll_Logo.webp';
 
-const VoertuigenComponent = () => {
-    const [voertuigen, setVoertuigen] = useState([]);
-    const [reserveringen, setReserveringen] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [searchTerm, setSearchTerm] = useState("");
-    const [filteredVoertuigen, setFilteredVoertuigen] = useState([]);
-    const [begindatum, setBegindatum] = useState(null);
-    const [einddatum, setEinddatum] = useState(null);
-    const [showDetails, setShowDetails] = useState(null); // Show details voor geselecteerd voertuig
-    const [showConfirm, setShowConfirm] = useState(null); // Voor bevestiging van reserveren
-    const [selectedVoertuig, setSelectedVoertuig] = useState(null); // Voor het geselecteerde voertuig om te reserveren
-    const [timeRemaining, setTimeRemaining] = useState(30); // Resterende tijd voor de bevestiging
-    const [timerActive, setTimerActive] = useState(false); // Om de timer aan en uit te zetten
+import PropTypes from "prop-types";
 
+// Separate component for individual voertuig card to prevent unnecessary re-renders
+const VoertuigenComponent = () => {
+const VoertuigCard = React.memo(({
+                                     voertuig,
+                                     email,
+                                     showDetails,
+                                     toggleDetails,
+                                     formatDatum
+                                 }) => {
+    return (
+        <div className="voertuig-card">
+            <div className="voertuig-photo">
+                <img
+                    src={carAndAllLogo}
+                    alt="CarAndAll Logo"
+                />
+            </div>
+            <div className="voertuig-info">
+                <h3 className="kenteken">ReserveringsId #{voertuig.reserveringId}</h3>
+                <p><strong>E-mail:</strong> {email || 'Laden...'}</p>
+                <p>
+                    <strong>Aanvraag:</strong> {voertuig.isGoedgekeurd ? "Goedgekeurd" : "In behandeling"}
+                </p>
+                <p><strong>Begindatum:</strong> {formatDatum(voertuig.begindatum)}</p>
+                <p><strong>Einddatum:</strong> {formatDatum(voertuig.einddatum)}</p>
+                <p>
+                    <strong>Betalingsstatus:</strong> {voertuig.isBetaald ? "Betaald" : `Nog te betalen €${voertuig.totaalPrijs || 0}`}
+                </p>
+                <div className="button-container">
+                    <button
+                        className="details-button"
+                        onClick={() => toggleDetails(voertuig.voertuigId)}
+                    >
+                        {showDetails === voertuig.voertuigId ? "Verberg Details" : "Toon Details"}
+                    </button>
+                </div>
+                {showDetails === voertuig.voertuigId && (
+                    <div className="voertuig-details">
+                        <p><strong>Kenteken:</strong> {voertuig.voertuig?.kenteken || 'Onbekend'}</p>
+                        <p><strong>Voertuig:</strong> {voertuig.voertuig ? `${voertuig.voertuig.merk} ${voertuig.voertuig.model}` : 'Onbekend'}</p>
+                        <p><strong>Comment:</strong> {voertuig.comment || "Geen comment"}</p>
+                        <p><strong>Totaalprijs:</strong> €{voertuig.totaalPrijs || 0}</p>
+
+                        <button className="VerwijderKnop" onClick={() => VerwijderReservering(voertuig.reserveringId)}>Verwijderen</button>
+
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+});
+
+// Define PropTypes for proper prop validation
+VoertuigCard.propTypes = {
+    voertuig: PropTypes.shape({
+        reserveringId: PropTypes.number.isRequired,
+        voertuigId: PropTypes.number.isRequired,
+        isGoedgekeurd: PropTypes.bool.isRequired,
+        isBetaald: PropTypes.bool.isRequired,
+        begindatum: PropTypes.string.isRequired,
+        einddatum: PropTypes.string.isRequired,
+        totaalPrijs: PropTypes.number,
+        comment: PropTypes.string,
+        voertuig: PropTypes.shape({
+            kenteken: PropTypes.string,
+            merk: PropTypes.string,
+            model: PropTypes.string
+        })
+    }).isRequired,
+    email: PropTypes.string,
+    showDetails: PropTypes.number,
+    toggleDetails: PropTypes.func.isRequired,
+    formatDatum: PropTypes.func.isRequired
+};
+
+// Add display name for debugging purposes
+VoertuigCard.displayName = 'VoertuigCard';
+
+
+    // Combine related state to reduce updates
+    const [filterCriteria, setFilterCriteria] = useState({
+        searchTerm: "",
+        begindatum: "",
+        einddatum: ""
+    });
+
+    const [state, setState] = useState({
+        reserveringen: [],
+        loading: true,
+        error: null,
+        showDetails: null,
+        emails: {}
+    });
 
     const { currentAccountId, logout } = useAccount();
     const navigate = useNavigate();
     const apiBaseUrl = `https://localhost:44318/api/ZakelijkBeheerder`;
 
-    // Haal de voertuigen op
-    useEffect(() => {
-        if (currentAccountId === 0) {
-            alert("U bent ingelogd zonder AccountId");
-            navigate('inlogpagina');
-        }
-        const fetchVoertuigen = async () => {
-            setLoading(true);
-            setBegindatum(null);
-            setEinddatum(null);
-            try {
-                const url = `${apiBaseUrl}/KrijgBedrijfId?accountId=${currentAccountId}`;
-                const response = await fetch(url);
-                if (!response.ok) {
-                    throw new Error(`Netwerkfout (${response.status}): ${response.statusText}`);
-                }
-                const data = await response.json();
-                const url2 = `https://localhost:44318/api/Bedrijf/KrijgBedrijf?id=${data}`;
-                const response2 = await fetch(url2);
-                if (!response2.ok) {
-                    throw new Error(`Netwerkfout (${response.status}): ${response.statusText}`);
-                }
-                const data2 = await response2.json();
-                const url3 = `https://localhost:44318/api/Reservering/KrijgGehuurdeBedrijfsreserveringen?medewerkers=${data2.bevoegdeMedewerkers}`;
-                const response3 = await fetch(url3);
-                if (!response3.ok) {
-                    throw new Error(`Netwerkfout (${response.status}): ${response.statusText}`);
-                }
-                const data3 = await response3.json();
-                setReserveringen(data3.$values || []);
-                const url4 = `https://localhost:44318/api/Voertuigen/KrijgGehuurdeBedrijfsvoertuigen?reserveringen=${data3}`;
-                const response4 = await fetch(url4);
-                if (!response4.ok) {
-                    throw new Error(`Netwerkfout (${response.status}): ${response.statusText}`);
-                }
-                const data4 = await response4.json();
-            } catch (err) {
-                console.error(err);
-                setError(`Kan voertuigen niet ophalen: ${err.message}`);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchVoertuigen();
-    }, []);
-
-    // Filter voertuigen
-    useEffect(() => {
-        const filtered = voertuigen.filter((voertuig) => {
-            return Object.keys(voertuig).some((key) => {
-                const value = voertuig[key];
-                if (typeof value === "string") {
-                    return value.toLowerCase().includes(searchTerm.toLowerCase());
-                }
-                if (typeof value === "number") {
-                    return value.toString().includes(searchTerm);
-                }
-                return false;
-            });
-        });
-        setFilteredVoertuigen(filtered);
-    }, [searchTerm, voertuigen]);
-
-    const fetchVoertuigen = async (begindatum, einddatum) => {
+    const VerwijderReservering = async (ReserveringId) => {
+        // Optimistische update
+        const nieuweReserveringen = state.reserveringen.filter(
+            (reservering) => reservering.reserveringId !== ReserveringId
+        );
+        setState(prevState => ({
+            ...prevState,
+            reserveringen: nieuweReserveringen
+        }));
 
         try {
-            const url = `${apiBaseUrl}/krijgallevoertuigenDatum?begindatum=${begindatum}&einddatum=${einddatum}`;
-            const response = await fetch(url);
-            if (!response.ok) {
-                throw new Error(`Netwerkfout (${response.status}): ${response.statusText}`);
-            }
-            const data = await response.json();
-            setVoertuigen(data.$values || []);
-        } catch (err) {
-            console.error(err);
-            setError(`Kan voertuigen niet ophalen: ${err.message}`);
-        } finally {
-            setTimeout(() => {
-                setLoading(false); // Zet loading op false na de vertraging
-            }, 1000); // Stel de vertraging in, bijvoorbeeld 1000ms (1 seconde)
-        }
-    };
-
-    // Logout functie
-    const handleLogout = () => {
-        logout();
-        navigate('/Inlogpagina');
-    };
-
-    // Reserveer functie
-    const handleReserveer = async (voertuigId) => {
-        const data = {
-            begindatum: begindatum,
-            einddatum: einddatum,
-            voertuigId: voertuigId,
-            AccountId: currentAccountId,
-            VoertuigStatus: "Gereserveerd"
-        };
-        setLoading(true);
-        try {
-            const url = new URL("https://localhost:44318/api/Voertuig/reserveerVoertuig");
-            var response = await fetch(url, {
-                method: 'POST',
+            const response = await fetch(`https://localhost:44318/api/Reservering/VerwijderReservering?reserveringId=${ReserveringId}`, {
+                method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(data),
             });
 
             if (!response.ok) {
-                throw new Error(`Netwerkfout (${response.status}): ${response.statusText}`);
+                throw new Error(`Verwijderen mislukt: ${response.statusText}`);
             }
-
-
-            setVoertuigen((prevVoertuigen) =>
-                prevVoertuigen.map((voertuig) =>
-                    voertuig.voertuigId === voertuigId
-                        ? { ...voertuig, voertuigStatus: "Gereserveerd" }
-                        : voertuig
-                )
-            );
         } catch (error) {
-            console.error("Fout bij reserveren:", error);
-            alert("Er is een probleem opgetreden bij het reserveren van het voertuig.");
+            console.error("Fout bij verwijderen:", error);
+            // Terugdraaien van de update als de API-aanroep mislukt
+            setState(prevState => ({
+                ...prevState,
+                reserveringen: state.reserveringen
+            }));
         }
-        fetchVoertuigen(begindatum, einddatum);
     };
 
-    // Functie om details van het voertuig weer te geven
-    const toggleDetails = (voertuigId) => {
-        setShowDetails(showDetails === voertuigId ? null : voertuigId); // Toggle details
-    };
 
-    // Bevestig reservering
-    const showReservationConfirm = (voertuigId) => {
-        if (begindatum == null || einddatum == null) {
-            alert(`Fout bij reserveren: Vul een datum in.`);
+    // Memoize the date formatter
+    const formatDatum = useCallback((datum) => {
+        try {
+            return new Date(datum).toLocaleDateString("nl-NL", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric"
+            });
+        } catch {
+            return 'Ongeldige datum';
+        }
+    }, []);
+
+    // Batch fetch emails with debouncing
+    const fetchEmails = useCallback(async (accountIds) => {
+        const uniqueIds = [...new Set(accountIds)].filter(id => id && id !== 0);
+        const unfetchedIds = uniqueIds.filter(id => !state.emails[id]);
+
+        if (unfetchedIds.length === 0) return;
+
+        try {
+            const promises = unfetchedIds.map(async (accountId) => {
+                const response = await fetch(
+                    `${apiBaseUrl}/KrijgAccountemail?accountId=${accountId}`,
+                    { headers: { 'Content-Type': 'application/json' } }
+                );
+
+                if (!response.ok) throw new Error();
+                const email = await response.text();
+                return { accountId, email };
+            });
+
+            const results = await Promise.all(promises);
+            setState(prev => ({
+                ...prev,
+                emails: {
+                    ...prev.emails,
+                    ...Object.fromEntries(results.map(({ accountId, email }) => [accountId, email]))
+                }
+            }));
+        } catch (error) {
+            console.error('Email fetch error:', error);
+        }
+    }, [apiBaseUrl, state.emails]);
+
+    // Optimize filtering with useMemo
+    const filteredVoertuigen = useMemo(() => {
+        const { searchTerm, begindatum, einddatum } = filterCriteria;
+
+        if (!state.reserveringen.length) return [];
+
+        return state.reserveringen.filter(voertuig => {
+            if (!voertuig) return false;
+
+            const searchValues = [
+                voertuig.voertuig?.kenteken,
+                voertuig.voertuig?.merk,
+                voertuig.voertuig?.model,
+                voertuig.comment
+            ].filter(Boolean).join(' ').toLowerCase();
+
+            const matchesSearch = !searchTerm ||
+                searchValues.includes(searchTerm.toLowerCase());
+
+            const matchesDate = (!begindatum || new Date(voertuig.einddatum) >= new Date(begindatum)) &&
+                (!einddatum || new Date(voertuig.begindatum) <= new Date(einddatum));
+
+            return matchesSearch && matchesDate;
+        });
+    }, [state.reserveringen, filterCriteria]);
+
+    // Initial data fetch
+    useEffect(() => {
+        if (!currentAccountId || currentAccountId === 0) {
+            alert("U bent ingelogd zonder AccountId");
+            navigate('inlogpagina');
             return;
         }
 
-        setSelectedVoertuig(voertuigId); // Zet het geselecteerde voertuig
-        setShowConfirm(true); // Zet de bevestiging dialoog op true
-        setTimeRemaining(30); // Zet de timer op 30 seconden
+        const fetchData = async () => {
+            try {
+                const bedrijfResponse = await fetch(`${apiBaseUrl}/KrijgBedrijfId?accountId=${currentAccountId}`);
+                if (!bedrijfResponse.ok) throw new Error();
+                const bedrijfId = await bedrijfResponse.json();
 
-        // Start de timer
-        setTimerActive(true);
-    };
+                const reserveringenResponse = await fetch(
+                    `https://localhost:44318/api/Reservering/KrijgGehuurdeBedrijfsreserveringen?bedrijfsId=${bedrijfId}`
+                );
+                if (!reserveringenResponse.ok) throw new Error();
+                const data = await reserveringenResponse.json();
 
+                setState(prev => ({
+                    ...prev,
+                    reserveringen: data.$values || [],
+                    loading: false
+                }));
+            } catch (err) {
+                setState(prev => ({
+                    ...prev,
+                    error: "Kan voertuigen niet ophalen",
+                    loading: false
+                }));
+            }
+        };
+
+        fetchData();
+    }, [currentAccountId, navigate, apiBaseUrl]);
+
+    // Optimized email fetching
     useEffect(() => {
-        let timer;
-
-        if (timerActive && timeRemaining > 0) {
-            // Verminder de tijd elke seconde
-            timer = setInterval(() => {
-                setTimeRemaining((prevTime) => prevTime - 1);
-            }, 1000);
-        } else if (timeRemaining === 0) {
-            // Annuleer de reservering als de tijd op is
-            cancelReservation();
+        if (filteredVoertuigen.length > 0) {
+            const accountIds = filteredVoertuigen
+                .filter(v => v && v.accountId)
+                .map(v => v.accountId);
+            fetchEmails(accountIds);
         }
+    }, [filteredVoertuigen, fetchEmails]);
 
-        // Cleanup de timer wanneer de component unmount
-        return () => clearInterval(timer);
-    }, [timerActive, timeRemaining]);
+    const handleSearchChange = useCallback((e) => {
+        const { id, value } = e.target;
+        setFilterCriteria(prev => ({
+            ...prev,
+            [id === 'searchInput' ? 'searchTerm' : id]: value
+        }));
+    }, []);
 
-    const cancelReservation = () => {
-        setShowConfirm(false); // Annuleer de bevestigingsdialoog
-        setSelectedVoertuig(null); // Reset het geselecteerde voertuig
-        setTimerActive(false); // Zet de timer uit
-    };
+    const toggleDetails = useCallback((voertuigId) => {
+        setState(prev => ({
+            ...prev,
+            showDetails: prev.showDetails === voertuigId ? null : voertuigId
+        }));
+    }, []);
 
-    const confirmReservation = () => {
-        if (selectedVoertuig !== null) {
-            handleReserveer(selectedVoertuig); // Bevestig de reservering
-            setShowConfirm(false); // Sluit de bevestigingsdialoog
-            setTimerActive(false); // Zet de timer uit
-        }
-    };
-
-
-
-    if (loading) return <div className="loading">Laden...</div>;
-    if (error) return <div className="error">{error}</div>;
+    if (state.loading) return <div className="loading">Laden...</div>;
+    if (state.error) return <div className="error">{state.error}</div>;
 
     return (
         <div className="voertuigen-container">
             <header className="header">
                 <h1>Voertuig huren</h1>
-                <button className="logout-button small" onClick={handleLogout}>
+                <button
+                    className="logout-button small"
+                    onClick={() => {
+                        logout();
+                        navigate('Inlogpagina');
+                    }}
+                >
                     Log uit
                 </button>
             </header>
@@ -223,29 +292,26 @@ const VoertuigenComponent = () => {
                     id="begindatum"
                     placeholder="Kies begindatum"
                     className="flatpickr-calander"
-                    value={begindatum}
-                    onChange={(e) => setBegindatum(e.target.value)}
+                    value={filterCriteria.begindatum}
+                    onChange={handleSearchChange}
                     min={new Date().toISOString().split('T')[0]}
+                    max={filterCriteria.einddatum}
                 />
                 <input
                     type="date"
                     id="einddatum"
                     placeholder="Kies einddatum"
                     className="flatpickr-calander"
-                    value={einddatum}
-                    onChange={(e) => {
-                        const newEinddatum = e.target.value;
-                        setEinddatum(newEinddatum);
-                        fetchVoertuigen(begindatum, newEinddatum);
-                    }}
-                    min={begindatum || new Date().toISOString().split('T')[0]}
+                    value={filterCriteria.einddatum}
+                    onChange={handleSearchChange}
+                    min={filterCriteria.begindatum || new Date().toISOString().split('T')[0]}
                 />
-
                 <input
                     type="text"
+                    id="searchInput"
                     placeholder="Zoek op merk of model"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
+                    value={filterCriteria.searchTerm}
+                    onChange={handleSearchChange}
                     className="search-bar"
                 />
             </div>
@@ -254,57 +320,14 @@ const VoertuigenComponent = () => {
                     <div className="no-vehicles">Geen voertuigen gevonden</div>
                 ) : (
                     filteredVoertuigen.map((voertuig) => (
-                        <div key={voertuig.voertuigId} className="voertuig-card">
-                            <div className="voertuig-photo">
-                                <img
-                                    className="voertuig-photo"
-                                    src={carAndAllLogo}
-                                    alt="CarAndAll Logo"
-                                />
-                            </div>
-                            <div className="voertuig-info">
-                                <h3 className="kenteken">{voertuig.kenteken}</h3>
-                                <p><strong>Merk:</strong> {voertuig.merk}</p>
-                                <p><strong>Model:</strong> {voertuig.model}</p>
-                                <p><strong>Voertuigtype:</strong> {voertuig.voertuigType}</p>
-
-                                {/* Als de bevestigingsdialoog nog niet getoond is */}
-                                {!showConfirm && (
-                                    <div className="button-container">
-                                        <button
-                                            className="reserveer-button"
-                                            onClick={() => showReservationConfirm(voertuig.voertuigId)}
-                                        >
-                                            Reserveer
-                                        </button>
-                                        <button
-                                            className="details-button"
-                                            onClick={() => toggleDetails(voertuig.voertuigId)}
-                                        >
-                                            Details
-                                        </button>
-                                    </div>
-                                )}
-
-                                {showConfirm && selectedVoertuig === voertuig.voertuigId && (
-                                    <div>
-                                        <p className="Confirmatievraag">Weet je het zeker? ({timeRemaining}s)</p>
-                                        <button className="AnnuleerKnop" onClick={cancelReservation}>Stop</button>
-                                        <button className="ReserveerKnop" onClick={confirmReservation}>Ja Reserveer</button>
-                                    </div>
-                                )}
-
-                                {/* Details tonen als de knop is ingedrukt */}
-                                {showDetails === voertuig.voertuigId && (
-                                    <div className="voertuig-details">
-                                        <p><strong>Kleur:</strong> {voertuig.kleur}</p>
-                                        <p><strong>Aanschafjaar:</strong> {voertuig.aanschafjaar}</p>
-                                        <p><strong>BrandstofType:</strong> {voertuig.brandstofType}</p>
-                                        <p><strong>Prijs:</strong> €{voertuig.prijs}</p>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
+                        <VoertuigCard
+                            key={`reservation-${voertuig.reserveringId}`}
+                            voertuig={voertuig}
+                            email={state.emails[voertuig.accountId]}
+                            showDetails={state.showDetails}
+                            toggleDetails={toggleDetails}
+                            formatDatum={formatDatum}
+                        />
                     ))
                 )}
             </div>

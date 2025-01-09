@@ -31,12 +31,12 @@ function VoertuigOverzicht() {
 
 
         if (bedrijfstatistieken && abonnement) {
-            if (bedrijfstatistieken.hoeveelheidMedewerkers > abonnement.maxMedewerkers) {
+            if (bedrijfstatistieken.hoeveelheidMedewerkers >= abonnement.maxMedewerkers) {
                 setTeveelMedewerkers(true);
             } else {
                 setTeveelMedewerkers(false);
             }
-            if (bedrijfstatistieken.gehuurdeAutos > abonnement.maxVoertuigen) {
+            if (bedrijfstatistieken.gehuurdeAutos >= abonnement.maxVoertuigen) {
                 setTeveelAutos(true);
             } else {
                 setTeveelAutos(false);
@@ -45,11 +45,9 @@ function VoertuigOverzicht() {
     }
     const GetBedrijfstatistieken = async () => {
         try {
-
             const response2 = await fetch(`https://localhost:44318/api/ZakelijkBeheerder/KrijgBedrijfId?accountId=${currentAccountId}`);
             if (response2.ok) {
                 const data2 = await response2.text();
-                console.log(data2);
 
                 const response = await fetch(`https://localhost:44318/api/Bedrijf/KrijgAlleBedrijfstatistieken?bedrijfsId=${data2}`, {
                     method: 'GET',
@@ -84,15 +82,29 @@ function VoertuigOverzicht() {
                 <p><strong>Abonnement:</strong> <a className="MedewerkersLink"
                                                    href="./AbonnementWijzigen">{bedrijfstatistieken.typeAbonnement} </a>
                     <hr/>
-                    <p>{teveelAutos && <strong className="Teveel">Gehuurde autos:</strong>}{!teveelAutos && <strong> Gehuurde autos: </strong>} <a className="MedewerkersLink"
-                                                             href="/Bedrijfsvoertuigen">{bedrijfstatistieken.gehuurdeAutos} </a>
+                    <p>
+                        {teveelAutos &&
+                            <strong className="Teveel"> <a className="Teveel" href="./AbonnementWijzigen">Gehuurde autos: </a><div className="tooltip">Je zit op het limiet van maximale auto's. klik om het limiet aan te passen</div></strong>
+                        }
+                        {!teveelAutos && <strong> Gehuurde autos: </strong>}
+                        <a className="MedewerkersLink" href="Bedrijfsvoertuigen">
+                            {bedrijfstatistieken.gehuurdeAutos}
+                        </a>
                     </p>
                     <hr/>
-                    <p>{teveelMedewerkers && <strong className="Teveel"> Medewerkers: </strong>}{!teveelMedewerkers && <strong> Medewerkers: </strong>} <a className="MedewerkersLink"
-                                                                      href="jouw-link-hier">{bedrijfstatistieken.hoeveelheidMedewerkers} </a>
+                    <p>
+                        {teveelMedewerkers &&
+                            <strong className="Teveel"><a className="Teveel" href="./AbonnementWijzigen">Medewerkers: </a><div
+                                className="tooltip">Je zit op het limiet van maximale medewerkers. klik om het limiet aan te passen </div></strong>
+                        }
+                        {!teveelMedewerkers && <strong> Medewerkers: </strong>}
+                        <a className="MedewerkersLink" href="./MedewerkersBeheren">
+                            {bedrijfstatistieken.hoeveelheidMedewerkers}
+                        </a>
                     </p>
-                        <hr/>
-                        <p><strong>Totale kosten:</strong> {bedrijfstatistieken.kosten}</p>
+
+                    <hr/>
+                    <p><strong>Totale kosten:</strong> {bedrijfstatistieken.kosten}</p>
 
                 </p>
                 <h2>Adresgegevens</h2>
