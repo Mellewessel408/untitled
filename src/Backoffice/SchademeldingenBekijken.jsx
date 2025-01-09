@@ -18,7 +18,6 @@ function SchademeldingenBekijken() {
     const [comment, setComment] = useState("");
     const [showCommentField, setShowCommentField] = useState(false);
     const [selectedForComment, setSelectedForComment] = useState(null);
-    const [datum, setDatum] = useState(null);
     const schademeldingentest = [
         {
             schadeclaimId: 1,
@@ -217,15 +216,6 @@ function SchademeldingenBekijken() {
                         Log uit
                     </button>
                 </div>
-                <input
-                    type="date"
-                    id="datum"
-                    placeholder="Kies datum"
-                    className="flatpickr-calander"
-                    value={datum}
-                    onChange={(e) => setDatum(e.target.value)}
-                    min={new Date().toISOString().split('T')[0]}
-                />
             </header>
 
             <div className="voertuigen-grid">

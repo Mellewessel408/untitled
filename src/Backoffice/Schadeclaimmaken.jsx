@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from 'react-router-dom';
+import {unstable_setDevServerHooks, useNavigate} from 'react-router-dom';
 import { useAccount } from "../Login/AccountProvider.jsx"; // Zorg dat de context beschikbaar is
 import "./VoertuigenSelectie.css"; // Import CSS classes
 import carAndAllLogo from '../assets/CarAndAll_Logo.webp';
@@ -10,10 +10,13 @@ const Schadeclaimmaken = () => {
     const [voertuigen, setVoertuigen] = useState([]); // State for storing vehicles
     const [loading, setLoading] = useState(true); // State for loading status
     const [error, setError] = useState(null); // State for handling errors
-    const [searchTerm, setSearchTerm] = useState(""); // Search term for merk and model
-    const [filteredVoertuigen, setFilteredVoertuigen] = useState([]); // Filtered vehicles
     const [selectedVoertuig, setSelectedVoertuig] = useState(null);
     const [beschrijving, setbeschrijving] = useState("");
+    const [datum, setDatum] = useState('');
+    const [searchTerm, setSearchTerm] = useState('');
+    const [filteredVoertuigen, setFilteredVoertuigen] = useState([]);
+    const [selectedStatus, setSelectedStatus] = useState(null);
+    const [status, setStatus] = useState(null);
 
     const { logout } = useAccount(); // Gebruik de logout-functie vanuit de context
     const navigate = useNavigate(); // Voor navigatie
@@ -44,8 +47,33 @@ const Schadeclaimmaken = () => {
 
         fetchVoertuigen();
     }, []); // Run only on component mount
+    const StatusBijwerken = (id) => {
+        setSelectedStatus(id)
+    }
 
-    // Filter vehicles based on search term
+    const handleSchadeclaim = async (id) => {
+
+
+        const data = {
+            voertuigId: id,
+            beschrijving: beschrijving,
+            datum: datum,
+        }
+
+        try {
+            // Verstuur het POST-verzoek naar de backend
+            const response = await fetch('https://localhost:44318/api/', {
+                method: 'PUT',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data),
+            });
+
+        } catch (error) {
+            // Foutafhandelingslogica
+            console.error('Er is een fout opgetreden:', error.message);
+            alert('Er is iets misgegaan! Fout details: ' + JSON.stringify(error, null, 2));
+        }
+    }
     useEffect(() => {
         const filtered = voertuigen.filter((voertuig) => {
             return (
@@ -55,19 +83,35 @@ const Schadeclaimmaken = () => {
         });
         setFilteredVoertuigen(filtered); // Update filtered vehicles based on search
     }, [searchTerm, voertuigen]); // Run whenever searchTerm or vehicles changes
+
     const handleHoofdmenu = () => {
         navigate("/HoofdschermBackoffice");
     }
     const SchadeclaimToevoegen = (id) => {
         setSelectedVoertuig(id);
-    }
+    };
     const handleBeschrijvingChange = (e) => {
         setbeschrijving(e.target.value);
 
     };
     const handleSchadeclaimSubmit = (id) => {
+        handleSchadeclaim(id);
 
+        setDatum('');
+        setSelectedVoertuig(null);
+        setbeschrijving('');
     }
+    const handleAfgehandeld = () => {
+        setStatus('Afgehandeld');
+    };
+    const handleInBehandeling = () => {
+        setStatus('In behandeling');
+    };
+    const handleKeuze = () => {
+
+
+        setSelectedStatus(null);
+    };
 
     // Nieuwe logout functie
     const handleLogout = () => {
@@ -82,10 +126,9 @@ const Schadeclaimmaken = () => {
 
     return (
         <div className="voertuigen-container">
-            {/* Title */}
 
             <header className="header">
-                <h1>Schademeldingen</h1>
+                <h1>Schadeclaims maken</h1>
                 <div className="header-buttons">
                     <button className="button small" onClick={handleHoofdmenu}>
                         Hoofdmenu
@@ -95,8 +138,6 @@ const Schadeclaimmaken = () => {
                     </button>
                 </div>
             </header>
-
-            {/* Search Section */}
             <div className="search-filter">
                 <input
                     type="text"
@@ -107,7 +148,7 @@ const Schadeclaimmaken = () => {
                 />
             </div>
 
-            {/* Grid of vehicles */}
+
             <div className="voertuigen-grid">
                 {filteredVoertuigen.length === 0 ? (
                     <div className="no-vehicles">Geen voertuigen gevonden</div>
@@ -128,7 +169,8 @@ const Schadeclaimmaken = () => {
                                 <p><strong>Kleur:</strong> {voertuig.kleur}</p>
                                 <p><strong>Aanschafjaar:</strong> {voertuig.aanschafjaar}</p>
                                 <p><strong>Status:</strong> {voertuig.voertuigStatus}</p>
-                               <button onClick={() =>SchadeclaimToevoegen(voertuig.voertuigId)}>SchadeclaimToevoegen</button>
+                                <button onClick={() => SchadeclaimToevoegen(voertuig.voertuigId)}>SchadeclaimToevoegen
+                                </button>
                                 {voertuig.voertuigId === selectedVoertuig && (
                                     <div className="comment-section">
                                     <textarea
@@ -136,11 +178,41 @@ const Schadeclaimmaken = () => {
                                         value={beschrijving}
                                         onChange={(e) => handleBeschrijvingChange(e)}
                                     />
+                                        <p>Datum van Schade:</p>
+                                        <input
+                                            type="date"
+                                            id="datum"
+                                            placeholder="Kies datum"
+                                            className="flatpickr-calander"
+                                            value={datum}
+                                            onChange={(e) => setDatum(e.target.value)}
+                                            max={new Date().toISOString().split('T')[0]}
+                                        />
 
                                         <button onClick={() => handleSchadeclaimSubmit(voertuig.voertuigId)}>
                                             Verzenden
                                         </button>
                                     </div>
+                                )}
+                                <button onClick={ ()=> StatusBijwerken(voertuig.voertuigId)}>Status bijwerken</button>
+                                {voertuig.voertuigId === selectedStatus && (
+                                    <div>
+                                        <button onClick={() => handleInBehandeling()}
+                                                style={{
+                                                    backgroundColor:
+                                                        status === 'In behandeling'
+                                                            ? 'grey'
+                                                            : '#040404',
+                                                }}>In behandeling</button>
+                                        <button onClick={() => handleAfgehandeld()}style={{
+                                            backgroundColor:
+                                                status === 'Afgehandeld'
+                                                    ? 'grey'
+                                                    : '#040404',
+                                        }}>Afgehandeld</button>
+                                        <button onClick={() => handleKeuze()}>Sla keuze op</button>
+                                    </div>
+
                                 )}
                             </div>
                         </div>
