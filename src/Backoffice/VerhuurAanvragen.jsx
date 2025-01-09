@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import "../VoertuigenSelectie.css";
+import "./VoertuigenSelectie.css";
 
 import logo from '../assets/CarAndAll_Logo.webp';
 import { AccountProvider, useAccount } from "../Login/AccountProvider.jsx";
@@ -66,11 +66,10 @@ function VerhuurAanvragen() {
             setSelectedAction(true);
         };
 
-        const handleCommentChange = (e, id) => {
+        const handleCommentChange = (e) => {
             setComment(e.target.value);
 
         };
-
         const verstuurdata = async (id) => {
 
 
@@ -118,7 +117,6 @@ function VerhuurAanvragen() {
             navigate('/Inlogpagina');
         };
         const handleAfkeuren = (id) => {
-            console.log(id);
             setSelectedReserveringId(id)
             setShowCommentField(true);
             setSelectedAction(false);

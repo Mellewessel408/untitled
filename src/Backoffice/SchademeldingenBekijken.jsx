@@ -3,11 +3,12 @@ import { useNavigate } from 'react-router-dom';
 //import './HoofdschermFrontoffice.css';
 import logo from '../assets/CarAndAll_Logo.webp';
 import { AccountProvider, useAccount } from "../Login/AccountProvider.jsx"; // Gebruik de useAccount hook om de context te gebruiken
+import '../VoertuigenSelectie.css';
 
 function SchademeldingenBekijken() {
     const navigate = useNavigate();
     const {currentAccountId, logout } = useAccount(); // Haal de currentAccountId uit de context
-    const [schademeldingen, setSchademeldingen] = useState([]);
+
     const [selectedSchademelding, setSelectedSchademelding] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
@@ -16,6 +17,44 @@ function SchademeldingenBekijken() {
     const [showConfirm, setShowConfirm] = useState(null); // Voor bevestiging van reserveren
     const [comment, setComment] = useState("");
     const [showCommentField, setShowCommentField] = useState(false);
+    const [selectedForComment, setSelectedForComment] = useState(null);
+    const schademeldingentest = [
+        {
+            schadeclaimId: 1,
+            kenteken: "AB-123-CD",
+            merk: "Toyota",
+            model: "Corolla",
+            kleur: "Blauw",
+            aanschafjaar: 2019,
+            brandstofType: "Benzine",
+            datum: "2025-01-05",
+            beschrijving: "Kleine deuk aan de linkerkant.",
+        },
+        {
+            schadeclaimId: 2,
+            kenteken: "EF-456-GH",
+            merk: "Volkswagen",
+            model: "Golf",
+            kleur: "Rood",
+            aanschafjaar: 2020,
+            brandstofType: "Diesel",
+            datum: "2025-01-01",
+            beschrijving: "Schade aan de achterbumper door aanrijding.",
+        },
+        {
+            schadeclaimId: 3,
+            kenteken: "IJ-789-KL",
+            merk: "Tesla",
+            model: "Model 3",
+            kleur: "Wit",
+            aanschafjaar: 2022,
+            brandstofType: "Elektrisch",
+            datum: "2025-01-04",
+            beschrijving: "Kras op de linkerportier.",
+        },
+    ];
+    const [schademeldingen, setSchademeldingen] = useState(schademeldingentest);
+
 
     const apiBaseUrl ='https://localhost:44318/api/';
     useEffect(() => {
@@ -35,9 +74,9 @@ function SchademeldingenBekijken() {
                 }
                 const data = await response.json();
 
-                const schademledingenArray = data.$values || [];
+                const schademeldingenArray = data.$values || [];
 
-                setSchademeldingen(schademledingenArray); // Set the vehicles data
+                setSchademeldingen(schademeldingenArray); // Set the vehicles data
                 setLoading(false); // Set loading to false after data is fetched
             } catch (err) {
                 console.log(err)
@@ -63,6 +102,29 @@ function SchademeldingenBekijken() {
         try {
             // Verstuur het POST-verzoek naar de backend
             const response = await fetch('https://localhost:44318/api/', {
+                method: 'PUT',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data),
+            });
+
+        } catch (error) {
+            // Foutafhandelingslogica
+            console.error('Er is een fout opgetreden:', error.message);
+            alert('Er is iets misgegaan bij het inloggen! Fout details: ' + JSON.stringify(error, null, 2));
+        }
+    }
+    const verstuurdata = async (id) => {
+
+
+        const data = {
+            schadeclaimId: id,
+            comment: comment,
+        }
+        console.log(data);
+
+        try {
+            // Verstuur het POST-verzoek naar de backend
+            const response = await fetch('https://localhost:44318/api', {
                 method: 'PUT',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(data),
@@ -113,7 +175,7 @@ function SchademeldingenBekijken() {
             setTimerActive(false); // Zet de timer uit
         }
     };
-    const handleCommentChange = (e, id) => {
+    const handleCommentChange = (e) => {
         setComment(e.target.value);
 
     };
@@ -121,9 +183,12 @@ function SchademeldingenBekijken() {
         verstuurdata(id);
         alert(`Commentaar verzonden: ${comment} voor ${id}`);
         setShowCommentField(false);
-        setSelectedSchademelding(null);
+        setSelectedForComment(null);
         setComment("");
-
+    };
+    const showComment = (id) => {
+        setSelectedForComment(id)
+        setShowCommentField(true);
     };
 
     const handleHoofdmenu = () => {
@@ -140,10 +205,9 @@ function SchademeldingenBekijken() {
     };
 
     return (
-        <div>
-
+        <div className="voertuigen-container">
             <header className="header">
-
+                <h1>Schademeldingen</h1>
                 <div className="header-buttons">
                     <button className="button small" onClick={handleHoofdmenu}>
                         Hoofdmenu
@@ -153,12 +217,10 @@ function SchademeldingenBekijken() {
                     </button>
                 </div>
             </header>
-            <div className="hoofdscherm-container">
-                <img src={logo} alt="Carandall Logo"/>
-                <h1>Schademeldingen</h1>
+            <div className="voertuigen-grid">
                 {schademeldingen.length === 0 ? (
                     <div className="no-vehicles">Geen schademeldingen gevonden</div>
-                    ) : ( schademeldingen.map((schademelding) => (
+                ) : (schademeldingen.map((schademelding) => (
                         <div key={schademelding.schadeclaimId} className="voertuig-card">
 
                             <p><strong>Kenteken:</strong> {schademelding.kenteken}</p>
@@ -170,7 +232,7 @@ function SchademeldingenBekijken() {
                             <p><strong>Schadebeschrijving:</strong>{schademelding.beschrijving}</p>
 
                             {!showConfirm && (
-                            <button onClick={showInReparatieConfirm}>In reparatie</button>
+                                <button onClick={ () =>showInReparatieConfirm(schademelding.schadeclaimId)}>In reparatie</button>
                             )}
                             {showConfirm && selectedSchademelding === schademelding.schadeclaimId && (
                                 <div>
@@ -179,7 +241,9 @@ function SchademeldingenBekijken() {
                                     <button className="ReserveerKnop" onClick={confirmInReparatie}>Ja Reserveer</button>
                                 </div>
                             )}
-                            {selectedSchademelding === schademelding.schadeclaimId && (
+
+                            <button onClick={() => showComment(schademelding.schadeclaimId)}>Comment</button>
+                            {selectedForComment === schademelding.schadeclaimId && (
                                 <div className="comment-section">
                                     <textarea
                                         placeholder="Voeg hier een opmerking toe..."

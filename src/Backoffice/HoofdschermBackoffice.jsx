@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 //import './HoofdschermFrontoffice.css';
 import logo from '../assets/CarAndAll_Logo.webp';
-import { AccountProvider, useAccount } from "../Login/AccountProvider.jsx"; // Gebruik de useAccount hook om de context te gebruiken
+import { AccountProvider, useAccount } from "../Login/AccountProvider.jsx";
 
 function HoofdschermBackoffice() {
     const navigate = useNavigate();
@@ -17,6 +17,9 @@ function HoofdschermBackoffice() {
 
     const BedrijfsAbonnement = () => {
         navigate('/BedrijfsabbonomentenGoedkeuren');
+    };
+    const Schadeclaimmaken = () => {
+        navigate('Schadeclaimmaken');
     };
     const VerhuurAanvraag = () => {
         navigate('VerhuurAanvragen');
@@ -38,6 +41,7 @@ function HoofdschermBackoffice() {
             <button onClick={BedrijfsAbonnement}>BedrijfsAbonnementen</button>
             <button onClick={VerhuurAanvraag}>VerhuurAanvragen</button>
             <button onClick={SchademeldingenBekijken}>Schademeldingen</button>
+            <button onClick={Schadeclaimmaken}>Schadeclaim maken</button>
             <button className="logout-button" onClick={LogUit}>Log uit</button>
         </div>
     );

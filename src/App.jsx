@@ -19,6 +19,7 @@ import HoofdschermBackoffice from "./Backoffice/HoofdschermBackoffice.jsx";
 import AbonnementGoedkeuren from "./Backoffice/AbonnementGoedkeuren.jsx";
 import VerhuurAanvragen from "./Backoffice/VerhuurAanvragen.jsx";
 import SchademeldingenBekijken from "./Backoffice/SchademeldingenBekijken.jsx";
+import Schadeclaimmaken from "./Backoffice/Schadeclaimmaken.jsx";
 function App() {
     return (
         <AccountProvider>
@@ -56,6 +57,7 @@ function App() {
                     <Route path="/HoofdschermBackoffice/AbonnementGoedKeuren" element={<AbonnementGoedkeuren />} />
                     <Route path="/HoofdschermBackoffice/VerhuurAanvragen" element={<VerhuurAanvragen />} />
                     <Route path="/HoofdschermBackoffice/Schademeldingen" element={<SchademeldingenBekijken/>} />
+                    <Route path="/HoofdschermBackoffice/Schadeclaimmaken" element={<Schadeclaimmaken />} />
                 </Routes>
             </div>
           </Router>
