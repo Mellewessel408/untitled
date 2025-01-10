@@ -24,6 +24,11 @@ import AbonnementWijzigen from "./ZakelijkBeheerder/AbonnementWijzigen.jsx";
 import VoertuigOverzicht from "./ZakelijkBeheerder/VoertuigOverzicht.jsx";
 import BedrijfsVoertuigen from "./ZakelijkBeheerder/BedrijfsVoertuigen.jsx";
 
+import HoofdschermBackoffice from "./Backoffice/HoofdschermBackoffice.jsx";
+import AbonnementGoedkeuren from "./Backoffice/AbonnementGoedkeuren.jsx";
+import VerhuurAanvragen from "./Backoffice/VerhuurAanvragen.jsx";
+import SchademeldingenBekijken from "./Backoffice/SchademeldingenBekijken.jsx";
+import Schadeclaimmaken from "./Backoffice/Schadeclaimmaken.jsx";
 function App() {
     return (
         <AccountProvider>
@@ -69,6 +74,11 @@ function App() {
                     <Route path="/ProfielParticulier" element={<ProfielWijzigen />} />
                     <Route path="/ProfielPagina" element={<ProfielPagina />} />
                     <Route path="/ProfielWijzigen" element={<ProfielWijzigen />} />
+                    <Route path="/HoofdschermBackoffice" element={<HoofdschermBackoffice />} />
+                    <Route path="/HoofdschermBackoffice/AbonnementGoedKeuren" element={<AbonnementGoedkeuren />} />
+                    <Route path="/HoofdschermBackoffice/VerhuurAanvragen" element={<VerhuurAanvragen />} />
+                    <Route path="/HoofdschermBackoffice/Schademeldingen" element={<SchademeldingenBekijken/>} />
+                    <Route path="/HoofdschermBackoffice/Schadeclaimmaken" element={<Schadeclaimmaken />} />
                 </Routes>
             </div>
           </Router>
