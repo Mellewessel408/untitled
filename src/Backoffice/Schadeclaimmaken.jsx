@@ -169,7 +169,8 @@ const Schadeclaimmaken = () => {
                                 <p><strong>Kleur:</strong> {voertuig.kleur}</p>
                                 <p><strong>Aanschafjaar:</strong> {voertuig.aanschafjaar}</p>
                                 <p><strong>Status:</strong> {voertuig.voertuigStatus}</p>
-                                <button onClick={() => SchadeclaimToevoegen(voertuig.voertuigId)}>SchadeclaimToevoegen
+                                <button
+                                    onClick={() => SchadeclaimToevoegen(voertuig.voertuigId)}>SchadeclaimToevoegen
                                 </button>
                                 {voertuig.voertuigId === selectedVoertuig && (
                                     <div className="comment-section">
@@ -189,16 +190,23 @@ const Schadeclaimmaken = () => {
                                             max={new Date().toISOString().split('T')[0]}
                                         />
 
-                                        <button onClick={() => handleSchadeclaimSubmit(voertuig.voertuigId)}>
+                                        <button style={{ marginBottom: "10px",
+                                        marginTop: "5px",
+                                        }}
+                                            onClick={() => handleSchadeclaimSubmit(voertuig.voertuigId)}>
                                             Verzenden
                                         </button>
                                     </div>
                                 )}
-                                <button onClick={ ()=> StatusBijwerken(voertuig.voertuigId)}>Status bijwerken</button>
+                                <button style={{ marginTop: "5px" }}
+                                    onClick={ ()=> StatusBijwerken(voertuig.voertuigId)}>Status bijwerken</button>
                                 {voertuig.voertuigId === selectedStatus && (
                                     <div>
-                                        <button onClick={() => handleInBehandeling()}
+                                        <button
+                                            onClick={() => handleInBehandeling()}
                                                 style={{
+                                                    marginRight : "5px",
+                                                    marginTop: "5px",
                                                     backgroundColor:
                                                         status === 'In behandeling'
                                                             ? 'grey'
@@ -210,7 +218,8 @@ const Schadeclaimmaken = () => {
                                                     ? 'grey'
                                                     : '#040404',
                                         }}>Afgehandeld</button>
-                                        <button onClick={() => handleKeuze()}>Sla keuze op</button>
+                                        <button style={{ marginTop: "5px" }}
+                                            onClick={() => handleKeuze()}>Sla keuze op</button>
                                     </div>
 
                                 )}

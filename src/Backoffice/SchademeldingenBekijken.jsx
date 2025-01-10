@@ -17,7 +17,11 @@ function SchademeldingenBekijken() {
     const [showConfirm, setShowConfirm] = useState(null); // Voor bevestiging van reserveren
     const [comment, setComment] = useState("");
     const [showCommentField, setShowCommentField] = useState(false);
+    const [showCommentField2, setShowCommentField2] = useState(false);
     const [selectedForComment, setSelectedForComment] = useState(null);
+    const [selectedReparatie, setSelectedReparatie] = useState(null);
+    const [reparatie, setReparatie] = useState('');
+    const [datum, setDatum] = useState('');
     const schademeldingentest = [
         {
             schadeclaimId: 1,
@@ -190,10 +194,19 @@ function SchademeldingenBekijken() {
         setSelectedForComment(id)
         setShowCommentField(true);
     };
-
+    const verstuur = () => {
+       // verstuurReparatie();
+        setShowCommentField(false);
+        setSelectedReparatie(null);
+        setReparatie('');
+    }
     const handleHoofdmenu = () => {
         navigate('/HoofdschermBackoffice'); // Navigeren naar inlogpagina
     };
+    const openReparatie = (id) => {
+        setSelectedReparatie(id)
+        setShowCommentField2(true)
+    }
 
     const LogUit = () => {
         logout();
@@ -203,6 +216,9 @@ function SchademeldingenBekijken() {
         LogUit(); // Roep de logout-functie aan
         navigate('/Inlogpagina'); // Navigeren naar inlogpagina
     };
+    const handleReparatieChange = (e) => {
+        setReparatie(e.target.value);
+    }
 
     return (
         <div className="voertuigen-container">
@@ -243,17 +259,45 @@ function SchademeldingenBekijken() {
                                 </div>
                             )}
 
-                            <button onClick={() => showComment(schademelding.schadeclaimId)}>Comment</button>
+                            <button style={{ marginTop: "5px" }}
+                                onClick={() => showComment(schademelding.schadeclaimId)}>Comment</button>
                             {selectedForComment === schademelding.schadeclaimId && (
                                 <div className="comment-section">
                                     <textarea
                                         placeholder="Voeg hier een opmerking toe..."
                                         value={comment}
-                                        onChange={(e) => handleCommentChange(e, schademelding.schadeclaimId)}
+                                        onChange={(e) => handleCommentChange(e)}
                                     />
                                     <button onClick={() => handleCommentSubmit(schademelding.schadeclaimId)}>
                                         Verzenden
                                     </button>
+                                </div>
+                            )}
+                            <button style={{ marginTop: "5px" }}
+                                onClick={ () => openReparatie(schademelding.schadeclaimId)}>
+                                Voeg Reparatie toe
+                            </button>
+                            {selectedReparatie === schademelding.schadeclaimId && (
+                                <div className="comment-section">
+                                    <textarea
+                                        placeholder="Reparatie"
+                                        value={reparatie}
+                                        onChange={(e) => handleReparatieChange(e)}
+                                    />
+                                    <p>Datum van Reparatie:</p>
+                                    <input
+                                        type="date"
+                                        id="datum"
+                                        placeholder="Kies datum"
+                                        className="flatpickr-calander"
+                                        value={datum}
+                                        onChange={(e) => setDatum(e.target.value)}
+                                        max={new Date().toISOString().split('T')[0]}
+                                    />
+                                    <button onClick={() => verstuur() }>
+                                        Verstuur
+                                    </button>
+
                                 </div>
                             )}
 
