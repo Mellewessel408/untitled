@@ -40,6 +40,7 @@
 .card {
     background-color: #fff;
     padding: 40px; /* Increase padding */
+    padding-bottom: 20px;
     border-radius: 15px; /* Slightly larger corner radius */
     box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); /* Enhance shadow */
     width: 90%;
@@ -83,6 +84,28 @@
 
 .card-buttons button:active {
     background-color: #003f7f;
+}
+
+.WijzigLimiet {
+    display: block;
+    width: 100%;
+}
+
+.WijzigenKnop {
+    margin-top: 10px;
+    font-size: 20px;
+    display: flex;
+    justify-content: center; /* Horizontaal centreren */
+    align-items: center; /* Verticaal centreren */
+    height: 55px; /* Volledige hoogte van het scherm */
+    width: 25%;
+    background-color: black;
+    color: white;
+    font-weight: bold; /* Toegevoegd om de tekst vetter te maken */
+}
+.WijzigenKnop:hover {
+    background-color: #3b3b3b;
+    transition-duration: 0.4s;
 }
 
 

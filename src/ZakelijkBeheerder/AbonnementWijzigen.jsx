@@ -7,21 +7,29 @@ function AbonnementWijzigen() {
     const [abonnement, setAbonnement] = useState('');
     const [maxVoertuigen, setMaxVoertuigen] = useState(null);
     const [maxMedewerkers, setMaxMedewerkers] = useState(null);
+    const [newVoertuigType, setNewVoertuigType] = useState(null);
     const [newAbonnement, setNewAbonnement] = useState(null);
+    const [showWijzigen, setShowWijzigen] = useState(null);
+    const [abonnementId, setAbonnementId] = useState(null);
 
-    const { currentAccountId, logout } = useAccount();
+    const { currentAccountId} = useAccount();
     const navigate = useNavigate();
 
     useEffect(() => {
+        setShowWijzigen(false);
         if (currentAccountId === 0) {
             alert("U bent ingelogd zonder AccountId");
             navigate('inlogpagina');
         }
         const fetchAbonnement = async () => {
             try {
+                //abonnement ophalen
                 const response = await fetch(`https://localhost:44318/api/Abonnement/getSpecifiekAbonnement?id=${currentAccountId}`);
+
                 if (response.ok) {
+                    //Abonnement invullen
                     const responsedata = await response.json();
+                    setAbonnementId(responsedata.abonnementId)
                     setAbonnement(responsedata.abonnementType);
                     setMaxVoertuigen(responsedata.maxVoertuigen);
                     setMaxMedewerkers(responsedata.maxMedewerkers);
@@ -37,11 +45,82 @@ function AbonnementWijzigen() {
         fetchAbonnement();
     }, [currentAccountId, navigate]);
 
-    const switchAbonnement = async () => {
+    const WijzigLimieten = async (event) => {
+        event.preventDefault();
+
+        const formData = new FormData(event.target);
+
+        const voertuigType = formData.get('typeAbonnement');
+        if (voertuigType == null || voertuigType === abonnement) {
+            voertuigType === abonnement;
+        }
+
+        //Medewerkerlimiet ophalen en kijken of hij leeg is, zodat je de oude kan gebruiken.
+        const medewerkerLimiet = formData.get('medewerkerLimiet');
+        if (medewerkerLimiet == "" || medewerkerLimiet === maxMedewerkers) {
+            medewerkerLimiet === maxMedewerkers;
+        }
+
+        //Voertuigenlimiet ophalen en kijken of hij leeg is, zodat je de oude kan gebruiken.
+        const voertuigenLimiet = formData.get('voertuigenLimiet');
+        if (voertuigenLimiet == "" || voertuigenLimiet === maxVoertuigen) {
+            voertuigenLimiet === maxVoertuigen;
+        }
+
+        /*//Kijken of er al een nieuw abonnement was
+        let abonnementType;
+        if (newAbonnement != null) {
+            abonnementType = newAbonnement.abonnementType;
+        } else {
+            abonnementType = abonnement;
+        }*/
+
+
+        //Nieuwe abonnementgegevens invullen
+        const UpdateAbonnement = {
+            abonnementType: voertuigType,
+            maxVoertuigen: voertuigenLimiet,
+            maxMedewerkers: medewerkerLimiet
+        };
+        try {
+            //Nieuw abonnement aanmaken
+            const response = await fetch(`https://localhost:44318/api/Abonnement/UpdateAbonnement?abonnementId=${abonnementId}&accountId=${currentAccountId}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(UpdateAbonnement) // Send the payload as the request body
+            });
+
+            // Check the response status
+            if (response.ok) {
+                //Nieuw abonnement invullen
+                const responsedata = await response.json();
+                setNewAbonnement({
+                    abonnementType: responsedata.abonnementType,
+                    maxVoertuigen: responsedata.maxVoertuigen,
+                    maxMedewerkers: responsedata.maxMedewerkers,
+                });
+            } else {
+                console.error('Fout bij wijzigen abonnement:', response.status);
+                alert('Er is iets fout gegaan bij het wijzigen van het abonnement.');
+            }
+        } catch (error) {
+            console.error('Kan abonnement niet wijzigen:', error.message);
+            alert(`Er is iets fout gegaan bij het wijzigen van het abonnement: ${error.message}`);
+        }
+        setShowWijzigen(false);
+    }
+
+    /*const switchAbonnement = async () => {
+        /!*if (newAbonnement != null && newAbonnement.abonnementType === abonnement) {
+            alert("Je hebt het abonnement al gewijzigd");
+            return;
+        }*!/
         // Switch between abonnement types
         const newType = abonnement === "Up Front" ? "Pay-As-You-Go" : "Up Front";
-        const newMaxVoertuigen = abonnement === "Up Front" ? 10 : 5; // Example values, adjust as needed
-        const newMaxMedewerkers = abonnement === "Up Front" ? 50 : 25; // Example values, adjust as needed
+        const newMaxMedewerkers = newAbonnement === null ? maxMedewerkers : newAbonnement.maxMedewerkers;
+        const newMaxVoertuigen = newAbonnement === null ? maxVoertuigen : newAbonnement.maxVoertuigen;
 
         // Create the payload with correct data structure
         const payload = {
@@ -80,25 +159,58 @@ function AbonnementWijzigen() {
             console.error('Kan abonnement niet wijzigen:', error.message);
             alert('Er is iets fout gegaan bij het wijzigen van het abonnement.');
         }
-    };
+    };*/
 
 
     return (
         <>
             <div className="card-container">
                 <div className="card">
-                    <h2>Huidig Abonnement</h2>
-                    <div className="card-labels">
-                        <label><strong>Abonnement Type:</strong> {abonnement || "Laden..."}</label>
-                        <label><strong>Maximaal aant. voertuigen:</strong> {maxVoertuigen !== null ? maxVoertuigen : "Laden..."}</label>
-                        <label><strong>Maximaal aant. medewerkers:</strong> {maxMedewerkers !== null ? maxMedewerkers : "Laden..."}</label>
-                    </div>
-                    {newAbonnement === null && (
-                        <button onClick={switchAbonnement}>
-                            Switch to {abonnement === "Up Front" ? "Pay-As-You-Go" : "Up Front"}
-                        </button>
+                    {!showWijzigen && (
+                        <>
+                            <h2>Huidig Abonnement</h2>
+                            <div className="card-labels">
+
+                                <label><strong>Abonnement Type:</strong> {abonnement || "Laden..."}</label>
+                                <label><strong>Maximaal aant.
+                                    voertuigen:</strong> {maxVoertuigen !== null ? maxVoertuigen : "Laden..."}</label>
+                                <label><strong>Maximaal aant.
+                                    medewerkers:</strong> {maxMedewerkers !== null ? maxMedewerkers : "Laden..."}
+                                </label>
+
+                            </div>
+                        </>
+                    )}
+                    <br/>
+                    {!showWijzigen ? (
+                        <button onClick={() => setShowWijzigen(true)}>Wijzig Abonnement</button>
+                    ) : (
+                        <form className="WijzigLimiet" onSubmit={WijzigLimieten}>
+                            <div>
+                                <label htmlFor="typeAbonnement">Type Abonnement:</label>
+                                <select name="typeAbonnement" id="typeAbonnement"
+                                        value={newVoertuigType !== null ? newVoertuigType : abonnement}
+                                        onChange={(e) => setNewVoertuigType(e.target.value)}>
+                                    <option value="Pay-As-You-Go">Pay-As-You-Go</option>
+                                    <option value="UpFront">UpFront</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label htmlFor="MedewerkerLimiet">Medewerkerlimiet:</label>
+                                <input type="text" name="medewerkerLimiet"
+                                       placeholder="Stel hier het medewerkerlimiet in..."/>
+                            </div>
+                            <div>
+                                <label htmlFor="VoertuigenLimiet">Voertuigenlimiet:</label>
+                                <input type="text" name="voertuigenLimiet"
+                                       placeholder="Stel hier het voertuiglimiet in..."/>
+                            </div>
+                            <input className="WijzigenKnop" type="submit" value="Wijzig"/>
+
+                        </form>
                     )}
                 </div>
+
 
                 {newAbonnement && (
                     <div className="card">
@@ -109,7 +221,11 @@ function AbonnementWijzigen() {
                             <label><strong>Maximaal aant. medewerkers:</strong> {newAbonnement.maxMedewerkers}</label>
                         </div>
                     </div>
+
                 )}
+            </div>
+            <div className="button-container">
+                <button type="button" onClick={() => {!showWijzigen ? (navigate('/HoofdschermZakelijkBeheerder')) : setShowWijzigen(false)}}>Terug</button>
             </div>
         </>
     );
