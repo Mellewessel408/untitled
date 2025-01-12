@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './RegistreerBedrijf.css';
+import '../styles/RegistreerBedrijf.css';
 import React from 'react';
 import logo from '../assets/CarAndAll_Logo.webp';
 import { AccountProvider, useAccount } from "./AccountProvider.jsx";

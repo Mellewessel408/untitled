@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import './InlogPagina.css';
+import '../styles/InlogPagina.css';
 import './KiesGebruiker.jsx';
 import { useNavigate } from 'react-router-dom';
 import {AccountProvider, useAccount} from "./AccountProvider.jsx";

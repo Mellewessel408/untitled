@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import RegistreerBedrijf from "./RegistreerBedrijf.jsx";
 import RegistreerPersoon from "./Registreren.jsx"
-import "./KiesGebruiker.css";
+import "../styles/KiesGebruiker.css";
 
 function KiesGebruiker() {
     const navigate = useNavigate();

@@ -1,5 +1,5 @@
 import {useNavigate} from 'react-router-dom';
-import '../Particulier/HoofdschermParticulier.css';
+import '../styles/HoofdschermParticulier.css';
 import {AccountProvider, useAccount} from "../Login/AccountProvider.jsx";
 import React, {useEffect, useState} from "react";
 import VoegMedewerkerToe from "./VoegMedewerkerToe.jsx";
