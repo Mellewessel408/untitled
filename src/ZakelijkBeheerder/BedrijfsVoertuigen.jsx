@@ -275,7 +275,7 @@ VoertuigCard.displayName = 'VoertuigCard';
     return (
         <div className="voertuigen-container">
             <header className="header">
-                <h1>Voertuig huren</h1>
+                <h1>Gehuurde autos</h1>
                 <button
                     className="logout-button small"
                     onClick={() => {

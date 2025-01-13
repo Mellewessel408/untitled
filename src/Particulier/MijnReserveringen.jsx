@@ -119,9 +119,7 @@ const MijnReserveringen = () => {
         <div className="voertuigen-container">
             <header className="header">
                 <h1>Mijn Reserveringen</h1>
-                <button className="logout-button small" onClick={logout}>
-                    Log uit
-                </button>
+
             </header>
 
             <div className="voertuigen-grid">

@@ -4,7 +4,7 @@ import logo from "../assets/CarAndAll_Logo.webp";
 import { useNavigate } from "react-router-dom";
 
 function ProfielPagina() {
-    const { currentAccountId } = useAccount();
+    const { currentAccountId, logout } = useAccount();
     const [accountDetails, setAccountDetails] = useState(null);
     const navigate = useNavigate();
 
@@ -41,8 +41,10 @@ function ProfielPagina() {
         return <p>{formattedNumber}</p>;
     };
 
-
-
+    const handleLogout = () => {
+        logout();
+        navigate('/Inlogpagina');
+    };
 
 
 
@@ -53,6 +55,9 @@ function ProfielPagina() {
 
     return (
         <div className="container">
+            <button className="logout-button small" onClick={handleLogout}>
+                Log uit
+            </button>
             <div className="Centreren">
                 <img className="logo" src={logo} alt="Carandall Logo"/>
             </div>
