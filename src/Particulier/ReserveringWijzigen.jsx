@@ -136,11 +136,6 @@ const ReserveringWijzigen = () => {
         setFilteredVoertuigen(filtered);
     }, [searchTerm, voertuigen]);
 
-    const handleLogout = () => {
-        logout();
-        navigate('/Inlogpagina');
-    };
-
     const handleReserveer = async (voertuig) => {
         const data = {
             begindatum: begindatum,
@@ -218,7 +213,7 @@ const ReserveringWijzigen = () => {
         <div className="voertuigen-container">
             <header className="header">
                 <h1>Reservering wijzigen</h1>
-                <button className="logout-button small" onClick={handleLogout}>Log uit</button>
+
             </header>
 
             <div className="search-filter">
