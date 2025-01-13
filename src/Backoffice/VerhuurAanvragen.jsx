@@ -213,6 +213,7 @@ function VerhuurAanvragen() {
                                     </div>
                                 )}
                             </div>
+
                         </div>
                     ))
                 )}

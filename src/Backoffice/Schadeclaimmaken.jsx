@@ -15,8 +15,6 @@ const Schadeclaimmaken = () => {
     const [datum, setDatum] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
     const [filteredVoertuigen, setFilteredVoertuigen] = useState([]);
-    const [selectedStatus, setSelectedStatus] = useState(null);
-    const [status, setStatus] = useState(null);
 
     const { logout } = useAccount(); // Gebruik de logout-functie vanuit de context
     const navigate = useNavigate(); // Voor navigatie
@@ -47,9 +45,6 @@ const Schadeclaimmaken = () => {
 
         fetchVoertuigen();
     }, []); // Run only on component mount
-    const StatusBijwerken = (id) => {
-        setSelectedStatus(id)
-    }
 
     const handleSchadeclaim = async (id) => {
 
@@ -101,17 +96,7 @@ const Schadeclaimmaken = () => {
         setSelectedVoertuig(null);
         setbeschrijving('');
     }
-    const handleAfgehandeld = () => {
-        setStatus('Afgehandeld');
-    };
-    const handleInBehandeling = () => {
-        setStatus('In behandeling');
-    };
-    const handleKeuze = () => {
 
-
-        setSelectedStatus(null);
-    };
 
     // Nieuwe logout functie
     const handleLogout = () => {
@@ -198,31 +183,7 @@ const Schadeclaimmaken = () => {
                                         </button>
                                     </div>
                                 )}
-                                <button style={{ marginTop: "5px" }}
-                                    onClick={ ()=> StatusBijwerken(voertuig.voertuigId)}>Status bijwerken</button>
-                                {voertuig.voertuigId === selectedStatus && (
-                                    <div>
-                                        <button
-                                            onClick={() => handleInBehandeling()}
-                                                style={{
-                                                    marginRight : "5px",
-                                                    marginTop: "5px",
-                                                    backgroundColor:
-                                                        status === 'In behandeling'
-                                                            ? 'grey'
-                                                            : '#040404',
-                                                }}>In behandeling</button>
-                                        <button onClick={() => handleAfgehandeld()}style={{
-                                            backgroundColor:
-                                                status === 'Afgehandeld'
-                                                    ? 'grey'
-                                                    : '#040404',
-                                        }}>Afgehandeld</button>
-                                        <button style={{ marginTop: "5px" }}
-                                            onClick={() => handleKeuze()}>Sla keuze op</button>
-                                    </div>
 
-                                )}
                             </div>
                         </div>
                     ))
