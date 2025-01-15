@@ -21,7 +21,9 @@ function SchademeldingenBekijken() {
     const [selectedForComment, setSelectedForComment] = useState(null);
     const [selectedReparatie, setSelectedReparatie] = useState(null);
     const [reparatie, setReparatie] = useState('');
-    const [datum, setDatum] = useState('');
+    const [datum, setDatum] = useState('')
+    const [selectedStatus, setSelectedStatus] = useState(null);
+    const [status, setStatus] = useState(null);
     const schademeldingentest = [
         {
             schadeclaimId: 1,
@@ -219,6 +221,20 @@ function SchademeldingenBekijken() {
     const handleReparatieChange = (e) => {
         setReparatie(e.target.value);
     }
+    const handleAfgehandeld = () => {
+        setStatus('Afgehandeld');
+    };
+    const handleInBehandeling = () => {
+        setStatus('In behandeling');
+    };
+    const handleKeuze = () => {
+
+
+        setSelectedStatus(null);
+    };
+    const StatusBijwerken = (id) => {
+        setSelectedStatus(id)
+    }
 
     return (
         <div className="voertuigen-container">
@@ -255,7 +271,7 @@ function SchademeldingenBekijken() {
                                 <div>
                                     <p className="Confirmatievraag">Weet je het zeker? ({timeRemaining}s)</p>
                                     <button className="AnnuleerKnop" onClick={cancelInReparatie}>Stop</button>
-                                    <button className="ReserveerKnop" onClick={confirmInReparatie}>Ja Reserveer</button>
+                                    <button className="ReserveerKnop" onClick={confirmInReparatie}>In Reparatie</button>
                                 </div>
                             )}
 
@@ -300,8 +316,34 @@ function SchademeldingenBekijken() {
 
                                 </div>
                             )}
+                            <button style={{ marginTop: "5px" }}
+                                    onClick={ ()=> StatusBijwerken(schademelding.schadeclaimId)}>Status bijwerken</button>
+                            {schademelding.schadeclaimId === selectedStatus && (
+                                <div>
+                                    <button
+                                        onClick={() => handleInBehandeling()}
+                                        style={{
+                                            marginRight : "3px",
+                                            marginTop: "5px",
+                                            backgroundColor:
+                                                status === 'In behandeling'
+                                                    ? 'grey'
+                                                    : '#040404',
+                                        }}>In behandeling</button>
+                                    <button onClick={() => handleAfgehandeld()}style={{
+                                        backgroundColor:
+                                            status === 'Afgehandeld'
+                                                ? 'grey'
+                                                : '#040404',
+                                    }}>Afgehandeld</button>
+                                    <button style={{ marginTop: "5px" }}
+                                            onClick={() => handleKeuze()}>Sla keuze op</button>
+                                </div>
+
+                            )}
 
                         </div>
+
                     ))
                 )}
 
