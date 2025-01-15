@@ -12,7 +12,8 @@ function AbonnementWijzigen() {
     const [showWijzigen, setShowWijzigen] = useState(null);
     const [abonnementId, setAbonnementId] = useState(null);
 
-    const { currentAccountId} = useAccount();
+    const { currentAccountId } = useAccount();
+    console.log('currentAccountId:', currentAccountId);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -50,37 +51,42 @@ function AbonnementWijzigen() {
 
         const formData = new FormData(event.target);
 
-        const voertuigType = formData.get('typeAbonnement');
-        if (voertuigType == null || voertuigType === abonnement) {
-            voertuigType === abonnement;
+        const abonnementType = formData.get('typeAbonnement');
+        if (abonnementType == null || abonnementType === abonnement) {
+            abonnementType === abonnement;
         }
 
         //Medewerkerlimiet ophalen en kijken of hij leeg is, zodat je de oude kan gebruiken.
         const medewerkerLimiet = formData.get('medewerkerLimiet');
-        if (medewerkerLimiet == "" || medewerkerLimiet === maxMedewerkers) {
+        if (medewerkerLimiet === "" || medewerkerLimiet === maxMedewerkers) {
             medewerkerLimiet === maxMedewerkers;
         }
 
         //Voertuigenlimiet ophalen en kijken of hij leeg is, zodat je de oude kan gebruiken.
         const voertuigenLimiet = formData.get('voertuigenLimiet');
-        if (voertuigenLimiet == "" || voertuigenLimiet === maxVoertuigen) {
+        if (voertuigenLimiet === "" || voertuigenLimiet === maxVoertuigen) {
             voertuigenLimiet === maxVoertuigen;
         }
 
-        /*//Kijken of er al een nieuw abonnement was
-        let abonnementType;
+        const today = new Date();
+        const nextMonth = new Date(today.getFullYear(), today.getMonth() + 1, 1);
+        const ingangsdatum = nextMonth.toISOString()
+
+            //Kijken of er al een nieuw abonnement was
+        let soortAbonnement;
         if (newAbonnement != null) {
-            abonnementType = newAbonnement.abonnementType;
+            soortAbonnement = newAbonnement.abonnementType;
         } else {
-            abonnementType = abonnement;
-        }*/
+            soortAbonnement = abonnementType;
+        }
 
 
         //Nieuwe abonnementgegevens invullen
         const UpdateAbonnement = {
-            abonnementType: voertuigType,
+            abonnementType: soortAbonnement,
             maxVoertuigen: voertuigenLimiet,
-            maxMedewerkers: medewerkerLimiet
+            maxMedewerkers: medewerkerLimiet,
+            begindatum: ingangsdatum
         };
         try {
             //Nieuw abonnement aanmaken
@@ -100,6 +106,7 @@ function AbonnementWijzigen() {
                     abonnementType: responsedata.abonnementType,
                     maxVoertuigen: responsedata.maxVoertuigen,
                     maxMedewerkers: responsedata.maxMedewerkers,
+                    ingangsdatum: responsedata.begindatum
                 });
             } else {
                 console.error('Fout bij wijzigen abonnement:', response.status);
@@ -111,56 +118,6 @@ function AbonnementWijzigen() {
         }
         setShowWijzigen(false);
     }
-
-    /*const switchAbonnement = async () => {
-        /!*if (newAbonnement != null && newAbonnement.abonnementType === abonnement) {
-            alert("Je hebt het abonnement al gewijzigd");
-            return;
-        }*!/
-        // Switch between abonnement types
-        const newType = abonnement === "Up Front" ? "Pay-As-You-Go" : "Up Front";
-        const newMaxMedewerkers = newAbonnement === null ? maxMedewerkers : newAbonnement.maxMedewerkers;
-        const newMaxVoertuigen = newAbonnement === null ? maxVoertuigen : newAbonnement.maxVoertuigen;
-
-        // Create the payload with correct data structure
-        const payload = {
-            abonnementType: newType,
-            maxVoertuigen: newMaxVoertuigen,
-            maxMedewerkers: newMaxMedewerkers
-        };
-
-        // Log the payload to verify the data
-        console.log("Payload:", payload);
-        console.log("AccountId", currentAccountId)
-
-        try {
-            // Make the POST request with the correct accountId as a query parameter and the payload in the body
-            const response = await fetch(`https://localhost:44318/api/Abonnement/Create?accountId=${currentAccountId}`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(payload) // Send the payload as the request body
-            });
-
-            // Check the response status
-            if (response.ok) {
-                const responsedata = await response.json();
-                setNewAbonnement({
-                    abonnementType: responsedata.abonnementType,
-                    maxVoertuigen: responsedata.maxVoertuigen,
-                    maxMedewerkers: responsedata.maxMedewerkers,
-                });
-            } else {
-                console.error('Fout bij wijzigen abonnement:', response.status);
-                alert('Er is iets fout gegaan bij het wijzigen van het abonnement.');
-            }
-        } catch (error) {
-            console.error('Kan abonnement niet wijzigen:', error.message);
-            alert('Er is iets fout gegaan bij het wijzigen van het abonnement.');
-        }
-    };*/
-
 
     return (
         <>
@@ -182,16 +139,17 @@ function AbonnementWijzigen() {
                         </>
                     )}
                     <br/>
-                    {!showWijzigen ? (
+                    {!showWijzigen && !newAbonnement && (
                         <button onClick={() => setShowWijzigen(true)}>Wijzig Abonnement</button>
-                    ) : (
+                    )}
+                    {showWijzigen && (
                         <form className="WijzigLimiet" onSubmit={WijzigLimieten}>
                             <div>
                                 <label htmlFor="typeAbonnement">Type Abonnement:</label>
                                 <select name="typeAbonnement" id="typeAbonnement"
                                         value={newVoertuigType !== null ? newVoertuigType : abonnement}
                                         onChange={(e) => setNewVoertuigType(e.target.value)}>
-                                    <option value="Pay-As-You-Go">Pay-As-You-Go</option>
+                                    <option value="PayAsYouGo">Pay-As-You-Go</option>
                                     <option value="UpFront">UpFront</option>
                                 </select>
                             </div>
@@ -216,6 +174,7 @@ function AbonnementWijzigen() {
                     <div className="card">
                         <h2>Nieuw Abonnement</h2>
                         <div className="card-labels">
+                            <label><strong>Ingangsdatum:</strong> {new Date(newAbonnement.ingangsdatum).toLocaleDateString('nl-NL', { day: '2-digit', month: 'long', year: 'numeric' })}</label>
                             <label><strong>Abonnement Type:</strong> {newAbonnement.abonnementType}</label>
                             <label><strong>Maximaal aant. voertuigen:</strong> {newAbonnement.maxVoertuigen}</label>
                             <label><strong>Maximaal aant. medewerkers:</strong> {newAbonnement.maxMedewerkers}</label>

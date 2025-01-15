@@ -6,6 +6,7 @@ import carAndAllLogo from './assets/CarAndAll_Logo.webp';
 
 const VoertuigenComponent = () => {
     const [voertuigen, setVoertuigen] = useState([]);
+    const [account, setAccount] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
@@ -29,12 +30,18 @@ const VoertuigenComponent = () => {
             alert("U bent ingelogd zonder AccountId");
             navigate('inlogpagina');
         }
+        getAccount();
         const fetchVoertuigen = async () => {
             setLoading(true);
             setBegindatum(null);
             setEinddatum(null);
             try {
-                const url = `${apiBaseUrl}/krijgallevoertuigen`;
+                let url;
+                if (account.AccountType != "ZakelijkHuurder") {
+                    url = `${apiBaseUrl}/krijgallevoertuigen`;
+                } else {
+                    url = `${apiBaseUrl}/FilterVoertuigen?voertuigType=Auto`;
+                }
                 const response = await fetch(url);
                 if (!response.ok) {
                     throw new Error(`Netwerkfout (${response.status}): ${response.statusText}`);
@@ -88,6 +95,21 @@ const VoertuigenComponent = () => {
             }, 1000); // Stel de vertraging in, bijvoorbeeld 1000ms (1 seconde)
         }
     };
+
+    const getAccount = async () => {
+        try {
+            const url = `$https://localhost:44318/api/Particulier/KrijgSpecifiekAccount?Id=${currentAccountId}`;
+            const response = await fetch(url);
+
+            if (!response.ok) {
+                throw new Error(`Netwerkfout (${response.status}): ${response.statusText}`);
+            }
+            setAccount(response.json())
+        } catch (error) {
+            console.error("Fout bij reserveren:", error);
+            alert("Er is een probleem opgetreden bij het reserveren van het voertuig.");
+        }
+    }
 
     // Reserveer functie
     const handleReserveer = async (voertuigId) => {
