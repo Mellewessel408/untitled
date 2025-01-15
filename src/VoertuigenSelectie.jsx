@@ -199,7 +199,7 @@ const VoertuigenComponent = () => {
         <div className="voertuigen-container">
             <header className="header">
                 <h1>Voertuig huren</h1>
-                <button className="logout-button small" onClick={handleLogout}>
+                <button className="logout-button" onClick={handleLogout}>
                     Log uit
                 </button>
             </header>

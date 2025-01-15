@@ -15,6 +15,8 @@ export const AccountProvider = ({ children }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
+    console.log('AccountProvider state:', gebruiker);
+
     useEffect(() => {
         if (gebruiker) {
             localStorage.setItem("gebruiker", JSON.stringify(gebruiker));
@@ -37,17 +39,26 @@ export const AccountProvider = ({ children }) => {
             const responseData = await response.json();
 
             if (response.ok) {
-                setGebruiker(responseData);
-                setLoading(false);
-                alert(`Welkom ${responseData.email}, ${responseData.accountType}`);
+                // After successful login, fetch the complete user details including address
+                const userDetailsResponse = await fetch(`${baseURL}/Account/GetSpecifiek?id=${responseData.accountId}`);
+                if (userDetailsResponse.ok) {
+                    const completeUserData = await userDetailsResponse.json();
+                    console.log('Complete user data:', completeUserData);
+                    setGebruiker(completeUserData);
+                    setLoading(false);
+                    alert(`Welkom ${completeUserData.email}, ${completeUserData.accountType}`);
+                    navigate('/Hoofdscherm');
+                } else {
+                    throw new Error('Failed to fetch complete user details');
+                }
             } else {
                 alert('Fout account of wachtwoord')
             }
         } catch (error) {
             console.error('Er is een fout opgetreden:', error.message);
             alert('Er is iets misgegaan bij het inloggen! Fout details: ' + JSON.stringify(error, null, 2));
+            setLoading(false);
         }
-
     };
 
     const logout = () => {
@@ -147,18 +158,94 @@ export const AccountProvider = ({ children }) => {
         }
     };
 
-    const verwijder = async (email) => {
+    const updateProfile = async (accountId, updateData) => {
+        setLoading(true);
+        setError(null);
+
+        try {
+            // First update the address if it exists
+            if (updateData.adres) {
+                const adresResponse = await fetch(`${baseURL}/Adres/Update?id=${gebruiker.adres.adresId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(updateData.adres),
+                });
+
+                if (!adresResponse.ok) {
+                    throw new Error("Failed to update address");
+                }
+            }
+
+            // Then update the account
+            const accountResponse = await fetch(`${baseURL}/Account/Update?id=${accountId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: updateData.email,
+                    naam: updateData.naam,
+                    nummer: updateData.nummer,
+                    accountType: gebruiker.accountType,
+                    adresId: gebruiker.adres?.adresId
+                }),
+            });
+
+            if (!accountResponse.ok) {
+                throw new Error("Failed to update account");
+            }
+
+            // Fetch updated user data
+            const updatedUserResponse = await fetch(`${baseURL}/Account/GetSpecifiek?id=${accountId}`);
+            if (updatedUserResponse.ok) {
+                const updatedUserData = await updatedUserResponse.json();
+                setGebruiker(updatedUserData);
+            }
+
+            setLoading(false);
+            return true;
+        } catch (error) {
+            setError(error.message);
+            setLoading(false);
+            throw error;
+        }
+    };
+
+    const AccountVerwijderen = async () => {
+        if (!gebruiker) {
+            console.error('Geen gebruiker gevonden om te verwijderen');
+            return;
+        }
+
         try {
             const response = await fetch(`${baseURL}/Account/Delete?id=${gebruiker.accountId}`, {
-                method: 'POST',
+                method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({email, wachtwoord})
             });
+
+            if (response.ok) {
+                console.log('Account succesvol verwijderd');
+                alert('Account succesvol verwijderd!');
+                setGebruiker(null);
+                navigate('/InlogPagina');
+            } else {
+                throw new Error('Er is iets misgegaan bij het verwijderen van het account');
+            }
+        } catch (error) {
+            console.error('Er is een fout opgetreden:', error.message);
+            alert('Er is iets misgegaan bij het verwijderen van het account! Fout details: ' + JSON.stringify(error, null, 2));
         }
-    }
+    };
 
     return (
-        <AccountContext.Provider value={{ loading, error, gebruiker, login, logout, registreer, verwijder }}>
+        <AccountContext.Provider value={{
+            loading,
+            error,
+            gebruiker,
+            login,
+            logout,
+            registreer,
+            AccountVerwijderen,
+            updateProfile
+        }}>
             {children}
         </AccountContext.Provider>
     );

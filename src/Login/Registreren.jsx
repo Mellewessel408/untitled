@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Registreren.css';
 import React from 'react';
@@ -15,8 +14,6 @@ function Registreren() {
 
     const Registreer = async (event) => {
         event.preventDefault();
-
-
 
         const formData = new FormData(event.target);
         const email = formData.get('email');

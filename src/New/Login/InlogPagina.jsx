@@ -1,5 +1,4 @@
 ﻿import React, { useState } from 'react';
-import './KiesGebruiker.jsx';
 import { useNavigate } from 'react-router-dom';
 import { useAccount } from '../Accountprovider.jsx';
 

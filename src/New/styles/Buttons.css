@@ -1,0 +1,17 @@
+﻿button {
+    width: 200px;
+
+    border-radius: 12px;
+    padding: 10px 24px;
+    background-color: #1a1a1a;
+    color: #f0f0f0;
+    display: block;
+}
+
+.logout-button {
+    transition-duration: 0.4s;
+}
+
+.logout-button:hover{
+    background-color: firebrick;
+}

@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAccount } from "../Login/AccountProvider.jsx";
 import React, { useEffect, useState } from "react";
 import logo from "../assets/CarAndAll_Logo.webp";
-import '../ZakelijkBeheerder/VoertuigOverzicht.css';
+import '../styles/VoertuigOverzicht.css';
 
 function VoertuigOverzicht() {
 

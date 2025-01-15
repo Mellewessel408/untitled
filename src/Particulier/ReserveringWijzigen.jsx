@@ -218,7 +218,7 @@ const ReserveringWijzigen = () => {
         <div className="voertuigen-container">
             <header className="header">
                 <h1>Reservering wijzigen</h1>
-                <button className="logout-button small" onClick={handleLogout}>Log uit</button>
+                <button className="logout-button" onClick={handleLogout}>Log uit</button>
             </header>
 
             <div className="search-filter">

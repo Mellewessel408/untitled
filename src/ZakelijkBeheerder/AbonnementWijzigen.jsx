@@ -1,4 +1,4 @@
-﻿import "./AbonnementWijzigen.css";
+﻿import "../styles/AbonnementWijzigen.css";
 import React, { useEffect, useState } from "react";
 import { useAccount } from "../Login/AccountProvider.jsx";
 import { useNavigate } from "react-router-dom";
