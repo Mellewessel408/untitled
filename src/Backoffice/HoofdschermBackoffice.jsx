@@ -14,9 +14,11 @@ function HoofdschermBackoffice() {
             navigate('/inlogpagina');
         }
     });
-
+    const AccountsBeheren = () => {
+        navigate('AccountsBeheren');
+    }
     const BedrijfsAbonnement = () => {
-        navigate('/BedrijfsabbonomentenGoedkeuren');
+        navigate('BedrijfsabbonomentenGoedkeuren');
     };
     const Schadeclaimmaken = () => {
         navigate('Schadeclaimmaken');
@@ -42,7 +44,9 @@ function HoofdschermBackoffice() {
             <button onClick={VerhuurAanvraag}>VerhuurAanvragen</button>
             <button onClick={SchademeldingenBekijken}>Schademeldingen</button>
             <button onClick={Schadeclaimmaken}>Schadeclaim maken</button>
+            <button onClick={AccountsBeheren}>Accounts Beheren</button>
             <button className="logout-button" onClick={LogUit}>Log uit</button>
+
         </div>
     );
 }

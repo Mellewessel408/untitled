@@ -23,12 +23,13 @@ import ReserveringWijzigen from "./Particulier/ReserveringWijzigen.jsx";
 import AbonnementWijzigen from "./ZakelijkBeheerder/AbonnementWijzigen.jsx";
 import VoertuigOverzicht from "./ZakelijkBeheerder/VoertuigOverzicht.jsx";
 import BedrijfsVoertuigen from "./ZakelijkBeheerder/BedrijfsVoertuigen.jsx";
-
 import HoofdschermBackoffice from "./Backoffice/HoofdschermBackoffice.jsx";
 import AbonnementGoedkeuren from "./Backoffice/AbonnementGoedkeuren.jsx";
 import VerhuurAanvragen from "./Backoffice/VerhuurAanvragen.jsx";
 import SchademeldingenBekijken from "./Backoffice/SchademeldingenBekijken.jsx";
 import Schadeclaimmaken from "./Backoffice/Schadeclaimmaken.jsx";
+import AccountsBeheren from "./Backoffice/AccountsBeheren.jsx";
+import VoegmedewerkerToe from "./Backoffice/VoegMedewerkerToe.jsx";
 function App() {
     return (
         <AccountProvider>
@@ -79,6 +80,8 @@ function App() {
                     <Route path="/HoofdschermBackoffice/VerhuurAanvragen" element={<VerhuurAanvragen />} />
                     <Route path="/HoofdschermBackoffice/Schademeldingen" element={<SchademeldingenBekijken/>} />
                     <Route path="/HoofdschermBackoffice/Schadeclaimmaken" element={<Schadeclaimmaken />} />
+                    <Route path="/HoofdschermBackoffice/AccountsBeheren" element={<AccountsBeheren />} />
+                    <Route path="/HoofdschermBackoffice/AccountsBeheren/voegMedewerkertoe" element={<VoegmedewerkerToe />} />
                 </Routes>
             </div>
           </Router>
