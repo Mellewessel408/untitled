@@ -1,22 +1,18 @@
-﻿import React, {useEffect, useState} from "react";
-import carAndAllLogo from "../assets/CarAndAll_Logo.webp";
+﻿import React, { useState, useEffect } from "react";
+import carAndAllLogo from '../assets/CarAndAll_Logo.webp';
+import { useVoertuigen } from "./Voertuigprovider.jsx"; // Use one image
 import { useAccount } from './Accountprovider.jsx';
-import { useVoertuigen } from "./Voertuigprovider.jsx";
 
-function SelectieScherm() {
+function StatusUpdate() {
     const { voertuigen } = useVoertuigen();
-    const { logout } = useAccount();
+    const { logout, loading, error } = useAccount();
 
     const [begindatum, setBegindatum] = useState("");
     const [einddatum, setEinddatum] = useState("");
     const [searchTerm, setSearchTerm] = useState("");
     const [filteredVoertuigen, setFilteredVoertuigen] = useState(voertuigen);
 
-    // States for handling confirmation and details
-    const [showConfirm, setShowConfirm] = useState(false);
-    const [selectedVoertuig, setSelectedVoertuig] = useState(null);
     const [showDetails, setShowDetails] = useState(null);
-    const [timeRemaining, setTimeRemaining] = useState(10);
 
     useEffect(() => {
         console.log("Voertuigen from context:", voertuigen);
@@ -55,25 +51,73 @@ function SelectieScherm() {
         setFilteredVoertuigen(filtered);
     }, [searchTerm, begindatum, einddatum, voertuigen]);
 
-    const showReservationConfirm = (voertuigId) => {
-        setSelectedVoertuig(voertuigId);
-        setShowConfirm(true);
+    const updateData = async (voertuigId) => {
+        const voertuig = voertuigen.find(v => v.voertuigId === voertuigId);
+        let updatedStatus = voertuig.voertuigStatus;
+
+        // Transition logic based on current status
+        if (updatedStatus === "IsGoedgekeurd") {
+            updatedStatus = "Uitgegeven"; // Transition "Gereserveerd" to "Uitgegeven"
+        } else if (updatedStatus === "Uitgegeven") {
+            updatedStatus = "Beschikbaar"; // Transition "Uitgegeven" to "Beschikbaar"
+        } else if (updatedStatus === "Beschikbaar") {
+            if (!begindatum || !einddatum) {
+                alert("Voor deze statusverandering moet een begindatum en einddatum ingevuld worden.");
+                return; // Ensure dates are filled when changing from "Beschikbaar" to "Uitgegeven"
+            }
+            updatedStatus = "Uitgegeven"; // Transition "Beschikbaar" to "Uitgegeven" with date check
+        }
+
+        // If we are changing to "Uitgegeven", we need to send the dates
+        const url = `https://localhost:44318/api/Frontoffice/updatevoertuigstatus?id=${voertuigId}&begindatum=${begindatum}&einddatum=${einddatum}`;
+        try {
+            const response = await fetch(url, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (response.ok) {
+                // If the update was successful, update the status locally
+                setVoertuigen((prevVoertuigen) => {
+                    return prevVoertuigen.map((voertuig) => {
+                        if (voertuig.voertuigId === voertuigId) {
+                            return {
+                                ...voertuig,
+                                voertuigStatus: updatedStatus,
+                            };
+                        }
+                        return voertuig;
+                    });
+                });
+            } else {
+                console.error('Failed to update the vehicle status');
+            }
+        } catch (error) {
+            console.error('Error updating vehicle status:', error);
+        }
     };
 
-    const cancelReservation = () => {
-        setShowConfirm(false);
-        setSelectedVoertuig(null);
+    // Event handler for button click
+    const handleButtonClick = (voertuigId) => {
+        updateData(voertuigId);
+        if (begindatum == null || einddatum == null) {
+            alert("Fout bij status veranderen: Vul een begin- en einddatum in.");
+            return;
+        }
     };
 
-    const confirmReservation = () => {
-        alert(`Voertuig ${selectedVoertuig} gereserveerd!`);
-        setShowConfirm(false);
-        setSelectedVoertuig(null);
-    };
-
+    // Toggle details visibility
     const toggleDetails = (voertuigId) => {
-        setShowDetails(showDetails === voertuigId ? null : voertuigId);
+        setShowDetails((prevState) => ({
+            ...prevState,
+            [voertuigId]: !prevState[voertuigId], // Toggle the visibility for the given vehicle
+        }));
     };
+
+    if (loading) return <div className="loading">Laden...</div>;
+    if (error) return <div className="error">{error}</div>;
 
     return (
         <div className="voertuigen-container">
@@ -133,30 +177,7 @@ function SelectieScherm() {
                                 <p><strong>Voertuigtype:</strong> {voertuig.voertuigType}</p>
 
                                 {/* Reservation Confirmation */}
-                                {!showConfirm && (
-                                    <div className="button-container">
-                                        <button
-                                            className="reserveer-button"
-                                            onClick={() => showReservationConfirm(voertuig.voertuigId)}
-                                        >
-                                            Reserveer
-                                        </button>
-                                        <button
-                                            className="details-button"
-                                            onClick={() => toggleDetails(voertuig.voertuigId)}
-                                        >
-                                            Details
-                                        </button>
-                                    </div>
-                                )}
 
-                                {showConfirm && selectedVoertuig === voertuig.voertuigId && (
-                                    <div>
-                                        <p className="Confirmatievraag">Weet je het zeker? ({timeRemaining}s)</p>
-                                        <button className="AnnuleerKnop" onClick={cancelReservation}>Stop</button>
-                                        <button className="ReserveerKnop" onClick={confirmReservation}>Ja Reserveer</button>
-                                    </div>
-                                )}
 
                                 {showDetails === voertuig.voertuigId && (
                                     <div className="voertuig-details">
@@ -175,6 +196,6 @@ function SelectieScherm() {
             </div>
         </div>
     );
-}
+};
 
-export default SelectieScherm;
+export default StatusUpdate;

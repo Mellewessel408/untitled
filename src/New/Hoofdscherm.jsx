@@ -39,12 +39,19 @@ const ZakelijkHuurder = ({ gebruiker, navigate, logout }) => (
 
 const ZakelijkBeheerder = () => <p>Welcome User! You have limited access.</p>;
 const Backoffice = () => <p>Welcome Guest! Please log in to get more access.</p>;
-const Frontoffice = () => <p>Welcome Guest! Please log in to get more access.</p>;
+const Frontoffice = ({gebruiker, navigate, logout}) => (
+    <UserLayout naam={gebruiker.email}>
+        <h2>Wat wil je vandaag doen?</h2>
+        <button onClick={() => navigate('/StatusUpdate')}>StatusUpdate</button>
+        <button className="logout-button" onClick={logout}>Log uit</button>
+    </UserLayout>
+);
 
 // Common PropTypes shape for user components
 const userPropTypes = {
     gebruiker: PropTypes.shape({
         naam: PropTypes.string.isRequired,
+        email: PropTypes.string.isRequired,
         accountType: PropTypes.string.isRequired,
     }).isRequired,
     navigate: PropTypes.func.isRequired,
@@ -53,8 +60,10 @@ const userPropTypes = {
 
 Particulier.propTypes = userPropTypes;
 ZakelijkHuurder.propTypes = userPropTypes;
+ZakelijkBeheerder.propTypes = userPropTypes;
+Backoffice.propTypes = userPropTypes;
+Frontoffice.propTypes = userPropTypes;
 
-// Main component with account type mapping
 const Hoofdscherm = () => {
     const { gebruiker, logout } = useAccount();
     const navigate = useNavigate();
