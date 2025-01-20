@@ -14,6 +14,9 @@ function HoofdschermBackoffice() {
             navigate('/inlogpagina');
         }
     });
+    const VoertuigenBeheren= () => {
+        navigate('VoertuigenBeheren');
+    }
     const AccountsBeheren = () => {
         navigate('AccountsBeheren');
     }
@@ -44,7 +47,8 @@ function HoofdschermBackoffice() {
             <button onClick={VerhuurAanvraag}>VerhuurAanvragen</button>
             <button onClick={SchademeldingenBekijken}>Schademeldingen</button>
             <button onClick={Schadeclaimmaken}>Schadeclaim maken</button>
-            <button onClick={AccountsBeheren}>Accounts Beheren</button>
+            <button onClick={AccountsBeheren}>Accounts beheren</button>
+            <button onClick={VoertuigenBeheren}>Voertuigen beheren</button>
             <button className="logout-button" onClick={LogUit}>Log uit</button>
 
         </div>
