@@ -1,25 +1,28 @@
-import {useNavigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import '../Particulier/HoofdschermParticulier.css';
-import {AccountProvider, useAccount} from "../Login/AccountProvider.jsx";
-import React, {useEffect, useState} from "react";
+import { AccountProvider, useAccount } from "../Login/AccountProvider.jsx";
+import React, { useEffect, useState } from "react";
 import VoegMedewerkerToe from "./VoegMedewerkerToe.jsx";
 
 function HoofdschermZakelijkBeheerder() {
     const navigate = useNavigate();
     const { currentAccountId, logout } = useAccount(); // Haal de currentAccountId uit de context
     const [accountNaam, setAccountNaam] = useState('');
+    const [isError, setIsError] = useState(false); // Toevoegen om dubbele alerts te voorkomen
+
     useEffect(() => {
-        if (currentAccountId === 0) {
-            alert("U bent ingelogd zonder AccountId")
-            navigate('/inlogpagina');
+        if (currentAccountId <= 0 && !isError) { // Controleer of error al is getoond
+            setIsError(true); // Zet de error-status op true zodat de alert niet opnieuw komt
+            alert("U bent ingelogd zonder AccountId");
+            navigate('/Inlogpagina');
+        } else if (currentAccountId > 0) {
+            // Alleen de naam ophalen als currentAccountId geldig is
+            const fetchNaam = async () => {
+                await KrijgNaam();
+            };
+            fetchNaam();
         }
-        const fetchNaam = async () => {
-            await KrijgNaam();
-
-        };
-        fetchNaam();
-    }, [currentAccountId, navigate]);
-
+    }, [currentAccountId, navigate, isError]); // `isError` toegevoegd om te controleren of we al een foutmelding hebben getoond
 
     const LogUit = () => {
         logout();
@@ -30,10 +33,11 @@ function HoofdschermZakelijkBeheerder() {
         navigate("VoertuigOverzicht");
     };
     const KrijgNaam = async () => {
+
         try {
             const response = await fetch(`https://localhost:44318/api/ZakelijkBeheerder/KrijgAccountemail?accountId=${currentAccountId}`, {
                 method: 'GET',
-                headers: {'Content-Type': 'application/json'},
+                headers: { 'Content-Type': 'application/json' },
             });
 
             if (response.ok) {
@@ -49,10 +53,10 @@ function HoofdschermZakelijkBeheerder() {
         }
     };
     const MedewerkersBeheren = () => {
-        navigate('MedewerkersBeheren')
+        navigate('MedewerkersBeheren');
     }
     const AbonnementWijzigen = () => {
-        navigate('AbonnementWijzigen')
+        navigate('AbonnementWijzigen');
     }
     const VerhuurActiviteiten = () => {
 
@@ -60,14 +64,12 @@ function HoofdschermZakelijkBeheerder() {
 
     const BedrijfVerwijderen = async () => {
         try {
-            // Verstuur het DELETE-verzoek naar de backend en wacht op het antwoord
             const response = await fetch(`https://localhost:44318/api/Bedrijf/VerwijderBedrijf?id=${currentAccountId}`, {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
             });
 
             if (response.ok) {
-                // Controleer of het verzoek succesvol was
                 console.log('Bedrijf succesvol verwijderd');
                 alert('Bedrijf succesvol verwijderd!');
                 navigate('/InlogPagina');
@@ -75,14 +77,10 @@ function HoofdschermZakelijkBeheerder() {
                 throw new Error('Er is iets misgegaan bij het verwijderen van het bedrijf');
             }
         } catch (error) {
-            // Foutafhandeling
             console.error('Er is een fout opgetreden:', error.message);
             alert('Er is iets misgegaan bij het verwijderen van het bedrijf! Fout details: ' + JSON.stringify(error, null, 2));
         }
     };
-
-
-
 
     return (
         <div className="hoofdscherm-container">
@@ -96,7 +94,6 @@ function HoofdschermZakelijkBeheerder() {
             <button className="logout-button" onClick={LogUit}>Log uit</button>
         </div>
     );
-
 }
 
 export default HoofdschermZakelijkBeheerder;

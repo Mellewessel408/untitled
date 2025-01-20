@@ -8,7 +8,7 @@ import { AccountProvider, useAccount } from "./AccountProvider.jsx";
 function RegistreerBedrijf() {
     const navigate = useNavigate();
     const { login } = useAccount();
-    const [abonnement, setAbonnement] = useState("Pay-As-You-Go");
+    const [abonnement, setAbonnement] = useState("PayAsYouGo");
 
     const InlogPagina = () => {
         navigate("/InlogPagina");
@@ -144,7 +144,7 @@ function RegistreerBedrijf() {
                 <div>
                     <label htmlFor="typeAbonnement">Type Abonnement:</label>
                     <select id="typeAbonnement" value={abonnement} onChange={(e) => setAbonnement(e.target.value)}>
-                        <option value="Pay-As-You-Go">Pay-As-You-Go</option>
+                        <option value="PayAsYouGo">Pay-As-You-Go</option>
                         <option value="UpFront">UpFront</option>
                     </select>
                 </div>
