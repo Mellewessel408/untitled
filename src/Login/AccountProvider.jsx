@@ -10,9 +10,7 @@ export const AccountProvider = ({ children }) => {
     });
 
     const login = (account) => {
-        const completeUserData = account.json();
-        console.log('Complete user data:', completeUserData);
-        setCurrentAccount(completeUserData);
+        setCurrentAccount(account);
     };
 
     const logout = () => {

@@ -1,9 +1,7 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Registreren.css';
-import React from 'react';
 import logo from '../assets/CarAndAll_Logo.webp';
-import {AccountProvider, useAccount} from "./AccountProvider.jsx";
+import {useAccount} from "./AccountProvider.jsx";
 function Registreren() {
     const navigate = useNavigate();
     const baseUrl = 'https://localhost:44318';
@@ -75,9 +73,9 @@ function Registreren() {
                 const errorMessage = await response.text();
                 alert(`Fout: ${errorMessage}`);
             }
-            console.log(response)
 
-            login(response)
+            const responseData = await response.json();
+            login(responseData);
             console.log('Account succesvol aangemaakt');
             navigate('/HoofdschermParticulier');
         } catch (error) {

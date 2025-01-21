@@ -37,7 +37,7 @@ function HoofdschermParticulier() {
 
     const AccountVerwijderen = async () => {
         try {
-            const response = await fetch(`https://localhost:44318/api/Particulier/VerwijderParticulier?id=${currentAccount}`, {
+            const response = await fetch(`https://localhost:44318/Account/Delete?accountId=${currentAccount.accountId}`, {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
             });
