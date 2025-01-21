@@ -4,32 +4,31 @@ import PropTypes from "prop-types";
 const AccountContext = createContext();
 
 export const AccountProvider = ({ children }) => {
-    const [currentAccountId, setCurrentAccountId] = useState(() => {
-        const storedAccountId = localStorage.getItem('currentAccountId');
-        // Check of de opgeslagen waarde een geldig accountId is
-        return storedAccountId && !isNaN(Number(storedAccountId)) ? JSON.parse(storedAccountId) : null;
+    const [currentAccount, setCurrentAccount] = useState(() => {
+        const storedAccount = localStorage.getItem('currentAccount');
+        return storedAccount && !isNaN(Number(storedAccount)) ? JSON.parse(storedAccount) : null;
     });
 
-    const login = (accountId) => {
-        setCurrentAccountId(accountId);
+    const login = (account) => {
+        setCurrentAccount(account);
     };
 
     const logout = () => {
-        setCurrentAccountId(null);
+        setCurrentAccount(null);
     };
 
     useEffect(() => {
-        if (currentAccountId !== null) {
+        if (currentAccount !== null) {
             // Sla het accountId op in localStorage als het is ingesteld
-            localStorage.setItem('currentAccountId', JSON.stringify(currentAccountId));
+            localStorage.setItem('currentAccountId', JSON.stringify(currentAccount));
         } else {
             // Verwijder het accountId uit localStorage als er uitgelogd is
             localStorage.removeItem('currentAccountId');
         }
-    }, [currentAccountId]);  // Bijwerken van localStorage wanneer currentAccountId verandert
+    }, [currentAccount]);  // Bijwerken van localStorage wanneer currentAccountId verandert
 
     return (
-        <AccountContext.Provider value={{ currentAccountId, login, logout }}>
+        <AccountContext.Provider value={{ currentAccount, login, logout }}>
             {children}
         </AccountContext.Provider>
     );

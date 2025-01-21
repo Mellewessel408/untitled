@@ -6,7 +6,7 @@ import logo from '../assets/CarAndAll_Logo.webp';
 import {AccountProvider, useAccount} from "./AccountProvider.jsx";
 function Registreren() {
     const navigate = useNavigate();
-
+    const baseUrl = 'https://localhost:44318';
     const InlogPagina = () => {
         navigate("/InlogPagina")
     }
@@ -15,8 +15,6 @@ function Registreren() {
 
     const Registreer = async (event) => {
         event.preventDefault();
-
-
 
         const formData = new FormData(event.target);
         const email = formData.get('email');
@@ -27,53 +25,65 @@ function Registreren() {
         const huisnummer = formData.get('huisnummer');
         const telefoonnummer = formData.get('telefoonnummer');
 
-        // Controleer of de wachtwoorden overeenkomen
         if (wachtwoord !== herhaalWachtwoord) {
             alert('Wachtwoorden komen niet overeen. Probeer het opnieuw.');
             return;
         }
 
-        // Verzamel de data in een object om te verzenden
-        const data = {
-            email: email,
-            wachtwoord: wachtwoord,
-            naam: naam,
-            telefoonnummer: telefoonnummer,
-            postcode : postcode,
-            huisnummer : huisnummer
-        };
+        const adresData = {
+            postcode: postcode,
+            huisnummer: huisnummer
+        }
 
+        try{
+            const adresUrl = `${baseUrl}/Adres/MaakAdres`;
+            const adresResponse = await fetch(adresUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(adresData),
+            });
 
-        try {
-            // Verstuur het POST verzoek naar de backend
-            const url = new URL("https://localhost:44318/api/Particulier/MaakAccount");
+            if (!adresResponse.ok) {
+                const errorMessage = await response.text(); // Krijg de tekst van de foutmelding
+                alert(`Fout: ${errorMessage}`);
+            }
+
+            const adresResponseData = await adresResponse.json(); // Parse JSON
+            const adresId = Number(adresResponseData.adresId);
+
+            const data = {
+                email: email,
+                wachtwoord: wachtwoord,
+                accountType: "Particulier",
+                naam: naam,
+                nummer: telefoonnummer,
+                adresId: adresId
+            };
+
+            const url = `${baseUrl}/Account/Registreer`;
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(data), // Data moet een JSON-object zijn
+                body: JSON.stringify(data)
             });
-            if (response.ok) {
-                // Als de request succesvol is
-                console.log("Object terughalen voor AccountId");
-                const IdResponse = await fetch('https://localhost:44318/api/Particulier/KrijgSpecifiekAccountEmail?email=' + email);
-                const IdData = await IdResponse.json();
-                if (IdData?.accountId) {
-                    login(IdData.accountId); // Account-ID instellen vanuit de response
-                }
-                console.log('Account succesvol aangemaakt');
-                navigate('/HoofdschermParticulier');
-            } else {
-                // Als de request niet succesvol is (bijvoorbeeld BadRequest)
-                const errorMessage = await response.text(); // Krijg de tekst van de foutmelding
+
+            if (!response.ok) {
+                const errorMessage = await response.text();
                 alert(`Fout: ${errorMessage}`);
             }
+            console.log(response)
+
+            login(response)
+            console.log('Account succesvol aangemaakt');
+            navigate('/HoofdschermParticulier');
         } catch (error) {
             console.error('Fout bij het versturen van het verzoek:', error);
             alert('Er is een fout opgetreden. Probeer het later opnieuw.');
         }
-
     }
 
     return (

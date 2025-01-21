@@ -7,16 +7,16 @@ import { useAccount } from "../Login/AccountProvider.jsx"; // Gebruik de useAcco
 //Nieuw
 function HoofdschermParticulier() {
     const navigate = useNavigate();
-    const { currentAccountId, logout } = useAccount(); // Haal de currentAccountId uit de context
+    const { currentAccount, logout } = useAccount();
     const [accountNaam, setAccountNaam] = useState('');
 
     useEffect(() => {
-        if (currentAccountId === 0) {
+        if (currentAccount === null) {
             alert("U bent ingelogd zonder AccountId");
             navigate('/inlogpagina');
         }
         KrijgNaam();
-    }, [currentAccountId, navigate]);
+    }, [currentAccount, navigate]);
 
     const AutoHuren = () => {
         navigate('/VoertuigenSelectie');
@@ -37,7 +37,7 @@ function HoofdschermParticulier() {
 
     const AccountVerwijderen = async () => {
         try {
-            const response = await fetch(`https://localhost:44318/api/Particulier/VerwijderParticulier?id=${currentAccountId}`, {
+            const response = await fetch(`https://localhost:44318/api/Particulier/VerwijderParticulier?id=${currentAccount}`, {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
             });
@@ -57,15 +57,16 @@ function HoofdschermParticulier() {
 
     const KrijgNaam = async () => {
         try {
-            const response = await fetch(`https://localhost:44318/api/ZakelijkBeheerder/KrijgSpecifiekAccount?id=${currentAccountId}`, {
+            const response = await fetch(`https://localhost:44318/api/ZakelijkBeheerder/KrijgSpecifiekAccount?id=${currentAccount.accountId}`, {
                 method: 'GET',
                 headers: {'Content-Type': 'application/json'},
             });
+            console.log(currentAccount);
 
             if (response.ok) {
                 const data = await response.json();
                 console.log(data);
-                setAccountNaam(data.naam);
+                setAccountNaam(currentAccount.naam);
             } else {
                 throw new Error('Er is iets misgegaan bij het ophalen van de accountnaam');
             }

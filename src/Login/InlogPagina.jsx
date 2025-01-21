@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import './InlogPagina.css';
 import './KiesGebruiker.jsx';
 import { useNavigate } from 'react-router-dom';
-import {AccountProvider, useAccount} from "./AccountProvider.jsx";
+import {useAccount} from "./AccountProvider.jsx";
 
 function InlogPagina() {
     const [email, setEmail] = useState('');
@@ -23,7 +23,7 @@ function InlogPagina() {
 
         try {
             // Verstuur het POST-verzoek naar de backend
-            const response = await fetch('https://localhost:44318/api/' + gebruiker + '/Login', {
+            const response = await fetch('https://localhost:44318/api/Login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data),
@@ -33,10 +33,7 @@ function InlogPagina() {
             if (response.ok) {
                 // Lees de JSON-body van de response
                 const responseData = await response.json();
-
-                console.log("Object terughalen voor AccountId:", responseData);
-                login(responseData.accountId); // Account-ID instellen vanuit de JSON-response
-
+                login(responseData)
 
                 console.log('Account succesvol ingelogd');
                 alert('Inloggen succesvol!');
