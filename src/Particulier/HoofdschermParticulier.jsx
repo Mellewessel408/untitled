@@ -15,7 +15,7 @@ function HoofdschermParticulier() {
             alert("U bent ingelogd zonder AccountId");
             navigate('/inlogpagina');
         }
-        KrijgNaam();
+        setAccountNaam(currentAccount.naam);
     }, [currentAccount, navigate]);
 
     const AutoHuren = () => {
@@ -52,27 +52,6 @@ function HoofdschermParticulier() {
         } catch (error) {
             console.error('Er is een fout opgetreden:', error.message);
             alert('Er is iets misgegaan bij het verwijderen van het account! Fout details: ' + JSON.stringify(error, null, 2));
-        }
-    };
-
-    const KrijgNaam = async () => {
-        try {
-            const response = await fetch(`https://localhost:44318/api/ZakelijkBeheerder/KrijgSpecifiekAccount?id=${currentAccount.accountId}`, {
-                method: 'GET',
-                headers: {'Content-Type': 'application/json'},
-            });
-            console.log(currentAccount);
-
-            if (response.ok) {
-                const data = await response.json();
-                console.log(data);
-                setAccountNaam(currentAccount.naam);
-            } else {
-                throw new Error('Er is iets misgegaan bij het ophalen van de accountnaam');
-            }
-        } catch (error) {
-            console.error('Er is een fout opgetreden:', error.message);
-            alert('Er is iets misgegaan bij het ophalen van de accountnaam! Fout details: ' + JSON.stringify(error, null, 2));
         }
     };
 
