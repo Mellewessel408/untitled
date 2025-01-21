@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import { useAccount } from "../Login/AccountProvider.jsx"; // Zorg dat de context beschikbaar is
 import "./VoertuigenSelectie.css"; // Hergebruik de CSS
@@ -9,18 +9,17 @@ const Reserveringen = () => {
     const [loading, setLoading] = useState(true); // State voor loading status
     const [error, setError] = useState(null); // State voor foutmeldingen
     const navigate = useNavigate(); // Voor navigatie
-    const { currentAccountId, logout } = useAccount(); // Haal de currentAccountId uit de context
-    const apiBaseUrl = `https://localhost:44318/api/Voertuig`; // API endpoint voor reserveringen
+    const { currentAccount, logout } = useAccount(); // Haal de currentAccountId uit de context
 
     // Haal de reserveringen op bij het laden van de component
     useEffect(() => {
-        if (currentAccountId === 0) {
+        if (currentAccount === null) {
             alert("U bent ingelogd zonder AccountId");
             navigate('/inlogpagina');
         }
         const fetchReserveringen = async () => {
             try {
-                const response = await fetch(`${apiBaseUrl}/krijgallereserveringen`);
+                const response = await fetch(`https://localhost:44318/Reservering/GetReserveringen?accountId=${currentAccount.accountId}`);
                 if (!response.ok) {
                     throw new Error("Netwerkfout: " + response.statusText);
                 }

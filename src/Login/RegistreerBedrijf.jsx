@@ -10,6 +10,8 @@ function RegistreerBedrijf() {
     const { login } = useAccount();
     const [abonnement, setAbonnement] = useState("PayAsYouGo");
 
+    const baseUrl = 'https://localhost:44318';
+
     const InlogPagina = () => {
         navigate("/InlogPagina");
     };
@@ -51,7 +53,8 @@ function RegistreerBedrijf() {
 
         const AccountData = {
             email: email,
-            wachtwoord: wachtwoord
+            wachtwoord: wachtwoord,
+            accountType: "ZakelijkBeheerder"
         };
 
         const AbonnementData = {
@@ -94,6 +97,7 @@ function RegistreerBedrijf() {
             console.error('Er is een fout opgetreden:', error.message);
             alert('Er is iets misgegaan bij het registreren! Fout details: ' + JSON.stringify(error, null, 2));
         }
+
     };
 
     return (

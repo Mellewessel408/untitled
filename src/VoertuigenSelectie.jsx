@@ -6,7 +6,6 @@ import carAndAllLogo from './assets/CarAndAll_Logo.webp';
 
 const VoertuigenComponent = () => {
     const [voertuigen, setVoertuigen] = useState([]);
-    const [account, setAccount] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
@@ -20,27 +19,25 @@ const VoertuigenComponent = () => {
     const [timerActive, setTimerActive] = useState(false); // Om de timer aan en uit te zetten
 
 
-    const { currentAccountId, logout } = useAccount();
+    const { currentAccount, logout } = useAccount();
     const navigate = useNavigate();
-    const apiBaseUrl = `https://localhost:44318/api/Voertuig`;
 
     // Haal de voertuigen op
     useEffect(() => {
-        if (currentAccountId === 0) {
+        if (currentAccount === null) {
             alert("U bent ingelogd zonder AccountId");
             navigate('inlogpagina');
         }
-        getAccount();
         const fetchVoertuigen = async () => {
             setLoading(true);
             setBegindatum(null);
             setEinddatum(null);
             try {
                 let url;
-                if (account.AccountType != "ZakelijkHuurder") {
-                    url = `${apiBaseUrl}/krijgallevoertuigen`;
+                if (currentAccount.accountType != "ZakelijkHuurder") {
+                    url = `https://localhost:44318/Voertuig/GetVoertuigen`;
                 } else {
-                    url = `${apiBaseUrl}/FilterVoertuigen?voertuigType=Auto`;
+                    url = `https://localhost:44318/Voertuig/GetVoertuigen?voertuigType=Auto`;
                 }
                 const response = await fetch(url);
                 if (!response.ok) {
@@ -79,7 +76,7 @@ const VoertuigenComponent = () => {
     const fetchVoertuigen = async (begindatum, einddatum) => {
 
         try {
-            const url = `${apiBaseUrl}/krijgallevoertuigenDatum?begindatum=${begindatum}&einddatum=${einddatum}`;
+            const url = `https://localhost:44318/Voertuig/GetVoertuigen?begindatum=${begindatum}&einddatum=${einddatum}`;
             const response = await fetch(url);
             if (!response.ok) {
                 throw new Error(`Netwerkfout (${response.status}): ${response.statusText}`);
@@ -96,34 +93,19 @@ const VoertuigenComponent = () => {
         }
     };
 
-    const getAccount = async () => {
-        try {
-            const url = `$https://localhost:44318/api/Particulier/KrijgSpecifiekAccount?Id=${currentAccountId}`;
-            const response = await fetch(url);
-
-            if (!response.ok) {
-                throw new Error(`Netwerkfout (${response.status}): ${response.statusText}`);
-            }
-            setAccount(response.json())
-        } catch (error) {
-            console.error("Fout bij reserveren:", error);
-            alert("Er is een probleem opgetreden bij het reserveren van het voertuig.");
-        }
-    }
-
     // Reserveer functie
     const handleReserveer = async (voertuigId) => {
         const data = {
             begindatum: begindatum,
             einddatum: einddatum,
             voertuigId: voertuigId,
-            AccountId: currentAccountId,
+            AccountId: currentAccount.accountId,
             VoertuigStatus: "Gereserveerd"
         };
 
         setLoading(true);
         try {
-            const url = new URL("https://localhost:44318/api/Voertuig/reserveerVoertuig");
+            const url = new URL("https://localhost:44318/Reservering/Reserveer");
             var response = await fetch(url, {
                 method: 'POST',
                 headers: {

@@ -5,7 +5,7 @@ import "../VoertuigenSelectie.css";
 import carAndAllLogo from '../assets/CarAndAll_Logo.webp';
 
 const ReserveringWijzigen = () => {
-    const { currentAccountId, logout } = useAccount();
+    const { currentAccount, logout } = useAccount();
     const navigate = useNavigate();
 
     const [mijnVoertuig, setMijnVoertuig] = useState(null);
@@ -24,7 +24,7 @@ const ReserveringWijzigen = () => {
     const { reserveringId } = location.state || {};
 
     useEffect(() => {
-        if (currentAccountId === 0) {
+        if (currentAccount === null) {
             alert("U bent ingelogd zonder AccountId");
             navigate('inlogpagina');
             return;
@@ -33,23 +33,23 @@ const ReserveringWijzigen = () => {
         setReservering(reserveringId);
         fetchVoertuigen(reserveringId);
 
-    }, [currentAccountId, navigate, reserveringId]);
+    }, [currentAccount.accountId, navigate, reserveringId]);
 
     const fetchVoertuigen = async (reserveringId) => {
         setLoading(true);
 
         try {
-            const url = `https://localhost:44318/api/Reservering/KrijgMijnReservering?reserveringId=` + reserveringId;
+            const url = `https://localhost:44318/Reservering/GetReserveringen?reserveringId=${reserveringId}`;
             const response = await fetch(url);
             if (!response.ok) {
                 throw new Error(`Netwerkfout (${response.status}): ${response.statusText}`);
             }
             const data = await response.json();
-            setMijnVoertuig(data);
+            setMijnVoertuig(data.voertuig);
             setBegindatum(data.begindatum);
             setEinddatum(data.einddatum);
 
-            const url2 = `https://localhost:44318/api/Voertuig/krijgallevoertuigenDatum?begindatum=${data.begindatum}&einddatum=${data.einddatum}`;
+            const url2 = `https://localhost:44318/Voertuig/GetVoertuigen?begindatum=${data.begindatum}&einddatum=${data.einddatum}`;
             const response2 = await fetch(url2);
             if (!response2.ok) {
                 throw new Error(`Netwerkfout (${response2.status}): ${response2.statusText}`);
@@ -82,7 +82,7 @@ const ReserveringWijzigen = () => {
 
     const fetchVoertuigenDatum = async (begindatum, einddatum) => {
         try {
-            const url = `https://localhost:44318/api/Voertuig/krijgallevoertuigenDatum?begindatum=${begindatum}&einddatum=${einddatum}`;
+            const url = `https://localhost:44318/Voertuig/GetVoertuigen?begindatum=${begindatum}&einddatum=${einddatum}`;
             const response = await fetch(url);
             if (!response.ok) {
                 throw new Error(`Netwerkfout (${response.status}): ${response.statusText}`);
@@ -137,18 +137,20 @@ const ReserveringWijzigen = () => {
     }, [searchTerm, voertuigen]);
 
     const handleReserveer = async (voertuig) => {
+        console.log(reservering);
         const data = {
             begindatum: begindatum,
             einddatum : einddatum,
             voertuigId: voertuig.voertuigId,
-            AccountId: currentAccountId,
+            AccountId: currentAccount.accountId,
             VoertuigStatus: "Gereserveerd"
         };
         console.log(data)
+        console.log(mijnVoertuig)
 
         setLoading(true);
         try {
-            const url = `https://localhost:44318/api/Reservering/PutReservering?reserveringId=` + reservering;
+            const url = `https://localhost:44318/Reservering/Update?reserveringId=${reserveringId}`;
             const response = await fetch(url, {
                 method: 'PUT',
                 headers: {

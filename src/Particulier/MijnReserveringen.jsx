@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAccount } from "../Login/AccountProvider.jsx";
 import "../VoertuigenSelectie.css";
@@ -11,20 +11,20 @@ const MijnReserveringen = () => {
     const [showDetails, setShowDetails] = useState(null);
     const [deleting, setDeleting] = useState(null);
     const navigate = useNavigate();
-    const { currentAccountId, logout } = useAccount();
-    const apiBaseUrl = `https://localhost:44318/api/Voertuig`;
+    const { currentAccount, logout } = useAccount();
 
 
     // Haal de voertuigen op
     const fetchReserveringen = async () => {
         try {
-            const url = `${apiBaseUrl}/krijgallevoertuigenAccount?accountId=${currentAccountId}`;
+            const url = `https://localhost:44318/Reservering/GetReserveringen?accountId=${currentAccount.accountId}`;
             const response = await fetch(url);
             if (!response.ok) {
                 throw new Error(`Netwerkfout (${response.status}): ${response.statusText}`);
             }
             const data = await response.json();
             setReserveringen(data.$values || []);
+            console.log(reserveringen)
         } catch (err) {
             console.error(err);
             setError(`Kan voertuigen niet ophalen: ${err.message}`);
@@ -35,12 +35,12 @@ const MijnReserveringen = () => {
 
     useEffect(() => {
         fetchReserveringen();
-    }, [currentAccountId]);
+    }, [currentAccount.accountId]);
 
     const DeleteReserveer = async (ReserveringId) => {
         setDeleting(ReserveringId);
         try {
-            const url = `https://localhost:44318/api/Reservering/VerwijderReservering?reserveringId=${ReserveringId}`;
+            const url = `https://localhost:44318/Reservering/Delete?reserveringId=${ReserveringId}`;
             const response = await fetch(url, {
                 method: 'DELETE',
                 headers: {
@@ -51,7 +51,7 @@ const MijnReserveringen = () => {
             if (response.ok) {
                 // Verwijder de reservering direct uit de lokale staat
                 setReserveringen((prevReserveringen) =>
-                    prevReserveringen.filter((reservering) => reservering.reserveringsId !== ReserveringId)
+                    prevReserveringen.filter((reservering) => reservering.reserveringId !== ReserveringId)
                 );
                 showNotification(ReserveringId, "red", "Verwijderd", 3000);
             } else {
@@ -126,8 +126,8 @@ const MijnReserveringen = () => {
                 {reserveringen.length === 0 ? (
                     <div className="no-vehicles">Geen voertuigen gevonden</div>
                 ) : (
-                    reserveringen.map((voertuig) => (
-                        <div key={voertuig.voertuigId} className="voertuig-card">
+                    reserveringen.map((reservering) => (
+                        <div key={reservering.reserveringId} className="voertuig-card">
                             <div className="voertuig-photo">
                                 <img
                                     className="voertuig-photo"
@@ -136,42 +136,42 @@ const MijnReserveringen = () => {
                                 />
                             </div>
                             <div className="voertuig-info">
-                                <h3 className="kenteken">ReserveringsId #{voertuig.reserveringsId}</h3>
-                                <p><strong>Voertuigtype:</strong> {voertuig.voertuigType}</p>
-                                <p><strong>Begindatum:</strong> {formatDatum(voertuig.begindatum)}</p>
-                                <p><strong>Einddatum:</strong> {formatDatum(voertuig.einddatum)}</p>
+                                <h3 className="kenteken">ReserveringId #{}</h3>
+                                <p><strong>Voertuigtype:</strong> {reservering.voertuig.voertuigType}</p>
+                                <p><strong>Begindatum:</strong> {formatDatum(reservering.begindatum)}</p>
+                                <p><strong>Einddatum:</strong> {formatDatum(reservering.einddatum)}</p>
                                 <p>
-                                    <strong>Betalingsstatus:</strong> {voertuig.isBetaald ? "Betaald" : `Nog te betalen €${voertuig.totaalPrijs || 0}`}
+                                    <strong>Betalingsstatus:</strong> {reservering.isBetaald ? "Betaald" : `Nog te betalen €${reservering.totaalPrijs || 0}`}
                                 </p>
 
                                 {/* Knop voor details */}
                                 <div className="button-container">
                                     <button
                                         className="details-button"
-                                        onClick={() => setShowDetails(showDetails === voertuig.voertuigId ? null : voertuig.voertuigId)}
+                                        onClick={() => setShowDetails(showDetails === reservering.reserveringId ? null : reservering.reserveringId)}
                                     >
-                                        {showDetails === voertuig.voertuigId ? "Verberg Details" : "Toon Details"}
+                                        {showDetails === reservering.voertuigId ? "Verberg Details" : "Toon Details"}
                                     </button>
                                     <button
                                         className="fetusDeletus"
-                                        disabled={deleting === voertuig.reserveringsId}
-                                        onClick={() => DeleteReserveer(voertuig.reserveringsId)}
+                                        disabled={deleting === reservering.reserveringId}
+                                        onClick={() => DeleteReserveer(reservering.reserveringId)}
                                     >
-                                        {deleting === voertuig.reserveringsId ? "Verwijderen..." : "Verwijder reservering"}
+                                        {deleting === reservering.reserveringId ? "Verwijderen..." : "Verwijder reservering"}
                                     </button>
                                 </div>
 
                                 {/* Details tonen als de knop is ingedrukt */}
-                                {showDetails === voertuig.voertuigId && (
+                                {showDetails === reservering.reserveringId && reservering.voertuig && (
                                     <div className="voertuig-details">
-                                        <p><strong>Kenteken:</strong> {voertuig.kenteken}</p>
-                                        <p><strong>Voertuig:</strong> {voertuig.merk} {voertuig.model}</p>
-                                        <p><strong>Kleur:</strong> {voertuig.kleur}</p>
-                                        <p><strong>Aanschafjaar:</strong> {voertuig.aanschafjaar}</p>
-                                        <p><strong>Brandstoftype:</strong> {voertuig.brandstofType}</p>
-                                        <p><strong>Totaalprijs:</strong> €{voertuig.totaalPrijs}</p>
+                                        <p><strong>Kenteken:</strong> {reservering.voertuig.kenteken}</p>
+                                        <p><strong>Voertuig:</strong> {reservering.voertuig.merk} {reservering.voertuig.model}</p>
+                                        <p><strong>Kleur:</strong> {reservering.voertuig.kleur}</p>
+                                        <p><strong>Aanschafjaar:</strong> {reservering.voertuig.aanschafjaar}</p>
+                                        <p><strong>Brandstoftype:</strong> {reservering.voertuig.brandstofType}</p>
+                                        <p><strong>Totaalprijs:</strong> €{reservering.voertuig.totaalPrijs}</p>
 
-                                        <button onClick={() => handleReserveringClick(voertuig.reserveringsId)}>
+                                        <button onClick={() => handleReserveringClick(reservering.reserveringId)}>
                                             Wijzig Reservering
                                         </button>
                                     </div>
