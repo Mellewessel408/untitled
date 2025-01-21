@@ -1,8 +1,8 @@
-import React, {useEffect, useState} from 'react';
+import {useState} from 'react';
 import './InlogPagina.css';
 import './KiesGebruiker.jsx';
 import { useNavigate } from 'react-router-dom';
-import {useAccount} from "./AccountProvider.jsx";
+import { useAccount } from "./AccountProvider.jsx";
 
 function InlogPagina() {
     const [email, setEmail] = useState('');
@@ -23,24 +23,23 @@ function InlogPagina() {
 
         try {
             // Verstuur het POST-verzoek naar de backend
-            const response = await fetch('https://localhost:44318/api/Login', {
+            const response = await fetch('https://localhost:44318/Account/Login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data),
             });
 
-            // Als de request succesvol is
-            if (response.ok) {
-                // Lees de JSON-body van de response
-                const responseData = await response.json();
-                login(responseData)
-
-                console.log('Account succesvol ingelogd');
-                alert('Inloggen succesvol!');
-                navigate('/Hoofdscherm' + gebruiker); // Of een andere route
-            } else {
+            if (!response.ok) {
                 alert('Fout account of wachtwoord!');
+                return;
             }
+
+            const responseData = await response.json();
+            login(responseData);
+            console.log(responseData);
+            console.log('Account succesvol ingelogd');
+            alert('Inloggen succesvol!');
+            navigate('/Hoofdscherm' + gebruiker);
         } catch (error) {
             // Foutafhandelingslogica
             console.error('Er is een fout opgetreden:', error.message);
