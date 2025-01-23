@@ -138,7 +138,7 @@ function VerhuurAanvragen() {
 
             <div className="voertuigen-grid">
                 {reserveringen.length === 0 ? (
-                    <div className="no-vehicles">Geen voertuigen gevonden</div>
+                    <div className="no-vehicles">Geen verhuuraanvragen gevonden</div>
                 ) : (
                     reserveringen.map((voertuig) => (
                         <div key={voertuig.reserveringsId} className="voertuig-card">

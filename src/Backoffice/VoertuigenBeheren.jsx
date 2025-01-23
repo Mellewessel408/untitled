@@ -17,16 +17,18 @@ const VoertuigenBeheren = () => {
         kenteken: '',
         merk: '',
         model: '',
-        voertuigType: '',
         kleur: '',
         aanschafjaar: '',
+        prijs: '',
+        voertuigStatus: '',
         brandstofType: '',
-        prijs: ''
-    });
 
+    });
+    const [voertuigType, setVoertuigType] = useState(null);
+    const [createMode, setCreateMode] = useState(false);
     const { currentAccountId, logout } = useAccount();
     const navigate = useNavigate();
-    const apiBaseUrl = `https://localhost:44318/api/Voertuig`;
+    const apiBaseUrl = `https://localhost:44318/api`;
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -38,12 +40,13 @@ const VoertuigenBeheren = () => {
     const annuleren = () => {
         setSelectedVoertuig(null);
         setWijzigen(false);
+        setCreateMode(false)
     }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch(`${apiBaseUrl}/${editingVoertuig}`, {
+            const response = await fetch(`${apiBaseUrl}/${voertuigType}/updateAuto/${editingVoertuig}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -73,7 +76,7 @@ const VoertuigenBeheren = () => {
 
     const VerwijderVoertuig = async (id) => {
         try {
-            const response = await fetch(`${apiBaseUrl}/Delete?id=${id}`, {
+            const response = await fetch(`${apiBaseUrl}/voertuig/Delete?id=${id}`, {
                 method: 'DELETE',
             });
 
@@ -99,12 +102,12 @@ const VoertuigenBeheren = () => {
                 kenteken: voertuig.kenteken,
                 merk: voertuig.merk,
                 model: voertuig.model,
-                voertuigType: voertuig.voertuigType,
                 kleur: voertuig.kleur,
                 aanschafjaar: voertuig.aanschafjaar,
                 brandstofType: voertuig.brandstofType,
-                prijs: voertuig.prijs
+                prijs: voertuig.prijs,
             });
+            setVoertuigType(voertuig.voertuigType);
             setEditingVoertuig(id);
         }
     };
@@ -118,7 +121,7 @@ const VoertuigenBeheren = () => {
         const fetchVoertuigen = async () => {
             setLoading(true);
             try {
-                const url = `${apiBaseUrl}/krijgallevoertuigen`;
+                const url = `${apiBaseUrl}/voertuig/krijgallevoertuigen`;
                 const response = await fetch(url);
                 if (!response.ok) {
                     throw new Error(`Netwerkfout (${response.status}): ${response.statusText}`);
@@ -160,8 +163,9 @@ const VoertuigenBeheren = () => {
             <header className="header">
                 <h1>Voertuig beheren</h1>
             </header>
-            <div className="search-filter">
-            </div>
+            <button onClick={() => setCreateMode(true)}>
+                Nieuw voertuig
+            </button>
             <div className="voertuigen-grid">
                 {filteredVoertuigen.length === 0 ? (
                     <div className="no-vehicles">Geen voertuigen gevonden</div>
@@ -198,9 +202,11 @@ const VoertuigenBeheren = () => {
                     ))
                 )}
             </div>
-            {wijzigen && (
+            {(wijzigen || createMode) && (
                 <div className="edit-form">
-                    <h2 className="text-xl font-bold mb-4">Voertuig Wijzigen</h2>
+                    <h2 className="text-xl font-bold mb-4">
+                        {wijzigen ? 'Voertuig Wijzigen' : 'Nieuw Voertuig Aanmaken'}
+                    </h2>
                     <form onSubmit={handleSubmit} className="space-y-4">
                         {Object.keys(formData).map((field) => (
                             <div key={field} className="space-y-2">
