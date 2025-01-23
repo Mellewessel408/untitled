@@ -65,7 +65,7 @@ function SchademeldingenBekijken() {
     const apiBaseUrl ='https://localhost:44318/api/';
     useEffect(() => {
         if (currentAccountId === 0) {
-            alert("U bent ingelogd zonder AccountId");
+            alert("U bent niet correct ingelogd. U wordt teruggestuurd naar de inlogpagina");
             navigate('/inlogpagina');
         }
     });

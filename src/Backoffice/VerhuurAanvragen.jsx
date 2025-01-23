@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 
 import "./Voertuigenselectie.css";
 
-import logo from '../assets/CarAndAll_Logo.webp';
 import { AccountProvider, useAccount } from "../Login/AccountProvider.jsx";
 import carAndAllLogo from "../assets/CarAndAll_Logo.webp"; // Gebruik de useAccount hook om de context te gebruiken
 
@@ -21,7 +20,7 @@ function VerhuurAanvragen() {
 
     useEffect(() => {
         if (currentAccountId === 0) {
-            alert("U bent ingelogd zonder AccountId");
+            alert("U bent niet correct ingelogd. U wordt teruggestuurd naar de inlogpagina");
             navigate('/inlogpagina');
         }
     });

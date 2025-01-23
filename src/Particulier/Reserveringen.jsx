@@ -15,7 +15,7 @@ const Reserveringen = () => {
     // Haal de reserveringen op bij het laden van de component
     useEffect(() => {
         if (currentAccountId === 0) {
-            alert("U bent ingelogd zonder AccountId");
+            alert("U bent niet correct ingelogd. U wordt teruggestuurd naar de inlogpagina");
             navigate('/inlogpagina');
         }
         const fetchReserveringen = async () => {

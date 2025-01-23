@@ -210,7 +210,7 @@ VoertuigCard.displayName = 'VoertuigCard';
     // Initial data fetch
     useEffect(() => {
         if (!currentAccountId || currentAccountId === 0) {
-            alert("U bent ingelogd zonder AccountId");
+            alert("U bent niet correct ingelogd. U wordt teruggestuurd naar de inlogpagina");
             navigate('inlogpagina');
             return;
         }
