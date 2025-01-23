@@ -31,17 +31,22 @@ const VoertuigenComponent = () => {
             navigate('inlogpagina');
         }
         getAccount();
+    }, []);
+
+    useEffect(() => {
+        if (account === null) return;
+
         const fetchVoertuigen = async () => {
             setLoading(true);
             setBegindatum(null);
             setEinddatum(null);
             try {
                 let url;
-                if (account.AccountType != "ZakelijkHuurder") {
-                    url = `${apiBaseUrl}/krijgallevoertuigen`;
-                } else {
+                if (account.accountType !== "Particulier") {
                     url = `${apiBaseUrl}/FilterVoertuigen?voertuigType=Auto`;
-                }
+                } else {
+                    url = `${apiBaseUrl}/krijgallevoertuigen`;
+                     }
                 const response = await fetch(url);
                 if (!response.ok) {
                     throw new Error(`Netwerkfout (${response.status}): ${response.statusText}`);
@@ -57,7 +62,8 @@ const VoertuigenComponent = () => {
         };
 
         fetchVoertuigen();
-    }, []);
+    }, [account, apiBaseUrl]);
+
 
     // Filter voertuigen
     useEffect(() => {
@@ -79,7 +85,12 @@ const VoertuigenComponent = () => {
     const fetchVoertuigen = async (begindatum, einddatum) => {
 
         try {
-            const url = `${apiBaseUrl}/krijgallevoertuigenDatum?begindatum=${begindatum}&einddatum=${einddatum}`;
+            let url
+            if (account.accountType !== "Particulier") {
+                url = `${apiBaseUrl}/krijgallevoertuigenDatum?begindatum=${begindatum}&einddatum=${einddatum}&accountType=Huurder`;
+            } else {
+                url = `${apiBaseUrl}/krijgallevoertuigenDatum?begindatum=${begindatum}&einddatum=${einddatum}`;
+            }
             const response = await fetch(url);
             if (!response.ok) {
                 throw new Error(`Netwerkfout (${response.status}): ${response.statusText}`);
@@ -98,18 +109,27 @@ const VoertuigenComponent = () => {
 
     const getAccount = async () => {
         try {
-            const url = `$https://localhost:44318/api/Particulier/KrijgSpecifiekAccount?Id=${currentAccountId}`;
-            const response = await fetch(url);
+            let url = `https://localhost:44318/api/Particulier/KrijgSpecifiekAccount?Id=${currentAccountId}`;
+            let response = await fetch(url);
 
             if (!response.ok) {
-                throw new Error(`Netwerkfout (${response.status}): ${response.statusText}`);
+                // Probeer het tweede eindpunt als het eerste faalt
+                url = `https://localhost:44318/api/ZakelijkHuurder/KrijgSpecifiekAccount?Id=${currentAccountId}`;
+                response = await fetch(url);
+
+                if (!response.ok) {
+                    throw new Error(`Netwerkfout (${response.status}): ${response.statusText}`);
+                }
             }
-            setAccount(response.json())
+
+            const accountData = await response.json();
+            setAccount(accountData);
         } catch (error) {
-            console.error("Fout bij reserveren:", error);
-            alert("Er is een probleem opgetreden bij het reserveren van het voertuig.");
+            console.error("Fout bij ophalen van het account:", error);
+            alert("Er is een probleem opgetreden bij het ophalen van het account.");
         }
-    }
+    };
+
 
     // Reserveer functie
     const handleReserveer = async (voertuigId) => {
