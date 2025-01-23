@@ -52,16 +52,19 @@ const Schadeclaimmaken = () => {
         const data = {
             voertuigId: id,
             beschrijving: beschrijving,
-            datum: datum,
+            datum: datum
         }
 
         try {
             // Verstuur het POST-verzoek naar de backend
-            const response = await fetch('https://localhost:44318/api/', {
-                method: 'PUT',
+            const response = await fetch('https://localhost:44318/api/Schadeclaim/PostSchadeclaim', {
+                method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(data),
             });
+            if (response.ok) {
+                alert("Schadeclaim toegevoegd!")
+            }
 
         } catch (error) {
             // Foutafhandelingslogica
