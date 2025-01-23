@@ -13,7 +13,7 @@ function HoofdschermZakelijkBeheerder() {
     useEffect(() => {
         if (currentAccountId <= 0 && !isError) { // Controleer of error al is getoond
             setIsError(true); // Zet de error-status op true zodat de alert niet opnieuw komt
-            alert("U bent ingelogd zonder AccountId");
+            alert("U bent niet correct ingelogd. U wordt teruggestuurd naar de inlogpagina");
             navigate('/Inlogpagina');
         } else if (currentAccountId > 0) {
             // Alleen de naam ophalen als currentAccountId geldig is
