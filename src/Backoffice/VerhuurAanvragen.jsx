@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import "./Voertuigenselectie.css";
+import "../Voertuigenselectie.css";
 
 import { AccountProvider, useAccount } from "../Login/AccountProvider.jsx";
 import carAndAllLogo from "../assets/CarAndAll_Logo.webp"; // Gebruik de useAccount hook om de context te gebruiken

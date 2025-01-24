@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import {unstable_setDevServerHooks, useNavigate} from 'react-router-dom';
 import { useAccount } from "../Login/AccountProvider.jsx";
-import "./VoertuigenSelectie.css"; // Import CSS classes
+import "../VoertuigenSelectie.css"; // Import CSS classes
 import carAndAllLogo from '../assets/CarAndAll_Logo.webp';
 
 const Schadeclaimmaken = () => {
