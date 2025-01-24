@@ -36,7 +36,7 @@ function RegistreerBedrijf() {
         console.log(emailDomein);
         // Controleer of de bedrijfsnaam overeenkomt met het e-maildomein
          if (domeinnaam !== emailDomein) {
-             alert("Emailadres klopt niet met de bijbehorende bedrijfsnaam!");
+             alert("Domeinnaam en E-mailadres komen niet overeen, probeer opnieuw.");
              return;
         }
 

@@ -42,7 +42,7 @@ function InlogPagina() {
                 alert('Inloggen succesvol!');
                 navigate('/Hoofdscherm' + gebruiker); // Of een andere route
             } else {
-                alert('Fout account of wachtwoord!');
+                alert('Deze combinatie van inloggegevens klopt niet, probeer het A.U.B. opnieuw.');
             }
         } catch (error) {
             // Foutafhandelingslogica
