@@ -1,51 +1,51 @@
 ﻿import React, { useState, useEffect } from "react";
-import "../VoertuigenSelectie.css"; // Import CSS classes
-import carAndAllLogo from '../assets/CarAndAll_Logo.webp'; // Use one image
+import "./VoertuigselectieFrontoffice.css"; // Import CSS classes
+import carAndAllLogo from '../assets/CarAndAll_Logo.webp';
+import Reserveringen from "../Particulier/Reserveringen.jsx"; // Use one image
 
 const VoertuigenComponent = () => {
-    const [voertuigen, setVoertuigen] = useState([]); // State for storing vehicles
+    const [reserveringen, setReserveringen] = useState([]); // State for storing vehicles
     const [loading, setLoading] = useState(true); // State for loading status
     const [error, setError] = useState(null); // State for handling errors
     const [searchTerm, setSearchTerm] = useState(""); // Search term for merk and model
     const [statusFilter, setStatusFilter] = useState(""); // Filter for vehicle status
     const [vehicleTypeFilter, setVehicleTypeFilter] = useState(""); // Filter for vehicle type
-    const [filteredVoertuigen, setFilteredVoertuigen] = useState([]); // Filtered vehicles
-    const [begindatum, setBegindatum] = useState('');
-    const [einddatum, setEinddatum] = useState('');
+    const [filteredReserveringen, setFilteredReserveringen] = useState([]); // Filtered vehicles
 
     // State to toggle visibility of extra details
     const [showDetails, setShowDetails] = useState({});
 
-    const apiBaseUrl = `https://localhost:44318/api/Voertuig`; // API endpoint to get all vehicles
+    const apiBaseUrl = `https://localhost:44318/api/Reservering`; // API endpoint to get all vehicles
 
     // Fetch vehicles from API
-    const fetchVoertuigen = async () => {
+    const fetchReserveringen = async () => {
         try {
-            const url = `${apiBaseUrl}/krijgallevoertuigen`;
+            const url = `${apiBaseUrl}/KrijgAlleReserveringenGoedgekeurd`;
             const response = await fetch(url);
             if (!response.ok) {
                 throw new Error("Netwerkfout: " + response.statusText);
             }
             const data = await response.json();
 
-            const voertuigenArray = data.$values || [];
-            setVoertuigen(voertuigenArray); // Set the vehicles data
+            const reserveringenArray = data.$values || [];
+            setReserveringen(reserveringenArray);
+           // Set the vehicles data
             setLoading(false); // Set loading to false after data is fetched
         } catch (err) {
             console.log(err);
-            setError("Kan voertuigen niet ophalen"); // Set error if fetch fails
+            setError("Kan reserveringen niet ophalen"); // Set error if fetch fails
             setLoading(false); // Set loading to false after error
         }
     };
 
     // Fetch vehicles when the component is mounted
     useEffect(() => {
-        fetchVoertuigen();
+        fetchReserveringen();
     }, []); // Run only on component mount
 
     // Filter vehicles based on search term, status, and vehicle type
     useEffect(() => {
-        const filtered = voertuigen.filter((voertuig) => {
+        const filtered = reserveringen.filter((voertuig) => {
             return Object.keys(voertuig).some((key) => {
                 const value = voertuig[key];
                 if (typeof value === "string") {
@@ -57,13 +57,14 @@ const VoertuigenComponent = () => {
                 return false;
             });
         });
-        setFilteredVoertuigen(filtered);
-    }, [searchTerm, voertuigen]); // Run whenever these values change
+        setFilteredReserveringen(filtered);
+    }, [searchTerm, reserveringen]);
+// Run whenever these values change
 
-    // Update vehicle status
-    const updateData = async (voertuigId) => {
-        const voertuig = voertuigen.find(v => v.voertuigId === voertuigId);
-        let updatedStatus = voertuig.voertuigStatus;
+    // Event handler for button click
+    const handleButtonClick = async (voertuigId) => {
+        const reservering = reserveringen.find(r => r.voertuigId === voertuigId);
+        let updatedStatus = reservering.voertuig.voertuigStatus;
 
         // Transition logic based on current status
         if (updatedStatus === "Gereserveerd") {
@@ -71,36 +72,35 @@ const VoertuigenComponent = () => {
         } else if (updatedStatus === "Uitgegeven") {
             updatedStatus = "Beschikbaar"; // Transition "Uitgegeven" to "Beschikbaar"
         } else if (updatedStatus === "Beschikbaar") {
-            if (!begindatum || !einddatum) {
-                alert("Voor deze statusverandering moet een begindatum en einddatum ingevuld worden.");
-                return; // Ensure dates are filled when changing from "Beschikbaar" to "Uitgegeven"
-            }
             updatedStatus = "Uitgegeven"; // Transition "Beschikbaar" to "Uitgegeven" with date check
         }
 
         // If we are changing to "Uitgegeven", we need to send the dates
-        const url = `https://localhost:44318/api/Frontoffice/updatevoertuigstatus?id=${voertuigId}&begindatum=${begindatum}&einddatum=${einddatum}`;
+        const url = `https://localhost:44318/api/Frontoffice/updatevoertuigstatus?id=${voertuigId}`;
         try {
             const response = await fetch(url, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                body: JSON.stringify({ voertuigStatus: updatedStatus })
             });
 
             if (response.ok) {
                 // If the update was successful, update the status locally
-                setVoertuigen((prevVoertuigen) => {
-                    return prevVoertuigen.map((voertuig) => {
-                        if (voertuig.voertuigId === voertuigId) {
-                            return {
-                                ...voertuig,
-                                voertuigStatus: updatedStatus,
-                            };
-                        }
-                        return voertuig;
-                    });
-                });
+                // setReserveringen((prevVoertuigen) => {
+                //     return prevVoertuigen.map((r) => {
+                //         if (r.voertuigId === voertuigId) {
+                //             return {
+                //                 ...r,
+                //                 voertuigStatus: updatedStatus,
+                //             };
+                //         }
+                //         return r;
+                //     });
+                // });
+
+                fetchReserveringen();
             } else {
                 console.error('Failed to update the vehicle status');
             }
@@ -109,23 +109,9 @@ const VoertuigenComponent = () => {
         }
     };
 
-    // Event handler for button click
-    const handleButtonClick = (voertuig) => {
-        const voertuigId = voertuig.voertuigId;
-
-        if (voertuig.voertuigStatus !== "Gereserveerd"){
-            if (voertuig.voertuigStatus === "Beschikbaar" && (!begindatum || !einddatum)) {
-                alert("Vul een begin- en einddatum in voor dit voertuig.");
-                return;
-            }
-        }
-
-        // Call updateData with the specific voertuigId
-        updateData(voertuigId);
-    };
-
     // Toggle details visibility
     const toggleDetails = (voertuigId) => {
+        console.log(reserveringen)
         setShowDetails((prevState) => ({
             ...prevState,
             [voertuigId]: !prevState[voertuigId], // Toggle the visibility for the given vehicle
@@ -180,76 +166,42 @@ const VoertuigenComponent = () => {
                     <option value="Camper">Camper</option>
                     <option value="Caravan">Caravan</option>
                 </select>
-
-                {/* Date Filters */}
-                <input
-                    type="date"
-                    placeholder="Kies begindatum"
-                    className="flatpickr-calander"
-                    value={begindatum}
-                    onChange={(e) => setBegindatum(e.target.value)}
-                    min={new Date().toISOString().split('T')[0]}
-                />
-                <input
-                    type="date"
-                    placeholder="Kies einddatum"
-                    className="flatpickr-calander"
-                    value={einddatum}
-                    onChange={(e) => setEinddatum(e.target.value)}
-                    min={begindatum || new Date().toISOString().split('T')[0]}
-                />
             </div>
 
             {/* Vehicle Grid */}
             <div className="voertuigen-grid">
-                {filteredVoertuigen.length === 0 ? (
+                {filteredReserveringen.length === 0 ? (
                     <div className="no-vehicles">Geen voertuigen gevonden</div>
                 ) : (
-                    filteredVoertuigen.map((voertuig) => (
-                        <div key={voertuig.voertuigId} className="voertuig-card">
+                    filteredReserveringen.map((reserveringen) => (
+                        <div key={reserveringen.voertuig.voertuigId} className="voertuig-card">
                             <div className="voertuig-photo">
-                                <img
-                                    className="voertuig-photo"
-                                    src={carAndAllLogo}
-                                    alt="CarAndAll Logo"
-                                />
+                                <img className="voertuig-photo" src={carAndAllLogo} alt="CarAndAll Logo" />
                             </div>
                             <div className="voertuig-info">
-                                <h3 className="kenteken">{voertuig.kenteken}</h3>
-                                <p><strong>Merk:</strong> {voertuig.merk}</p>
-                                <p><strong>Model:</strong> {voertuig.model}</p>
-                                <p><strong>Status:</strong> {voertuig.voertuigStatus}</p>
+                                <h3 className="kenteken">{reserveringen.voertuig.kenteken}</h3>
+                                <p><strong>Merk:</strong> {reserveringen.voertuig.merk}</p>
+                                <p><strong>Model:</strong> {reserveringen.voertuig.model}</p>
+                                <p><strong>Status:</strong> {reserveringen.voertuig.voertuigStatus}</p>
 
-                                {/* Status button and Details */}
+                                {/* Button container */}
                                 <div className="button-container">
-                                    <button
-                                        className="reserveer-button"
-                                        onClick={() => handleButtonClick(voertuig)}
-                                    >
-                                        {voertuig.voertuigStatus === "Gereserveerd"
-                                            ? "Maak Uitgegeven"
-                                            : voertuig.voertuigStatus === "Uitgegeven"
-                                                ? "Maak Beschikbaar"
-                                                : "Maak Uitgegeven"}
+                                    <button className="reserveer-button" onClick={() => handleButtonClick(reserveringen.voertuig.voertuigId)}>
+                                        Auto is binnen
                                     </button>
-
-                                    {/* Details Button */}
-                                    <button
-                                        className="details-button"
-                                        onClick={() => toggleDetails(voertuig.voertuigId)}
-                                    >
-                                        {showDetails[voertuig.voertuigId] ? "Verberg Details" : "Toon Details"}
+                                    <button className="details-button" onClick={() => toggleDetails(reserveringen.voertuig.voertuigId)}>
+                                        {showDetails[reserveringen.voertuig.voertuigId] ? "Verberg Details" : "Toon Details"}
                                     </button>
                                 </div>
 
                                 {/* Extra details visible when the button is clicked */}
-                                {showDetails[voertuig.voertuigId] && (
+                                {showDetails[reserveringen.voertuig.voertuigId] && (
                                     <div className="extra-details">
-                                        <p><strong>Kleur:</strong> {voertuig.kleur}</p>
-                                        <p><strong>Aanschafjaar:</strong> {voertuig.aanschafjaar}</p>
-                                        <p><strong>Prijs:</strong> €{voertuig.prijs}</p>
-                                        <p><strong>Voertuigtype:</strong> {voertuig.voertuigType}</p>
-                                        <p><strong>Brandstoftype:</strong> {voertuig.brandstofType}</p>
+                                        <p><strong>Kleur:</strong> {reserveringen.voertuig.kleur}</p>
+                                        <p><strong>Aanschafjaar:</strong> {reserveringen.voertuig.aanschafjaar}</p>
+                                        <p><strong>Prijs:</strong> €{reserveringen.voertuig.prijs}</p>
+                                        <p><strong>Voertuigtype:</strong> {reserveringen.voertuig.voertuigType}</p>
+                                        <p><strong>Brandstoftype:</strong> {reserveringen.voertuig.brandstofType}</p>
                                     </div>
                                 )}
                             </div>

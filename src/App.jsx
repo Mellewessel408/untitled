@@ -29,6 +29,7 @@ import AbonnementGoedkeuren from "./Backoffice/AbonnementGoedkeuren.jsx";
 import VerhuurAanvragen from "./Backoffice/VerhuurAanvragen.jsx";
 import SchademeldingenBekijken from "./Backoffice/SchademeldingenBekijken.jsx";
 import Schadeclaimmaken from "./Backoffice/Schadeclaimmaken.jsx";
+import VoertuigInname from "./Frontoffice/VoertuigInname.jsx";
 function App() {
     return (
         <AccountProvider>
@@ -69,6 +70,7 @@ function App() {
                     <Route path="/VoertuigenSelectie" element={<VoertuigenSelectie />} />
                     <Route path="/HoofdschermZakelijkBeheerder/AbonnementWijzigen" element={<AbonnementWijzigen />} />
                     <Route path="/VoertuigenSelectieFrontoffice" element={<VoertuigselectieFrontoffice />} />
+                    <Route path="/VoertuigInname" element={<VoertuigInname />} />
                     <Route path="/VoertuigenSelectieZakelijkHuurder" element={<VoertuigenSelectieZakelijkHuurder />} />
                     <Route path="*" element={<Pagina404 />}/>
                     <Route path="/ProfielParticulier" element={<ProfielWijzigen />} />

@@ -19,6 +19,10 @@ function HoofdschermFrontoffice() {
         navigate('/VoertuigenSelectieFrontoffice');
     };
 
+    const TeruggekregenVoertuigen = () => {
+        navigate('/VoertuigInname');
+    };
+
     const LogUit = () => {
         logout();
         navigate('/Inlogpagina');
@@ -30,6 +34,7 @@ function HoofdschermFrontoffice() {
             <h1>Welkom</h1>
             <h2>Wat wil je vandaag doen?</h2>
             <button onClick={StatusUpdate}>StatusUpdate</button>
+            <button onClick={TeruggekregenVoertuigen}>VoertuigInname</button>
             <button className="logout-button" onClick={LogUit}>Log uit</button>
         </div>
     );
