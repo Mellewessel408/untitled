@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from "react";
 import {unstable_setDevServerHooks, useNavigate} from 'react-router-dom';
-import { useAccount } from "../Login/AccountProvider.jsx"; // Zorg dat de context beschikbaar is
-//import "..VoertuigenSelectie.css"; // Import CSS classes
+import { useAccount } from "../Login/AccountProvider.jsx";
+import "./VoertuigenSelectie.css"; // Import CSS classes
 import carAndAllLogo from '../assets/CarAndAll_Logo.webp';
-import VoertuigenComponent from "../VoertuigenSelectie.jsx";
-import SchademeldingenBekijken from "./SchademeldingenBekijken.jsx"; // Gebruik één afbeelding
 
 const Schadeclaimmaken = () => {
     const [voertuigen, setVoertuigen] = useState([]); // State for storing vehicles

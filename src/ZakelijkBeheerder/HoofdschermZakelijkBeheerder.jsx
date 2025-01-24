@@ -13,7 +13,7 @@ function HoofdschermZakelijkBeheerder() {
     useEffect(() => {
         if (currentAccountId <= 0 && !isError) { // Controleer of error al is getoond
             setIsError(true); // Zet de error-status op true zodat de alert niet opnieuw komt
-            alert("U bent ingelogd zonder AccountId");
+            alert("U bent niet correct ingelogd. U wordt teruggestuurd naar de inlogpagina");
             navigate('/Inlogpagina');
         } else if (currentAccountId > 0) {
             // Alleen de naam ophalen als currentAccountId geldig is
@@ -59,7 +59,7 @@ function HoofdschermZakelijkBeheerder() {
         navigate('AbonnementWijzigen');
     }
     const VerhuurActiviteiten = () => {
-
+        navigate('BedrijfsVoertuigen');
     }
 
     const BedrijfVerwijderen = async () => {
@@ -86,10 +86,10 @@ function HoofdschermZakelijkBeheerder() {
         <div className="hoofdscherm-container">
             <h2>Welkom, {accountNaam}!</h2>
             <h2>Wat wil je vandaag doen</h2>
-            <button onClick={VoertuigenOverzicht}>Voertuigen overzicht</button>
+            <button onClick={VoertuigenOverzicht}>Bedrijfsoverzicht</button>
             <button onClick={MedewerkersBeheren}>Medewerkers beheren</button>
             <button onClick={AbonnementWijzigen}> Wijzig Abonnement</button>
-            <button onClick={VerhuurActiviteiten}>Verhuur activiteiten</button>
+            <button onClick={VerhuurActiviteiten}>Gehuurde Voertuigen</button>
             <button onClick={BedrijfVerwijderen} className="fetusDeletus">Het Bedrijf Verwijderen</button>
             <button className="logout-button" onClick={LogUit}>Log uit</button>
         </div>

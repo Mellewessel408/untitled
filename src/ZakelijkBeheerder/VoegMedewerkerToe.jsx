@@ -10,7 +10,7 @@ function VoegMedewerkerToe() {
 
     useEffect(() => {
         if (currentAccountId === 0) {
-            alert("U bent ingelogd zonder AccountId");
+            alert("U bent niet correct ingelogd. U wordt teruggestuurd naar de inlogpagina");
             navigate('/inlogpagina');
         } else {
             GetBedrijf(); // Haal bedrijf zodra de component laadt
@@ -73,17 +73,11 @@ function VoegMedewerkerToe() {
         const formData = new FormData(event.target);
         const email = formData.get('email');
         const wachtwoord = formData.get('wachtwoord');
-        const herhaalWachtwoord = formData.get('herhaalWachtwoord');
 
         const emailDomein = email.split('@')[1]?.toLowerCase();
 
         if (bedrijfDomein !== emailDomein) {
             alert("Emailadres klopt niet met het bijbehorende bedrijfsdomein!");
-            return;
-        }
-
-        if (wachtwoord !== herhaalWachtwoord) {
-            alert('Wachtwoorden komen niet overeen. Probeer het opnieuw.');
             return;
         }
 
@@ -125,15 +119,11 @@ function VoegMedewerkerToe() {
             <form onSubmit={Registreer}>
                 <div>
                     <label htmlFor="email">Huurder email:</label>
-                    <input type="text" id="email" name="email" required placeholder="Vul je bedrijfsnaam in..." />
+                    <input type="text" id="email" name="email" required placeholder="Vul het emailadres in..." />
                 </div>
                 <div>
                     <label htmlFor="wachtwoord">Wachtwoord:</label>
                     <input type="password" id="wachtwoord" name="wachtwoord" required placeholder="(minimaal 8 karakters)" minLength="8" />
-                </div>
-                <div>
-                    <label htmlFor="herhaalWachtwoord">Herhaal Wachtwoord:</label>
-                    <input type="password" id="herhaalWachtwoord" name="herhaalWachtwoord" required placeholder="Vul alweer het wachtwoord in..." />
                 </div>
                 <button type="submit">Voeg nieuwe medewerker toe</button>
             </form>
