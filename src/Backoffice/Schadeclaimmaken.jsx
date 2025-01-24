@@ -157,7 +157,7 @@ const Schadeclaimmaken = () => {
                                 <p><strong>Aanschafjaar:</strong> {voertuig.aanschafjaar}</p>
                                 <p><strong>Status:</strong> {voertuig.voertuigStatus}</p>
                                 <button
-                                    onClick={() => SchadeclaimToevoegen(voertuig.voertuigId)}>SchadeclaimToevoegen
+                                    onClick={() => SchadeclaimToevoegen(voertuig.voertuigId)}>Schadeclaim Toevoegen
                                 </button>
                                 {voertuig.voertuigId === selectedVoertuig && (
                                     <div className="comment-section">

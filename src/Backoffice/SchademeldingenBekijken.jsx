@@ -36,70 +36,83 @@ function SchademeldingenBekijken() {
     });
 
     useEffect(() => {
-        const fetchSchademeldingen = async () => {
-            try {
-                const url = `https://localhost:44318/api/Schadeclaim/krijgalleSchadeclaims`;
-                const response = await fetch(url);
 
-                if (!response.ok) {
-                    throw new Error("Netwerkfout: " + response.statusText);
-                }
+        fetchSchademeldingen();
+    }, []);
 
-                const data = await response.json();
-                const schadeclaims = data.$values;
+    const fetchSchademeldingen = async () => {
+        try {
+            const url = `https://localhost:44318/api/Schadeclaim/krijgalleSchadeclaims`;
+            const response = await fetch(url);
 
-                const fetchedSchademeldingen = [];
-                for (let schadeclaim of schadeclaims) {
-                    const url2 = `https://localhost:44318/api/Voertuig/krijgspecifiekvoertuig?id=${schadeclaim.voertuigId}`;
-                    const response2 = await fetch(url2);
-
-                    if (!response2.ok) {
-                        alert("Er is iets mis gegaan bij het inladen van de voertuigen");
-                        return;
-                    }
-
-                    const data2 = await response2.json();
-
-                    const schademelding = {
-                        schadeclaimId: schadeclaim.schadeclaimId,
-                        kenteken: data2.kenteken,
-                        merk: data2.merk,
-                        model: data2.model,
-                        kleur: data2.kleur,
-                        aanschafjaar: data2.aanschafjaar,
-                        brandstofType: data2.brandstofType,
-                        datum: schadeclaim.datum,
-                        beschrijving: schadeclaim.beschrijving,
-                        status: schadeclaim.status
-                    };
-                    fetchedSchademeldingen.push(schademelding);
-                }
-
-                setSchademeldingen(fetchedSchademeldingen); // Update de state met alle schademeldingen
-                setLoading(false);
-            } catch (err) {
-                console.log(err);
-                setError("Kan schademeldingen niet ophalen");
-                setLoading(false);
+            if (!response.ok) {
+                throw new Error("Netwerkfout: " + response.statusText);
             }
-        };
 
-        fetchSchademeldingen(); // Haal de gegevens op bij de eerste render
-    }, []); // Lege dependency array zorgt ervoor dat dit alleen bij de eerste render wordt uitgevoerd
-    // Gebruik een lege dependency array om te zorgen dat de fetch alleen eenmaal wordt uitgevoerd
+            const data = await response.json();
+            const schadeclaims = data.$values;
+
+            const fetchedSchademeldingen = [];
+            for (let schadeclaim of schadeclaims) {
+                const url2 = `https://localhost:44318/api/Voertuig/krijgspecifiekvoertuig?id=${schadeclaim.voertuigId}`;
+                const response2 = await fetch(url2);
+
+                if (!response2.ok) {
+                    alert("Er is iets mis gegaan bij het inladen van de voertuigen");
+                    return;
+                }
+
+                const data2 = await response2.json();
+
+                const schademelding = {
+                    schadeclaimId: schadeclaim.schadeclaimId,
+                    kenteken: data2.kenteken,
+                    merk: data2.merk,
+                    model: data2.model,
+                    kleur: data2.kleur,
+                    aanschafjaar: data2.aanschafjaar,
+                    brandstofType: data2.brandstofType,
+                    datum: schadeclaim.datum,
+                    beschrijving: schadeclaim.beschrijving,
+                    status: schadeclaim.schadeclaimstatus,
+                    reparatieId: schadeclaim.reparatieId
+                };
+
+                // Als er een reparatieId is, haal de reparatie op
+                if (schademelding.reparatieId) {
+                    const reparatie = await KrijgReparatie(schademelding.reparatieId); // Reparatie ophalen met reparatieId
+                    schademelding.reparatie = reparatie; // Voeg de reparatie toe aan het schademelding object
+                }
+
+                fetchedSchademeldingen.push(schademelding);
+            }
+
+            setSchademeldingen(fetchedSchademeldingen); // Update de state met alle schademeldingen
+            setLoading(false);
+        } catch (err) {
+            console.log(err);
+            setError("Kan schademeldingen niet ophalen");
+            setLoading(false);
+        }
+    };
+
+
+    const handleReparatieChange = async (e) => {
+        setReparatie(e.target.value);
+    }
 
     const handleInReparatie = async (id) => {
 
 
         const data = {
             schadeclaimId: id,
-            status: "in repartie"
+            status: "In reparatie"
         }
         console.log(data);
 
         try {
             // Verstuur het POST-verzoek naar de backend
-            const response = await fetch(`${apiBaseUrl}/PostSchadeclaim`, {
+            await fetch(`${apiBaseUrl}/PostSchadeclaim`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(data),
@@ -111,42 +124,39 @@ function SchademeldingenBekijken() {
             alert('Er is iets misgegaan bij het inloggen! Fout details: ' + JSON.stringify(error, null, 2));
         }
     }
-    const verstuurdata = async (id) => {
+
+    const KrijgReparatie = async (id) => {
+        try {
+            const response = await fetch(`https://localhost:44318/api/Reparatie/KrijgSpecifiekeReparatie?id=${id}`, {
+                method: 'GET',
+                headers: {'Content-Type': 'application/json'}
+            });
+
+            if (!response.ok) {
+                return;
+            }
+            const data = await response.json();
+            console.log(data);  // Controleer wat er precies wordt teruggestuurd
+            return data;
+        } catch (error) {
+            console.error('Er is een fout opgetreden:', error.message);
+            alert('Er is iets misgegaan bij het inloggen! Fout details: ' + JSON.stringify(error, null, 2));
+        }
+    };
+
+
+    const MaakReparatie = async (id) => {
 
 
         const data = {
-            beschrijving: comment,
+            beschrijving: reparatie,
             ReparatieDatum: datum,
         }
         console.log(data);
 
         try {
             // Verstuur het POST-verzoek naar de backend
-            const response = await fetch(`https://localhost:44318/api/Reparatie/MaakReparatieAan?id=${id}`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(data),
-            });
-
-        } catch (error) {
-            // Foutafhandelingslogica
-            console.error('Er is een fout opgetreden:', error.message);
-            alert('Er is iets misgegaan bij het nnhg! Fout details: ' + JSON.stringify(error, null, 2));
-        }
-    }
-
-    const MaakReparatie = async (id) => {
-
-
-        const data = {
-            beschrijving: comment,
-            ReparatieDatum: reparatie,
-        }
-        console.log(data);
-
-        try {
-            // Verstuur het POST-verzoek naar de backend
-            const response = await fetch(`https://localhost:44318/api/Reparatie/MaakReparatieAan?id=${id}`, {
+            const response = await fetch(`https://localhost:44318/api/Reparatie/MaakReparatieAan?schadeclaimId=${id}`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(data),
@@ -160,6 +170,7 @@ function SchademeldingenBekijken() {
             console.error('Er is een fout opgetreden:', error.message);
             alert('Er is iets misgegaan bij het inloggen! Fout details: ' + JSON.stringify(error, null, 2));
         }
+        fetchSchademeldingen();
     }
 
     const showInReparatieConfirm = (schademeldingId) => {
@@ -204,17 +215,7 @@ function SchademeldingenBekijken() {
         setComment(e.target.value);
 
     };
-    const handleCommentSubmit = (id) => {
-        verstuurdata(id);
-        alert(`Commentaar verzonden: ${comment} voor ${id}`);
-        setShowCommentField(false);
-        setSelectedForComment(null);
-        setComment("");
-    };
-    const showComment = (id) => {
-        setSelectedForComment(id)
-        setShowCommentField(true);
-    };*/
+    */
     const verstuur = (id) => {
         MaakReparatie(id);
         setShowCommentField(false);
@@ -237,24 +238,6 @@ function SchademeldingenBekijken() {
         LogUit(); // Roep de logout-functie aan
         navigate('/Inlogpagina'); // Navigeren naar inlogpagina
     };
-    const handleReparatieChange = (e) => {
-        setReparatie(e.target.value);
-    }
-    const handleAfgehandeld = () => {
-        setStatus('Afgehandeld');
-    };
-    const handleInBehandeling = () => {
-        setStatus('In behandeling');
-    };
-    const handleKeuze = () => {
-
-
-        setSelectedStatus(null);
-    };
-    const StatusBijwerken = (id) => {
-        setSelectedStatus(id)
-    }
-
     const formatDatum = (datum) => {
         const date = new Date(datum);
         return date.toLocaleDateString("nl-NL", { day: "2-digit", month: "2-digit", year: "numeric" });
@@ -278,44 +261,41 @@ function SchademeldingenBekijken() {
                 {schademeldingen.length === 0 ? (
                     <div className="no-vehicles">Geen schademeldingen gevonden</div>
                 ) : (schademeldingen.map((schademelding) => (
-                        <div key={schademelding.schadeclaimId} className="voertuig-card">
-                            <p><strong>Kenteken:</strong> {schademelding.kenteken}</p>
-                            <p><strong>Voertuig:</strong> {schademelding.merk} {schademelding.model}</p>
-                            <p><strong>Kleur:</strong> {schademelding.kleur}</p>
-                            <p><strong>Aanschafjaar:</strong> {schademelding.aanschafjaar}</p>
-                            <p><strong>Brandstoftype:</strong> {schademelding.brandstofType}</p>
-                            <p><strong>Datum van schade:</strong>{formatDatum(schademelding.datum)}</p>
-                            <p><strong>Schadebeschrijving:</strong>{schademelding.beschrijving}</p>
+                    <div key={schademelding.schadeclaimId} className="voertuig-card">
+                        <p><strong>Kenteken:</strong> {schademelding.kenteken}</p>
+                        <p><strong>Voertuig:</strong> {schademelding.merk} {schademelding.model}</p>
+                        <p><strong>Kleur:</strong> {schademelding.kleur}</p>
+                        <p><strong>Aanschafjaar:</strong> {schademelding.aanschafjaar}</p>
+                        <p><strong>Brandstoftype:</strong> {schademelding.brandstofType}</p>
+                        <p><strong>Datum van schade:</strong> {formatDatum(schademelding.datum)}</p>
+                        <p><strong>Schadebeschrijving:</strong> {schademelding.beschrijving}</p>
+                        <p><strong>Schadestatus:</strong> {schademelding.status}</p>
+                        <br />
 
-                            {!showConfirm && (
-                                <button onClick={ () =>showInReparatieConfirm(schademelding.schadeclaimId)}>In reparatie</button>
-                            )}
-                            {showConfirm && selectedSchademelding === schademelding.schadeclaimId && (
-                                <div>
-                                    <p className="Confirmatievraag">Weet je het zeker? ({timeRemaining}s)</p>
-                                    <button className="AnnuleerKnop" onClick={cancelInReparatie}>Stop</button>
-                                    <button className="ReserveerKnop" onClick={confirmInReparatie}>In Reparatie</button>
-                                </div>
-                            )}
-
-                            {/*<button style={{ marginTop: "5px" }}
-                                onClick={() => showComment(schademelding.schadeclaimId)}>Comment</button>
-                            {selectedForComment === schademelding.schadeclaimId && (
-                                <div className="comment-section">
-                                    <textarea
-                                        placeholder="Voeg hier een opmerking toe..."
-                                        value={comment}
-                                        onChange={(e) => handleCommentChange(e)}
-                                    />
-                                    <button onClick={() => handleCommentSubmit(schademelding.schadeclaimId)}>
-                                        Verzenden
-                                    </button>
-                                </div>
-                            )}*/}
-                            <button style={{ marginTop: "5px" }}
-                                onClick={ () => openReparatie(schademelding.schadeclaimId)}>
+                        {!showConfirm && (
+                            <button onClick={() => showInReparatieConfirm(schademelding.schadeclaimId)}>In
+                                reparatie</button>
+                        )}
+                        {showConfirm && selectedSchademelding === schademelding.schadeclaimId && (
+                            <div>
+                                <p className="Confirmatievraag">Weet je het zeker? ({timeRemaining}s)</p>
+                                <button className="AnnuleerKnop" onClick={cancelInReparatie}>Stop</button>
+                                <button className="ReserveerKnop" onClick={confirmInReparatie}>In Reparatie</button>
+                            </div>
+                        )}
+                        {schademelding.reparatieId ? (
+                            <>
+                                <h2>Reparatie</h2>
+                                <p><strong>Reparatienummer:</strong> {schademelding.reparatieId}</p>
+                            <p><strong>Reparatiebeschrijving:</strong> {schademelding.reparatie.beschrijving}</p>
+                            <p><strong>Reparatiedatum:</strong> {formatDatum(schademelding.reparatie.reparatieDatum)}</p>
+                            </>
+                ) : (
+                            <button style={{marginTop: "5px"}}
+                                    onClick={() => openReparatie(schademelding.schadeclaimId)}>
                                 Voeg Reparatie toe
                             </button>
+                        )}
                             {selectedReparatie === schademelding.schadeclaimId && (
                                 <div className="comment-section">
                                     <textarea
@@ -333,38 +313,12 @@ function SchademeldingenBekijken() {
                                         onChange={(e) => setDatum(e.target.value)}
                                         max={new Date().toISOString().split('T')[0]}
                                     />
-                                    <button onClick={() => verstuur(schademelding.schadeclaimId) }>
+                                    <button onClick={() => verstuur(schademelding.schadeclaimId)}>
                                         Verstuur
                                     </button>
 
                                 </div>
                             )}
-                            <button style={{ marginTop: "5px" }}
-                                    onClick={ ()=> StatusBijwerken(schademelding.schadeclaimId)}>Status bijwerken</button>
-                            {schademelding.schadeclaimId === selectedStatus && (
-                                <div>
-                                    <button
-                                        onClick={() => handleInBehandeling()}
-                                        style={{
-                                            marginRight : "3px",
-                                            marginTop: "5px",
-                                            backgroundColor:
-                                                status === 'In behandeling'
-                                                    ? 'grey'
-                                                    : '#040404',
-                                        }}>In behandeling</button>
-                                    <button onClick={() => handleAfgehandeld()}style={{
-                                        backgroundColor:
-                                            status === 'Afgehandeld'
-                                                ? 'grey'
-                                                : '#040404',
-                                    }}>Afgehandeld</button>
-                                    <button style={{ marginTop: "5px" }}
-                                            onClick={() => handleKeuze()}>Sla keuze op</button>
-                                </div>
-
-                            )}
-
                         </div>
 
                     ))

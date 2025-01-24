@@ -21,17 +21,12 @@ function Registreren() {
         const formData = new FormData(event.target);
         const email = formData.get('email');
         const wachtwoord = formData.get('wachtwoord');
-        const herhaalWachtwoord = formData.get('herhaalWachtwoord');
         const naam = formData.get('naam');
         const postcode = formData.get('postcode');
         const huisnummer = formData.get('huisnummer');
         const telefoonnummer = formData.get('telefoonnummer');
 
         // Controleer of de wachtwoorden overeenkomen
-        if (wachtwoord !== herhaalWachtwoord) {
-            alert('Wachtwoorden komen niet overeen. Probeer het opnieuw.');
-            return;
-        }
 
         // Verzamel de data in een object om te verzenden
         const data = {
@@ -98,12 +93,6 @@ function Registreren() {
                     <label htmlFor="wachtwoord">Wachtwoord: </label>
                     <input type="password" id="wachtwoord" name="wachtwoord" required
                            placeholder="(minimaal 8 karakters)" minLength="8"/>
-                </div>
-
-                <div>
-                    <label htmlFor="herhaalWachtwoord">Herhaal wachtwoord:</label>
-                    <input type="password" id="herhaalWachtwoord" name="herhaalWachtwoord" required
-                           placeholder="Vul je wachtwoord in..." minLength="8"/>
                 </div>
 
                 <div>

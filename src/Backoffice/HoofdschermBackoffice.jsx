@@ -38,8 +38,8 @@ function HoofdschermBackoffice() {
             <img src={logo} alt="Carandall Logo"/>
             <h1>Welkom</h1>
             <h2>Wat wil je vandaag doen?</h2>
-            <button onClick={BedrijfsAbonnement}>BedrijfsAbonnementen</button>
-            <button onClick={VerhuurAanvraag}>VerhuurAanvragen</button>
+            <button onClick={BedrijfsAbonnement}>Bedrijfsabonnementen</button>
+            <button onClick={VerhuurAanvraag}>Verhuuraanvragen</button>
             <button onClick={SchademeldingenBekijken}>Schademeldingen</button>
             <button onClick={Schadeclaimmaken}>Schadeclaim maken</button>
             <button className="logout-button" onClick={LogUit}>Log uit</button>
