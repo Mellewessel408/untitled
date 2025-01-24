@@ -70,6 +70,7 @@ function SchademeldingenBekijken() {
                         brandstofType: data2.brandstofType,
                         datum: schadeclaim.datum,
                         beschrijving: schadeclaim.beschrijving,
+                        status: schadeclaim.status
                     };
                     fetchedSchademeldingen.push(schademelding);
                 }
@@ -114,18 +115,45 @@ function SchademeldingenBekijken() {
 
 
         const data = {
-            schadeclaimId: id,
-            comment: comment,
+            beschrijving: comment,
+            ReparatieDatum: datum,
         }
         console.log(data);
 
         try {
             // Verstuur het POST-verzoek naar de backend
-            const response = await fetch(`${apiBaseUrl}`, {
+            const response = await fetch(`https://localhost:44318/api/Reparatie/MaakReparatieAan?id=${id}`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(data),
             });
+
+        } catch (error) {
+            // Foutafhandelingslogica
+            console.error('Er is een fout opgetreden:', error.message);
+            alert('Er is iets misgegaan bij het nnhg! Fout details: ' + JSON.stringify(error, null, 2));
+        }
+    }
+
+    const MaakReparatie = async (id) => {
+
+
+        const data = {
+            beschrijving: comment,
+            ReparatieDatum: reparatie,
+        }
+        console.log(data);
+
+        try {
+            // Verstuur het POST-verzoek naar de backend
+            const response = await fetch(`https://localhost:44318/api/Reparatie/MaakReparatieAan?id=${id}`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data),
+            });
+            if (response.ok) {
+                alert("Je hebt een reparatie aangemaakt");
+            }
 
         } catch (error) {
             // Foutafhandelingslogica
@@ -172,7 +200,7 @@ function SchademeldingenBekijken() {
             setTimerActive(false); // Zet de timer uit
         }
     };
-    const handleCommentChange = (e) => {
+    /*const handleCommentChange = (e) => {
         setComment(e.target.value);
 
     };
@@ -186,9 +214,9 @@ function SchademeldingenBekijken() {
     const showComment = (id) => {
         setSelectedForComment(id)
         setShowCommentField(true);
-    };
-    const verstuur = () => {
-       // verstuurReparatie();
+    };*/
+    const verstuur = (id) => {
+        MaakReparatie(id);
         setShowCommentField(false);
         setSelectedReparatie(null);
         setReparatie('');
@@ -270,7 +298,7 @@ function SchademeldingenBekijken() {
                                 </div>
                             )}
 
-                            <button style={{ marginTop: "5px" }}
+                            {/*<button style={{ marginTop: "5px" }}
                                 onClick={() => showComment(schademelding.schadeclaimId)}>Comment</button>
                             {selectedForComment === schademelding.schadeclaimId && (
                                 <div className="comment-section">
@@ -283,7 +311,7 @@ function SchademeldingenBekijken() {
                                         Verzenden
                                     </button>
                                 </div>
-                            )}
+                            )}*/}
                             <button style={{ marginTop: "5px" }}
                                 onClick={ () => openReparatie(schademelding.schadeclaimId)}>
                                 Voeg Reparatie toe
@@ -305,7 +333,7 @@ function SchademeldingenBekijken() {
                                         onChange={(e) => setDatum(e.target.value)}
                                         max={new Date().toISOString().split('T')[0]}
                                     />
-                                    <button onClick={() => verstuur() }>
+                                    <button onClick={() => verstuur(schademelding.schadeclaimId) }>
                                         Verstuur
                                     </button>
 

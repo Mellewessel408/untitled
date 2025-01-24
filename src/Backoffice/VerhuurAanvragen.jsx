@@ -103,7 +103,7 @@ function VerhuurAanvragen() {
 
     const handleCommentSubmit = (id) => {
         verstuurdata(id);
-        alert(`Commentaar verzonden: ${comment} voor ${id}`);
+        //alert(`Commentaar verzonden: ${comment} voor ${id}`);
         fetchReserveringen();
             setShowCommentField(false);
             setSelectedReserveringId(null);

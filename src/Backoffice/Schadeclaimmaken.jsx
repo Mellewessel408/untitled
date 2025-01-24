@@ -21,28 +21,29 @@ const Schadeclaimmaken = () => {
 
     // Fetch voertuigen when the component is mounted
     useEffect(() => {
-        const fetchVoertuigen = async () => {
-            try {
-                const url = `${apiBaseUrl}/krijgallevoertuigen`;
-                const response = await fetch(url);
-                if (!response.ok) {
-                    throw new Error("Netwerkfout: " + response.statusText);
-                }
-                const data = await response.json();
-
-                const voertuigenArray = data.$values || [];
-
-                setVoertuigen(voertuigenArray); // Set the vehicles data
-                setLoading(false); // Set loading to false after data is fetched
-            } catch (err) {
-                console.log(err)
-                setError("Kan voertuigen niet ophalen"); // Set error if fetch fails
-                setLoading(false); // Set loading to false after error
-            }
-        };
 
         fetchVoertuigen();
     }, []); // Run only on component mount
+
+    const fetchVoertuigen = async () => {
+        try {
+            const url = `${apiBaseUrl}/krijgallevoertuigen`;
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error("Netwerkfout: " + response.statusText);
+            }
+            const data = await response.json();
+
+            const voertuigenArray = data.$values || [];
+
+            setVoertuigen(voertuigenArray); // Set the vehicles data
+            setLoading(false); // Set loading to false after data is fetched
+        } catch (err) {
+            console.log(err)
+            setError("Kan voertuigen niet ophalen"); // Set error if fetch fails
+            setLoading(false); // Set loading to false after error
+        }
+    };
 
     const handleSchadeclaim = async (id) => {
 
@@ -55,11 +56,14 @@ const Schadeclaimmaken = () => {
 
         try {
             // Verstuur het POST-verzoek naar de backend
-            const response = await fetch('https://localhost:44318/api/', {
-                method: 'PUT',
+            const response = await fetch('https://localhost:44318/api/Schadeclaim/PostSchadeclaim', {
+                method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(data),
             });
+            if (response.ok) {
+                fetchVoertuigen();
+            }
 
         } catch (error) {
             // Foutafhandelingslogica
