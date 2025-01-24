@@ -77,7 +77,7 @@ function VoegMedewerkerToe() {
         const emailDomein = email.split('@')[1]?.toLowerCase();
 
         if (bedrijfDomein !== emailDomein) {
-            alert("Emailadres klopt niet met de bijbehorende bedrijfsdomein!");
+            alert("Emailadres klopt niet met het bijbehorende bedrijfsdomein!");
             return;
         }
 

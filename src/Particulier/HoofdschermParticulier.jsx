@@ -11,7 +11,7 @@ function HoofdschermParticulier() {
     const [accountNaam, setAccountNaam] = useState('');
 
     useEffect(() => {
-        if (currentAccountId === 0) {
+        if (currentAccountId < 1) {
             alert("U bent niet correct ingelogd. U wordt teruggestuurd naar de inlogpagina");
             navigate('/inlogpagina');
         }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-//import './HoofdschermFrontoffice.css';
+//import '../HoofdschermFrontoffice.css';
 import logo from '../assets/CarAndAll_Logo.webp';
 import { AccountProvider, useAccount } from "../Login/AccountProvider.jsx"; // Gebruik de useAccount hook om de context te gebruiken
 import '../VoertuigenSelectie.css';
@@ -24,45 +24,10 @@ function SchademeldingenBekijken() {
     const [datum, setDatum] = useState('')
     const [selectedStatus, setSelectedStatus] = useState(null);
     const [status, setStatus] = useState(null);
-    const schademeldingentest = [
-        {
-            schadeclaimId: 1,
-            kenteken: "AB-123-CD",
-            merk: "Toyota",
-            model: "Corolla",
-            kleur: "Blauw",
-            aanschafjaar: 2019,
-            brandstofType: "Benzine",
-            datum: "2025-01-05",
-            beschrijving: "Kleine deuk aan de linkerkant.",
-        },
-        {
-            schadeclaimId: 2,
-            kenteken: "EF-456-GH",
-            merk: "Volkswagen",
-            model: "Golf",
-            kleur: "Rood",
-            aanschafjaar: 2020,
-            brandstofType: "Diesel",
-            datum: "2025-01-01",
-            beschrijving: "Schade aan de achterbumper door aanrijding.",
-        },
-        {
-            schadeclaimId: 3,
-            kenteken: "IJ-789-KL",
-            merk: "Tesla",
-            model: "Model 3",
-            kleur: "Wit",
-            aanschafjaar: 2022,
-            brandstofType: "Elektrisch",
-            datum: "2025-01-04",
-            beschrijving: "Kras op de linkerportier.",
-        },
-    ];
-    const [schademeldingen, setSchademeldingen] = useState(schademeldingentest);
+    const [schademeldingen, setSchademeldingen] = useState([]);
 
 
-    const apiBaseUrl ='https://localhost:44318/api/';
+    const apiBaseUrl ='https://localhost:44318/api/Schadeclaim';
     useEffect(() => {
         if (currentAccountId === 0) {
             alert("U bent niet correct ingelogd. U wordt teruggestuurd naar de inlogpagina");
@@ -73,29 +38,55 @@ function SchademeldingenBekijken() {
     useEffect(() => {
         const fetchSchademeldingen = async () => {
             try {
-                const url = `${apiBaseUrl}/voertuigMetSchademeldingen`;
+                const url = `https://localhost:44318/api/Schadeclaim/krijgalleSchadeclaims`;
                 const response = await fetch(url);
+
                 if (!response.ok) {
                     throw new Error("Netwerkfout: " + response.statusText);
                 }
+
                 const data = await response.json();
+                const schadeclaims = data.$values;
 
-                const schademeldingenArray = data.$values || [];
+                const fetchedSchademeldingen = [];
+                for (let schadeclaim of schadeclaims) {
+                    const url2 = `https://localhost:44318/api/Voertuig/krijgspecifiekvoertuig?id=${schadeclaim.voertuigId}`;
+                    const response2 = await fetch(url2);
 
-                setSchademeldingen(schademeldingenArray); // Set the vehicles data
-                setLoading(false); // Set loading to false after data is fetched
+                    if (!response2.ok) {
+                        alert("Er is iets mis gegaan bij het inladen van de voertuigen");
+                        return;
+                    }
+
+                    const data2 = await response2.json();
+
+                    const schademelding = {
+                        schadeclaimId: schadeclaim.schadeclaimId,
+                        kenteken: data2.kenteken,
+                        merk: data2.merk,
+                        model: data2.model,
+                        kleur: data2.kleur,
+                        aanschafjaar: data2.aanschafjaar,
+                        brandstofType: data2.brandstofType,
+                        datum: schadeclaim.datum,
+                        beschrijving: schadeclaim.beschrijving,
+                    };
+                    fetchedSchademeldingen.push(schademelding);
+                }
+
+                setSchademeldingen(fetchedSchademeldingen); // Update de state met alle schademeldingen
+                setLoading(false);
             } catch (err) {
-                console.log(err)
-                setError("Kan schademeldingen niet ophalen"); // Set error if fetch fails
-                setLoading(false); // Set loading to false after error
-            }
-            finally {
-                setTimeout(() => {
-                    setLoading(false); // Zet loading op false na de vertraging
-                }, 1000); // Stel de vertraging in, bijvoorbeeld 1000ms (1 seconde)
+                console.log(err);
+                setError("Kan schademeldingen niet ophalen");
+                setLoading(false);
             }
         };
-    })
+
+        fetchSchademeldingen(); // Haal de gegevens op bij de eerste render
+    }, []); // Lege dependency array zorgt ervoor dat dit alleen bij de eerste render wordt uitgevoerd
+    // Gebruik een lege dependency array om te zorgen dat de fetch alleen eenmaal wordt uitgevoerd
+
     const handleInReparatie = async (id) => {
 
 
@@ -107,8 +98,8 @@ function SchademeldingenBekijken() {
 
         try {
             // Verstuur het POST-verzoek naar de backend
-            const response = await fetch('https://localhost:44318/api/', {
-                method: 'PUT',
+            const response = await fetch(`${apiBaseUrl}/PostSchadeclaim`, {
+                method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(data),
             });
@@ -130,8 +121,8 @@ function SchademeldingenBekijken() {
 
         try {
             // Verstuur het POST-verzoek naar de backend
-            const response = await fetch('https://localhost:44318/api', {
-                method: 'PUT',
+            const response = await fetch(`${apiBaseUrl}`, {
+                method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(data),
             });
@@ -236,6 +227,11 @@ function SchademeldingenBekijken() {
         setSelectedStatus(id)
     }
 
+    const formatDatum = (datum) => {
+        const date = new Date(datum);
+        return date.toLocaleDateString("nl-NL", { day: "2-digit", month: "2-digit", year: "numeric" });
+    };
+
     return (
         <div className="voertuigen-container">
             <header className="header">
@@ -255,13 +251,12 @@ function SchademeldingenBekijken() {
                     <div className="no-vehicles">Geen schademeldingen gevonden</div>
                 ) : (schademeldingen.map((schademelding) => (
                         <div key={schademelding.schadeclaimId} className="voertuig-card">
-
                             <p><strong>Kenteken:</strong> {schademelding.kenteken}</p>
                             <p><strong>Voertuig:</strong> {schademelding.merk} {schademelding.model}</p>
                             <p><strong>Kleur:</strong> {schademelding.kleur}</p>
                             <p><strong>Aanschafjaar:</strong> {schademelding.aanschafjaar}</p>
                             <p><strong>Brandstoftype:</strong> {schademelding.brandstofType}</p>
-                            <p><strong>Datum van schade:</strong>{schademelding.datum}</p>
+                            <p><strong>Datum van schade:</strong>{formatDatum(schademelding.datum)}</p>
                             <p><strong>Schadebeschrijving:</strong>{schademelding.beschrijving}</p>
 
                             {!showConfirm && (
