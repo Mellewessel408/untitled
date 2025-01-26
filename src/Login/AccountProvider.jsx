@@ -6,7 +6,6 @@ const AccountContext = createContext();
 export const AccountProvider = ({ children }) => {
     const [currentAccountId, setCurrentAccountId] = useState(() => {
         const storedAccountId = localStorage.getItem('currentAccountId');
-        // Check of de opgeslagen waarde een geldig accountId is
         return storedAccountId && !isNaN(Number(storedAccountId)) ? JSON.parse(storedAccountId) : null;
     });
 

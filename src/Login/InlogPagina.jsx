@@ -12,6 +12,8 @@ function InlogPagina() {
     const { login } = useAccount();
     const [gebruiker, setGebruiker] = useState('Particulier');
 
+    const [security, setSecurity] = useState(0);
+
     const [isOpen, setIsOpen] = useState(false);
 
     const privacyPolicyText = 'Wij hechten grote waarde aan de bescherming van uw persoonsgegevens en zorgen ervoor dat uw gegevens op een veilige en verantwoorde manier worden behandeld. Deze verklaring legt uit hoe wij omgaan met uw persoonsgegevens in overeenstemming met de Algemene Verordening Gegevensbescherming (AVG), ISO 27001, en andere relevante wet- en regelgeving.\n' +
@@ -83,6 +85,21 @@ function InlogPagina() {
     const inlogKnop = async (event) => {
         event.preventDefault(); // Voorkomt dat het formulier standaard wordt ingediend
 
+        const lockoutEnd = localStorage.getItem('loginLockoutEnd');
+        if (lockoutEnd && new Date().getTime() < parseInt(lockoutEnd)) {
+            const remainingMinutes = Math.ceil((parseInt(lockoutEnd) - new Date().getTime()) / (1000 * 60));
+            alert(`Account is vergrendeld. Probeer het over ${remainingMinutes} minuten opnieuw.`);
+            return;
+        }
+
+        if (security === 3) {
+            const lockoutTime = new Date().getTime() + (30 * 60 * 1000);
+            localStorage.setItem('loginLockoutEnd', lockoutTime.toString());
+            alert('Te veel mislukte inlogpogingen. Probeer het later opnieuw.');
+            return;
+        }
+        setSecurity(security + 1);
+
         const data = {
             email: email,
             wachtwoord: wachtwoord
@@ -99,6 +116,8 @@ function InlogPagina() {
             // Als de request succesvol is
             if (response.ok) {
                 // Lees de JSON-body van de response
+                setSecurity(0)
+                localStorage.removeItem('loginLockoutEnd');
                 const responseData = await response.json();
 
                 console.log("Object terughalen voor AccountId:", responseData);
