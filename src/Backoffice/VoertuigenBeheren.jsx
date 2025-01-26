@@ -18,10 +18,10 @@ const VoertuigenBeheren = () => {
         merk: '',
         model: '',
         kleur: '',
-        aanschafjaar: '',
-        prijs: '',
-        voertuigStatus: '',
-        brandstofType: '',
+        aanschafjaar: 0,
+        prijs: 0,
+        voertuigStatus: 'Beschikbaar',
+        brandstofType: ''
 
     });
     const [voertuigType, setVoertuigType] = useState(null);
@@ -43,7 +43,7 @@ const VoertuigenBeheren = () => {
         setCreateMode(false)
     }
 
-    const handleSubmit = async (e) => {
+    const handleEdit = async (e) => {
         e.preventDefault();
         try {
             const response = await fetch(`${apiBaseUrl}/${voertuigType}/updateAuto/${editingVoertuig}`, {
@@ -57,22 +57,42 @@ const VoertuigenBeheren = () => {
                 }),
             });
 
+            setSelectedVoertuig(null);
+            setWijzigen(false);
+            setCreateMode(false);
             if (!response.ok) {
                 throw new Error('Wijzigen mislukt');
             }
 
-            const updatedVoertuig = await response.json();
-            setVoertuigen(prevVoertuigen =>
-                prevVoertuigen.map(v =>
-                    v.voertuigId === editingVoertuig ? updatedVoertuig : v
-                )
-            );
-            setEditingVoertuig(null);
+            fetchVoertuigen();
+
+
         } catch (error) {
-            console.error('Fout bij wijzigen:', error);
-            alert('Er is een fout opgetreden bij het wijzigen van het voertuig');
+
+            return;
         }
     };
+
+    const handleCreate = async (e) => {
+        e.preventDefault();
+        console.log(formData);
+        try {
+            const response = await fetch(`${apiBaseUrl}/Voertuig/MaakVoertuig?voertuigType=Auto`, {
+                method: 'POST',
+
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            });
+            setSelectedVoertuig(null);
+            setWijzigen(false);
+            setCreateMode(false);
+            fetchVoertuigen();
+        } catch (error) {
+            return;
+        }
+    }
 
     const VerwijderVoertuig = async (id) => {
         try {
@@ -104,8 +124,9 @@ const VoertuigenBeheren = () => {
                 model: voertuig.model,
                 kleur: voertuig.kleur,
                 aanschafjaar: voertuig.aanschafjaar,
+                voertuigStatus: 'Beschikbaar',
                 brandstofType: voertuig.brandstofType,
-                prijs: voertuig.prijs,
+                prijs: voertuig.prijs
             });
             setVoertuigType(voertuig.voertuigType);
             setEditingVoertuig(id);
@@ -117,6 +138,9 @@ const VoertuigenBeheren = () => {
             alert("U bent ingelogd zonder AccountId");
             navigate('inlogpagina');
         }
+        fetchVoertuigen();
+    }, [currentAccountId, navigate]);
+
 
         const fetchVoertuigen = async () => {
             setLoading(true);
@@ -136,8 +160,8 @@ const VoertuigenBeheren = () => {
             }
         };
 
-        fetchVoertuigen();
-    }, [currentAccountId, navigate]);
+
+
 
     useEffect(() => {
         const filtered = voertuigen.filter((voertuig) => {
@@ -207,7 +231,14 @@ const VoertuigenBeheren = () => {
                     <h2 className="text-xl font-bold mb-4">
                         {wijzigen ? 'Voertuig Wijzigen' : 'Nieuw Voertuig Aanmaken'}
                     </h2>
-                    <form onSubmit={handleSubmit} className="space-y-4">
+                    <form onSubmit={(e) => {
+                        e.preventDefault();
+                        if (wijzigen) {
+                            handleEdit(e); // Methode voor wijzigen
+                        } else {
+                            handleCreate(e); // Methode voor nieuw voertuig aanmaken
+                        }
+                    }} className="space-y-4">
                         {Object.keys(formData).map((field) => (
                             <div key={field} className="space-y-2">
                                 <label className="block">

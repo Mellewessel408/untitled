@@ -35,13 +35,13 @@ function AbonnementGoedkeuren() {
 
     const navigate = useNavigate();
     const { currentAccountId, logout } = useAccount(); // Haal de currentAccountId uit de context
-    const [bedrijfabonnementen, setBedrijfabonnementen] = useState(mockbedrijfabonnementen);
+    const [bedrijfabonnementen, setBedrijfabonnementen] = useState([]);
     const [selectedAction, setSelectedAction] = useState(null);
     const [selectedAbonnementId, setSelectedAbonnement] = useState(null);
 
     async function fetchAbonnementen() {
         try {
-            const response = await fetch(`https://localhost:44319/api/abonnementen/getall?accountType=frontoffice`, {
+            const response = await fetch(`https://localhost:44318/api/Bedrijf`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -53,7 +53,8 @@ function AbonnementGoedkeuren() {
             }
 
             const data = await response.json();
-            setBedrijfabonnementen(data);
+            const abonnementen = data.$values || [];
+            setBedrijfabonnementen(abonnementen);
         } catch (error) {
             console.error('Fout bij het ophalen van de accounts:', error);
         }
@@ -101,33 +102,33 @@ function AbonnementGoedkeuren() {
 
                 <h1>Abonnementen Goedkeuren</h1>
                 <div className="accounts-grid">
-                    {bedrijfabonnementen.map((abonnement) => (
+                    {bedrijfabonnementen.map((bedrijf) => (
 
-                        <div key={abonnement.abonnementId} className="account-card">
+                        <div key={bedrijf.abonnementId} className="account-card">
                             <div className="account-header">
-                                <div className="account-title">{abonnement.abonnementType}</div>
+                                <div className="account-title">{bedrijf.abonnementType}</div>
                             </div>
                             <div className="account-content">
                                 <div className="account-info">
                                     <div className="info-row">
                                         <span className="font-medium">Bedrijfsnaam:</span>
-                                        <span>{abonnement.abonnementId}</span>
+                                        <span>{bedrijf.bedrijfsnaam}</span>
                                     </div>
                                     <div className="info-row">
                                         <span className="font-medium">Max voertuigen</span>
-                                        <span>{abonnement.MaxVoertuigen}</span>
+                                        <span>{bedrijf.abonnement.maxVoertuigen}</span>
                                     </div>
                                     <div className="info-row">
                                         <span className="font-medium">Max medewerkers</span>
-                                        <span>{abonnement.MaxMedewerkers}</span>
+                                        <span>{bedrijf.abonnement.maxMedewerkers}</span>
                                     </div>
 
                                     <div className="button-group">
                                         <button
-                                            onClick={() => handleGoedkeuren(abonnement.abonnementId)}
+                                            onClick={() => handleGoedkeuren(bedrijf.abonnementId)}
                                             style={{
                                                 backgroundColor:
-                                                    selectedAction === true && selectedAbonnementId === abonnement.abonnementId
+                                                    selectedAction === true && selectedAbonnementId === bedrijf.abonnementId
                                                         ? 'grey'
                                                         : '#040404',
                                                 marginRight: '10px',
@@ -136,10 +137,10 @@ function AbonnementGoedkeuren() {
                                             Goedkeuren
                                         </button>
                                         <button
-                                            onClick={() => handleAfkeuren(abonnement.abonnementId)}
+                                            onClick={() => handleAfkeuren(bedrijf.abonnementId)}
                                             style={{
                                                 backgroundColor:
-                                                    selectedAction === false && selectedAbonnementId === abonnement.abonnementId
+                                                    selectedAction === false && selectedAbonnementId === bedrijf.abonnementId
                                                         ? 'grey'
                                                         : '#040404',
 
@@ -147,7 +148,7 @@ function AbonnementGoedkeuren() {
                                         >
                                             Afkeuren
                                         </button>
-                                        <button onClick={() => handleSubmit(abonnement.abonnementId.abonnementId)}
+                                        <button onClick={() => handleSubmit(bedrijf.abonnementId)}
                                         style={{
                                             marginTop: '10px',
                                         }

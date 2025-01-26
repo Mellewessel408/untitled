@@ -1,6 +1,5 @@
 import {useEffect, useState} from "react";
 import './Accountsbeheren.css';
-import VoegMedewerkerToe from "../ZakelijkBeheerder/VoegMedewerkerToe.jsx";
 import {useNavigate} from "react-router-dom";
 
 function AccountsBeheren() {
@@ -11,11 +10,9 @@ function AccountsBeheren() {
     const [isEditing, setIsEditing] = useState(false);
     const [selectedType, setSelectedType] = useState(null);
 
-
-
     async function fetchAccounts() {
         try {
-            const response = await fetch(`https://localhost:44319/api/account/getall?accountType=frontoffice`, {
+            const response = await fetch(`https://localhost:44318/api/Frontoffice/Krijg alle accounts`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -27,34 +24,83 @@ function AccountsBeheren() {
             }
 
             const data = await response.json();
-            setAccounts(data);
+            const frontofficeAccounts = data.$values.map((account) => ({
+                ...account,
+                type: 'frontoffice',
+            }));
+            setAccounts(frontofficeAccounts);
         } catch (error) {
             console.error('Fout bij het ophalen van de accounts:', error);
         }
     }
+    async function fetchAccountsBackoffice() {
+        try {
+            const response = await fetch(`https://localhost:44318/api/Backoffice/Krijg alle accounts`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
 
-// 2. useEffect met lege dependency array voor eenmalige uitvoering
+            if (!response.ok) {
+                throw new Error(`Er is een fout opgetreden: ${response.status} ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            const backofficeAccounts = data.$values.map((account) => ({
+                ...account,
+                type: 'backoffice',
+            }));
+            setAccounts((prevAccounts) => [...prevAccounts, ...backofficeAccounts]);
+        } catch (error) {
+            console.error('Fout bij het ophalen van de accounts:', error);
+        }
+    }
+    async function WijzigAccount(account) {
+        try {
+            const body = {
+                accountId: account.accountId,
+                email: account.email,
+                wachtwoord: account.wachtwoord
+            };
+            const response = await fetch(`https://localhost:44318/api/${account.type}/UpdateAccount?id=${account.accountId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(body)
+            });
+        }
+        catch (error) {
+            console.error('Fout bij het ophalen van de accounts:', error);
+        }
+    }
+
     useEffect(() => {
         fetchAccounts();
-    }, []);
 
-// Aanroepen van de functie
+        fetchAccountsBackoffice();
+    }, []);
 
 
         const AccountWijzigen = (account) => {
         setSelectedAccount(account);
         setIsEditing(true);
+
     };
     const VoegMedewerkerToe = () => {
         navigate("voegMedewerkertoe");
     };
+    const wijzigMedewerker = (account) => {
+        WijzigAccount(account);
+
+    }
 
     const AccountVerwijderen = async (id) => {
         try {
-            const response = await fetch(`https://localhost:44319/api/account/delete?id=${id}`, {
+            const response = await fetch(`https://localhost:44318/api/Backoffice/DeleteAccount?id=${id}`, {
                 method: 'DELETE',
             });
-            // Update de lokale state na succesvolle verwijdering
             if (response.ok) {
                 setAccounts(accounts.filter(account => account.accountId !== id));
             }
@@ -64,29 +110,8 @@ function AccountsBeheren() {
         }
     };
 
-    const handleSaveChanges = async (updatedAccount) => {
-        try {
-            const response = await fetch(`https://localhost:44319/api/account/update?id=${updatedAccount.accountId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(updatedAccount)
-            });
 
-            if (response.ok) {
-                // Update de lokale state
-                setAccounts(accounts.map(account =>
-                    account.accountId === updatedAccount.accountId ? updatedAccount : account
-                ));
-                setIsEditing(false);
-                setSelectedAccount(null);
-            }
-        } catch (error) {
-            console.error('Er is een fout opgetreden:', error.message);
-            alert('Er is iets misgegaan bij het wijzigen!');
-        }
-    };
+
 
     return (
         <div className="accounts-container">
@@ -108,6 +133,10 @@ function AccountsBeheren() {
                                 <div className="info-row">
                                     <span className="font-medium">Email:</span>
                                     <span>{account.email}</span>
+                                </div>
+                                <div className="info-row">
+                                    <span className="font-medium">SoortMedewerker:</span>
+                                    <span>{account.type}</span>
                                 </div>
 
                                 <div className="button-group">
@@ -131,19 +160,21 @@ function AccountsBeheren() {
 
             {isEditing && selectedAccount && (
                 <div className="edit-overlay">
-                    <div className="edit-modal">
+                <div className="edit-modal">
                         <h3>Account Wijzigen</h3>
                         <form onSubmit={(e) => {
-                            e.preventDefault(); // Voorkom standaard form submit
+                            e.preventDefault();
+
                             const updatedAccount = {
                                 ...selectedAccount,
-                                accountType: selectedType // Voeg het geselecteerde type toe aan het account
+                                accountType: selectedType
                             };
-                            handleSaveChanges(updatedAccount); // Geef het bijgewerkte account mee
+                            wijzigMedewerker(updatedAccount)
                         }}>
                             <div className="form-group">
                                 <label>Email:</label>
                                 <input
+                                    id = "email"
                                     type="email"
                                     value={selectedAccount.email}
                                     onChange={(e) => setSelectedAccount({
@@ -152,6 +183,7 @@ function AccountsBeheren() {
                                     })}
                                 />
                                 <select
+                                    id={"type"}
                                     value={selectedType}
                                     onChange={(e) => setSelectedType(e.target.value)}
                                     className="p-2 border rounded-md"
@@ -184,5 +216,4 @@ function AccountsBeheren() {
         </div>
     );
 }
-
 export default AccountsBeheren;

@@ -10,34 +10,27 @@ function VoegmedewerkerToe() {
     const VoegNieuweMedewerker = async (event) => {
         event.preventDefault();
 
-
-
         const formData = new FormData(event.target);
-        const type = formData.get('type');
+        const type = formData.get('soortmedewerker');
         const email = formData.get('email');
         const wachtwoord = formData.get('wachtwoord');
         const herhaalWachtwoord = formData.get('herhaalWachtwoord');
 
-        // Controleer of de wachtwoorden overeenkomen
         if (wachtwoord !== herhaalWachtwoord) {
             alert('Wachtwoorden komen niet overeen. Probeer het opnieuw.');
             return;
         }
 
-        // Verzamel de data in een object om te verzenden
+
         const data = {
-            type: type,
             email: email,
-            wachtwoord: wachtwoord,
-            naam: "",
-            nummer: "",
-            adresId: "",
+            wachtwoord: wachtwoord
         };
 
 
         try {
-            // Verstuur het POST verzoek naar de backend
-            const url = new URL("https://localhost:44319/api/account/registreer");
+
+            const url = new URL(`https://localhost:44318/api/${type}/MaakAccount`);
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
@@ -50,7 +43,7 @@ function VoegmedewerkerToe() {
             console.error('Fout bij het versturen van het verzoek:', error);
             alert('Er is een fout opgetreden. Probeer het later opnieuw.');
         }
-
+        document.getElementById('form').reset();
     }
 
     return (
@@ -59,7 +52,7 @@ function VoegmedewerkerToe() {
                 <img className="logo" src={logo} alt="Carandall Logo"/>
             </div>
             <h1>Registreer Medewerker</h1>
-            <form onSubmit={VoegNieuweMedewerker}>
+            <form id="form" onSubmit={VoegNieuweMedewerker}>
                 <div>
                     <label htmlFor="email">Emailadres:</label>
                     <input type="email" id="email" name="email" required placeholder="Vul het emailadres in..."/>
@@ -79,8 +72,8 @@ function VoegmedewerkerToe() {
                 <div>
                     <label htmlFor="SoortMedewerker">Medewerker:</label>
                     <select id="soortmedewerker" name="soortmedewerker" required>
-                        <option value="Backend">Backend-Medewerker</option>
-                        <option value="Frontend">Frontend-Medewerker</option>
+                        <option value="Backoffice">Backoffice-Medewerker</option>
+                        <option value="Frontoffice">Frontoffice-Medewerker</option>
                     </select>
                 </div>
 
