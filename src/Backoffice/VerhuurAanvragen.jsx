@@ -87,7 +87,11 @@ function VerhuurAanvragen() {
                     body: JSON.stringify(data),
                 });
                 if (response.ok) {
-
+                    if (selectedAction) {
+                        alert(`Reservering met id ${id} is goedgekeurd!`);
+                    } else {
+                        alert(`Reservering met id ${id} is afgekeurd...`);
+                    }
                 }
             } catch (error) {
                 // Foutafhandelingslogica
@@ -119,6 +123,7 @@ function VerhuurAanvragen() {
             setSelectedReserveringId(id)
             setShowCommentField(true);
             setSelectedAction(false);
+
         };
 
     return (

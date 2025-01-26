@@ -10,20 +10,12 @@ function SchademeldingenBekijken() {
     const {currentAccountId, logout } = useAccount(); // Haal de currentAccountId uit de context
 
     const [selectedSchademelding, setSelectedSchademelding] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(false);
     const [timeRemaining, setTimeRemaining] = useState(30); // Resterende tijd voor de bevestiging
     const [timerActive, setTimerActive] = useState(false); // Om de timer aan en uit te zetten
     const [showConfirm, setShowConfirm] = useState(null); // Voor bevestiging van reserveren
-    const [comment, setComment] = useState("");
-    const [showCommentField, setShowCommentField] = useState(false);
-    const [showCommentField2, setShowCommentField2] = useState(false);
-    const [selectedForComment, setSelectedForComment] = useState(null);
     const [selectedReparatie, setSelectedReparatie] = useState(null);
     const [reparatie, setReparatie] = useState('');
     const [datum, setDatum] = useState('')
-    const [selectedStatus, setSelectedStatus] = useState(null);
-    const [status, setStatus] = useState(null);
     const [schademeldingen, setSchademeldingen] = useState([]);
 
 
@@ -38,6 +30,7 @@ function SchademeldingenBekijken() {
     useEffect(() => {
 
         fetchSchademeldingen();
+        console.log(schademeldingen);
     }, []);
 
     const fetchSchademeldingen = async () => {
@@ -88,11 +81,8 @@ function SchademeldingenBekijken() {
             }
 
             setSchademeldingen(fetchedSchademeldingen); // Update de state met alle schademeldingen
-            setLoading(false);
         } catch (err) {
             console.log(err);
-            setError("Kan schademeldingen niet ophalen");
-            setLoading(false);
         }
     };
 
@@ -101,23 +91,16 @@ function SchademeldingenBekijken() {
         setReparatie(e.target.value);
     }
 
-    const handleInReparatie = async (id) => {
-
-
-        const data = {
-            schadeclaimId: id,
-            status: "In reparatie"
-        }
-        console.log(data);
+    const handleInReparatie = async (id, status) => {
 
         try {
             // Verstuur het POST-verzoek naar de backend
-            await fetch(`${apiBaseUrl}/PostSchadeclaim`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(data),
+            await fetch(`${apiBaseUrl}/UpdateStatus?schadeclaimId=${id}&status=${status}`, {
+                method: 'PUT',
+                headers: {'Content-Type': 'application/json'}
             });
 
+            fetchSchademeldingen();
         } catch (error) {
             // Foutafhandelingslogica
             console.error('Er is een fout opgetreden:', error.message);
@@ -204,9 +187,10 @@ function SchademeldingenBekijken() {
         setSelectedSchademelding(null); // Reset het geselecteerde voertuig
         setTimerActive(false); // Zet de timer uit
     };
-    const confirmInReparatie = () => {
+    const confirmInReparatie = (status) => {
         if (selectedSchademelding !== null) {
-            handleInReparatie(selectedSchademelding); // Bevestig de reservering
+            handleInReparatie(selectedSchademelding, status); // Bevestig de reservering
+
             setShowConfirm(false); // Sluit de bevestigingsdialoog
             setTimerActive(false); // Zet de timer uit
         }
@@ -218,17 +202,13 @@ function SchademeldingenBekijken() {
     */
     const verstuur = (id) => {
         MaakReparatie(id);
-        setShowCommentField(false);
+        //setShowCommentField(false);
         setSelectedReparatie(null);
         setReparatie('');
     }
     const handleHoofdmenu = () => {
         navigate('/HoofdschermBackoffice'); // Navigeren naar inlogpagina
     };
-    const openReparatie = (id) => {
-        setSelectedReparatie(id)
-        setShowCommentField2(true)
-    }
 
     const LogUit = () => {
         logout();
@@ -272,17 +252,21 @@ function SchademeldingenBekijken() {
                         <p><strong>Schadestatus:</strong> {schademelding.status}</p>
                         <br />
 
-                        {!showConfirm && (
-                            <button onClick={() => showInReparatieConfirm(schademelding.schadeclaimId)}>In
-                                reparatie</button>
+                        {!showConfirm && !(schademelding.status === "Afgehandeld") && (
+                            <button onClick={() => showInReparatieConfirm(schademelding.schadeclaimId)}>Verander status</button>
                         )}
                         {showConfirm && selectedSchademelding === schademelding.schadeclaimId && (
                             <div>
                                 <p className="Confirmatievraag">Weet je het zeker? ({timeRemaining}s)</p>
                                 <button className="AnnuleerKnop" onClick={cancelInReparatie}>Stop</button>
-                                <button className="ReserveerKnop" onClick={confirmInReparatie}>In Reparatie</button>
+                                {schademelding.status === "In afwachting" ? (
+                                    <button className="ReserveerKnop" onClick={() => confirmInReparatie("In reparatie")}>In Reparatie</button>
+                                ) : (
+                                    <button className="ReserveerKnop" onClick={() => confirmInReparatie("Afgehandeld")}>Afgehandeld</button>
+                                )}
                             </div>
                         )}
+
                         {schademelding.reparatieId ? (
                             <>
                                 <h2>Reparatie</h2>
@@ -292,7 +276,8 @@ function SchademeldingenBekijken() {
                             </>
                 ) : (
                             <button style={{marginTop: "5px"}}
-                                    onClick={() => openReparatie(schademelding.schadeclaimId)}>
+
+                                    onClick={() => {(selectedReparatie === null) || selectedReparatie !== schademelding.schadeclaimId ? setSelectedReparatie(schademelding.schadeclaimId) : (setSelectedReparatie(null))}}>
                                 Voeg Reparatie toe
                             </button>
                         )}
