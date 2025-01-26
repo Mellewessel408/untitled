@@ -53,8 +53,9 @@ function AbonnementGoedkeuren() {
             }
 
             const data = await response.json();
-            const abonnementen = data.$values || [];
-            setBedrijfabonnementen(abonnementen);
+            const abonnementen = data.$values;
+            const abonnementenMetNullBegindatum = abonnementen.filter(abonnement => abonnement.begindatum == null);
+            setBedrijfabonnementen(abonnementenMetNullBegindatum);
         } catch (error) {
             console.error('Fout bij het ophalen van de accounts:', error);
         }
@@ -87,9 +88,36 @@ function AbonnementGoedkeuren() {
         setSelectedAbonnement(id)
         setSelectedAction(false);
     }
-    const handleSubmit = () => {
-        //verstuurData();
+    const handleSubmit = (bedrijf) => {
+        updateAbonnement(bedrijf);
         setSelectedAbonnement(null);
+    }
+    async function updateAbonnement(bedrijf) {
+        try {
+            const updatedAbonnement = {
+                abonnementId: bedrijf.abonnementId,
+                maxVoertuigen: bedrijf.abonnement.maxVoertuigen,
+                maxMedewerkers: bedrijf.abonnement.maxMedewerkers,
+                abonnementType: bedrijf.abonnement.type,
+                begindatum: new Date().toISOString()
+            };
+            const response = await fetch(`https://localhost:44318/api/Abonnement/UpdateAbonnement?abonnementId=${bedrijf.abonnementId}&accountId=${bedrijf.bevoegdeMedewerkers.accountId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(updatedAbonnement)
+            });
+
+            if (!response.ok) {
+                throw new Error(`Er is een fout opgetreden: ${response.status} ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            console.log('Abonnement succesvol bijgewerkt:', data);
+        } catch (error) {
+            console.error('Fout bij het bijwerken van het abonnement:', error);
+        }
     }
 
 
@@ -148,7 +176,7 @@ function AbonnementGoedkeuren() {
                                         >
                                             Afkeuren
                                         </button>
-                                        <button onClick={() => handleSubmit(bedrijf.abonnementId)}
+                                        <button onClick={() => handleSubmit(bedrijf)}
                                         style={{
                                             marginTop: '10px',
                                         }
