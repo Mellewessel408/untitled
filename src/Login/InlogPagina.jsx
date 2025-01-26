@@ -13,6 +13,7 @@ function InlogPagina() {
     const [gebruiker, setGebruiker] = useState('Particulier');
 
     const [security, setSecurity] = useState(0);
+    const [remainingTime, setRemainingTime] = useState(0);
 
     const [isOpen, setIsOpen] = useState(false);
 
@@ -82,13 +83,41 @@ function InlogPagina() {
         '13. Wijzigingen in deze Privacyverklaring\n' +
         'Wij behouden ons het recht voor om deze privacyverklaring te wijzigen. Wij zullen u tijdig informeren over belangrijke wijzigingen die invloed kunnen hebben op de manier waarop wij met uw gegevens omgaan.';
 
+
+    useEffect(() => {
+        // Check for existing lockout on component mount
+        const lockoutEnd = localStorage.getItem('loginLockoutEnd');
+        if (lockoutEnd) {
+            const remaining = Math.ceil((parseInt(lockoutEnd) - new Date().getTime()) / (1000 * 60));
+            if (remaining > 0) {
+                setRemainingTime(remaining);
+            }
+        }
+
+        // Optional: Set up an interval to update remaining time
+        const timer = setInterval(() => {
+            const lockoutEnd = localStorage.getItem('loginLockoutEnd');
+            if (lockoutEnd) {
+                const remaining = Math.ceil((parseInt(lockoutEnd) - new Date().getTime()) / (1000 * 60));
+                if (remaining > 0) {
+                    setRemainingTime(remaining);
+                } else {
+                    setRemainingTime(0);
+                    localStorage.removeItem('loginLockoutEnd');
+                }
+            }
+        }, 1000); // Update every second
+
+        // Cleanup interval on component unmount
+        return () => clearInterval(timer);
+    }, []);
+
     const inlogKnop = async (event) => {
         event.preventDefault(); // Voorkomt dat het formulier standaard wordt ingediend
 
         const lockoutEnd = localStorage.getItem('loginLockoutEnd');
         if (lockoutEnd && new Date().getTime() < parseInt(lockoutEnd)) {
-            const remainingMinutes = Math.ceil((parseInt(lockoutEnd) - new Date().getTime()) / (1000 * 60));
-            alert(`Account is vergrendeld. Probeer het over ${remainingMinutes} minuten opnieuw.`);
+            setRemainingTime(Math.ceil((parseInt(lockoutEnd) - new Date().getTime()) / (1000 * 60)));
             return;
         }
 
@@ -187,7 +216,14 @@ function InlogPagina() {
                             placeholder="Vul hier uw wachtwoord in..."
                         />
                     </div>
-                    <button className="Inlogknop">Inloggen</button>
+                    <button
+                        className="Inlogknop"
+                        disabled={remainingTime > 0}
+                    >
+                        {remainingTime > 0
+                            ? `Inloggen (${remainingTime} min)`
+                            : 'Inloggen'}
+                    </button>
                 </form>
 
                 <button
