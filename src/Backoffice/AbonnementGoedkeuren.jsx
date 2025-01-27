@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logo from '../assets/CarAndAll_Logo.webp';
 import './Accountsbeheren.css';
-import './Voertuigenselectie.css'
+import '../Voertuigenselectie.css'
 import { AccountProvider, useAccount } from "../Login/AccountProvider.jsx"; // Gebruik de useAccount hook om de context te gebruiken
 
 function AbonnementGoedkeuren() {

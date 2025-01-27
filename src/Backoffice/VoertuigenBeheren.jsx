@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAccount } from "../Login/AccountProvider.jsx";
-import "./VoertuigenSelectie.css";
+import "../VoertuigenSelectie.css";
 import carAndAllLogo from '../assets/CarAndAll_Logo.webp';
 
 const VoertuigenBeheren = () => {
